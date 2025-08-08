@@ -1,0 +1,21 @@
+services:
+  database:
+    container_name: database
+    hostname: database
+    image: postgres
+    restart: always
+    env_file:
+      - ../../../.env
+    volumes:
+      - ../../../postgres_data:/var/lib/postgresql/data
+      - ../../../postgres_backups:/backups
+      - ../../../scripts/postgres:/scripts
+    ports:
+      - "${DB_OUTER_PORT}:${DB_INNER_PORT}"
+    networks:
+      - plants_care_bot_network
+
+networks:
+  plants_care_bot_network:
+    name: plants_care_bot_network
+    external: true
