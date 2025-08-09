@@ -1,9 +1,8 @@
 package entities
 
 type Temporary struct {
-	ID        int
-	UserID    int
-	Step      int
-	MessageID int
-	Data      []byte
+	ID     int    `json:"id"`
+	UserID int    `json:"user_id"`
+	Step   int    `json:"step"`
+	Data   []byte `json:"data"`
 }

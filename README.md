@@ -24,8 +24,6 @@ task -d scripts local -v
 go run ./cmd/main.go
 ```
 
-## GraphQL
-
 ## Linters
 
 To run linters, use next command:

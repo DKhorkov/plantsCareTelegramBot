@@ -54,7 +54,6 @@ CREATE TABLE IF NOT EXISTS temporary
     id         SERIAL PRIMARY KEY,
     user_id    INTEGER NOT NULL,
     step       INTEGER NOT NULL,
-    message_id INTEGER NOT NULL,
     data       bytea,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );

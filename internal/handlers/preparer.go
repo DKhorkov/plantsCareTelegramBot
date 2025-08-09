@@ -10,9 +10,4 @@ func Prepare(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logg
 	for cmd, h := range handlers {
 		bot.Handle(cmd, h(useCases, logger))
 	}
-
-	//bot.Handle(&clb, Test)
-	bot.Handle(telebot.OnMedia, func(context telebot.Context) error {
-		return context.Send("invalid")
-	})
 }

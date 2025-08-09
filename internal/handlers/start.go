@@ -1,30 +1,11 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/DKhorkov/libs/logging"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"gopkg.in/telebot.v4"
-)
-
-var (
-	createGroupButton = telebot.InlineButton{
-		Unique: "createGroup",
-		Text:   "Добавить сценарий полива",
-	}
-	manageGroupsButton = telebot.InlineButton{
-		Unique: "manageGroups",
-		Text:   "Управление сценариями полива",
-	}
-	addFlowerButton = telebot.InlineButton{
-		Unique: "addFlower",
-		Text:   "Добавить растение",
-	}
-	managePlantsButton = telebot.InlineButton{
-		Unique: "managePlants",
-		Text:   "Управление растениями",
-	}
 )
 
 func Start(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
@@ -42,10 +23,13 @@ func Start(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerF
 				Lastname:   context.Sender().LastName,
 				IsBot:      context.Sender().IsBot,
 			},
-			context.Message().ID,
 		)
 
 		if err != nil {
+			return err
+		}
+
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.StartStep); err != nil {
 			return err
 		}
 
@@ -79,12 +63,45 @@ func Start(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerF
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromDisk(startImagePath),
-				Caption: fmt.Sprintf("Привет!\n" +
-					"Кажется, ты хочешь отрегулировать полив растений😃\n" +
-					"Я тебе помогу.\n\n" +
-					"Выбери действие ниже, чтобы мы могли продолжить:\n\n",
-				),
+				File:    telebot.FromDisk(startImagePath),
+				Caption: startMessageText,
+			},
+			menu,
+		)
+
+		if err != nil {
+			logger.Error("Failed to send message", "Error", err)
+			return err
+		}
+
+		return nil
+	}
+}
+
+func AddGroupCallback(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+	return func(context telebot.Context) error {
+		if err := context.Delete(); err != nil {
+			logger.Error("Failed to delete message", "Error", err)
+			return err
+		}
+
+		if err := useCases.SetTemporaryStep(int(context.Sender().ID), steps.GroupTitleStep); err != nil {
+			return err
+		}
+
+		menu := &telebot.ReplyMarkup{
+			ResizeKeyboard: true,
+			InlineKeyboard: [][]telebot.InlineButton{
+				{
+					backToStartButton,
+				},
+			},
+		}
+
+		err := context.Send(
+			&telebot.Photo{
+				File:    telebot.FromDisk(addGroupTitleImagePath),
+				Caption: addGroupTitleText,
 			},
 			menu,
 		)
@@ -100,11 +117,15 @@ func Start(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerF
 
 func Test(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
-		err := context.Delete()
-		if err != nil {
-			return err
-		}
+		//err := context.Delete()
+		//if err != nil {
+		//	return err
+		//}
+		//
+		//return context.Send("some message")
 
-		return context.Send("some message")
+		return context.Respond(&telebot.CallbackResponse{
+			Text: "Ошибка обновления: ",
+		})
 	}
 }

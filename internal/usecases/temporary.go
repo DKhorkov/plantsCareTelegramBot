@@ -1,0 +1,98 @@
+package usecases
+
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/DKhorkov/libs/logging"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
+)
+
+type temporaryUseCases struct {
+	storage interfaces.Storage
+	logger  logging.Logger
+}
+
+func (u *temporaryUseCases) GetUserTemporary(telegramID int) (entities.Temporary, error) {
+	user, err := u.storage.GetUserByTelegramID(telegramID)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to get user with telegramID=%d", user.TelegramID),
+			"Error",
+			err,
+		)
+
+		return entities.Temporary{}, err
+	}
+
+	temp, err := u.storage.GetTemporaryByUserID(user.ID)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to get Temporary data for user with ID=%d", user.ID),
+			"Error",
+			err,
+		)
+
+		return entities.Temporary{}, err
+	}
+
+	return temp, nil
+}
+
+func (u *temporaryUseCases) SetTemporaryStep(telegramID int, step int) error {
+	temp, err := u.GetUserTemporary(telegramID)
+	if err != nil {
+		return err
+	}
+
+	temp.Step = step
+	if err = u.storage.UpdateTemporary(temp); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),
+			"Error",
+			err,
+		)
+
+		return err
+	}
+
+	return nil
+}
+
+func (u *temporaryUseCases) AddGroupTitle(telegramID int, title string) (entities.Group, error) {
+	temp, err := u.GetUserTemporary(telegramID)
+	if err != nil {
+		return entities.Group{}, err
+	}
+
+	group := entities.Group{
+		UserID: temp.UserID,
+		Title:  title,
+	}
+
+	data, err := json.Marshal(group)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to marshal data for user with ID=%d", temp.UserID),
+			"Error",
+			err,
+		)
+
+		return entities.Group{}, err
+	}
+
+	temp.Data = data
+	temp.Step = steps.GroupDescriptionStep
+	if err = u.storage.UpdateTemporary(temp); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),
+			"Error",
+			err,
+		)
+
+		return entities.Group{}, err
+	}
+
+	return group, nil
+}
