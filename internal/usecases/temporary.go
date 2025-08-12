@@ -14,7 +14,7 @@ type temporaryUseCases struct {
 	logger  logging.Logger
 }
 
-func (u *temporaryUseCases) GetUserTemporary(telegramID int) (entities.Temporary, error) {
+func (u *temporaryUseCases) GetUserTemporary(telegramID int) (*entities.Temporary, error) {
 	user, err := u.storage.GetUserByTelegramID(telegramID)
 	if err != nil {
 		u.logger.Error(
@@ -23,7 +23,7 @@ func (u *temporaryUseCases) GetUserTemporary(telegramID int) (entities.Temporary
 			err,
 		)
 
-		return entities.Temporary{}, err
+		return nil, err
 	}
 
 	temp, err := u.storage.GetTemporaryByUserID(user.ID)
@@ -34,7 +34,7 @@ func (u *temporaryUseCases) GetUserTemporary(telegramID int) (entities.Temporary
 			err,
 		)
 
-		return entities.Temporary{}, err
+		return nil, err
 	}
 
 	return temp, nil
@@ -47,7 +47,7 @@ func (u *temporaryUseCases) SetTemporaryStep(telegramID int, step int) error {
 	}
 
 	temp.Step = step
-	if err = u.storage.UpdateTemporary(temp); err != nil {
+	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),
 			"Error",
@@ -60,13 +60,33 @@ func (u *temporaryUseCases) SetTemporaryStep(telegramID int, step int) error {
 	return nil
 }
 
-func (u *temporaryUseCases) AddGroupTitle(telegramID int, title string) (entities.Group, error) {
+func (u *temporaryUseCases) SetTemporaryMessage(telegramID int, messageID int) error {
 	temp, err := u.GetUserTemporary(telegramID)
 	if err != nil {
-		return entities.Group{}, err
+		return err
 	}
 
-	group := entities.Group{
+	temp.MessageID = messageID
+	if err = u.storage.UpdateTemporary(*temp); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),
+			"Error",
+			err,
+		)
+
+		return err
+	}
+
+	return nil
+}
+
+func (u *temporaryUseCases) AddGroupTitle(telegramID int, title string) (*entities.Group, error) {
+	temp, err := u.GetUserTemporary(telegramID)
+	if err != nil {
+		return nil, err
+	}
+
+	group := &entities.Group{
 		UserID: temp.UserID,
 		Title:  title,
 	}
@@ -79,19 +99,19 @@ func (u *temporaryUseCases) AddGroupTitle(telegramID int, title string) (entitie
 			err,
 		)
 
-		return entities.Group{}, err
+		return nil, err
 	}
 
 	temp.Data = data
 	temp.Step = steps.GroupDescriptionStep
-	if err = u.storage.UpdateTemporary(temp); err != nil {
+	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),
 			"Error",
 			err,
 		)
 
-		return entities.Group{}, err
+		return nil, err
 	}
 
 	return group, nil

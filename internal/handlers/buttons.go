@@ -27,4 +27,14 @@ var (
 		Unique: "backToStart",
 		Text:   "Назад ↩️",
 	}
+
+	backToAddGroupTitleButton = telebot.InlineButton{
+		Unique: "backToAddGroupTitle",
+		Text:   "Назад ↩️",
+	}
+
+	menuButton = telebot.InlineButton{
+		Unique: "menu",
+		Text:   "В меню 🏠",
+	}
 )

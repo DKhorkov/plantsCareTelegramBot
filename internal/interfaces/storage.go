@@ -7,13 +7,13 @@ type Storage interface {
 	// Users:
 
 	SaveUser(user entities.User) (int, error)
-	GetUserByTelegramID(telegramID int) (entities.User, error)
+	GetUserByTelegramID(telegramID int) (*entities.User, error)
 
 	// Temporary:
 
 	CreateTemporary(temp entities.Temporary) error
 	UpdateTemporary(temp entities.Temporary) error
-	GetTemporaryByUserID(userID int) (entities.Temporary, error)
+	GetTemporaryByUserID(userID int) (*entities.Temporary, error)
 
 	// Groups:
 
@@ -23,7 +23,7 @@ type Storage interface {
 	DeleteGroup(id int) error
 	GetUserGroups(userID int) ([]entities.Group, error)
 	CountUserGroups(userID int) (int, error)
-	GetGroup(id int) (entities.Group, error)
+	GetGroup(id int) (*entities.Group, error)
 
 	// Plants:
 
@@ -33,5 +33,5 @@ type Storage interface {
 	DeletePlant(id int) error
 	GetUserPlants(userID int) ([]entities.Plant, error)
 	CountUserPlants(userID int) (int, error)
-	GetPlant(id int) (entities.Plant, error)
+	GetPlant(id int) (*entities.Plant, error)
 }

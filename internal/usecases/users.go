@@ -51,7 +51,7 @@ func (u *usersUseCases) SaveUser(user entities.User) (int, error) {
 	return userID, nil
 }
 
-func (u *usersUseCases) GetUserByTelegramID(telegramID int) (entities.User, error) {
+func (u *usersUseCases) GetUserByTelegramID(telegramID int) (*entities.User, error) {
 	user, err := u.storage.GetUserByTelegramID(telegramID)
 	if err != nil {
 		u.logger.Error(
@@ -60,7 +60,7 @@ func (u *usersUseCases) GetUserByTelegramID(telegramID int) (entities.User, erro
 			err,
 		)
 
-		return entities.User{}, err
+		return nil, err
 	}
 
 	return user, nil

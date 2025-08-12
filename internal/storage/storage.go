@@ -88,11 +88,11 @@ func (s *Storage) SaveUser(user entities.User) (int, error) {
 	return userID, nil
 }
 
-func (s *Storage) GetUserByTelegramID(telegramID int) (entities.User, error) {
+func (s *Storage) GetUserByTelegramID(telegramID int) (*entities.User, error) {
 	ctx := context.Background()
 	connection, err := s.dbConnector.Connection(ctx)
 	if err != nil {
-		return entities.User{}, err
+		return nil, err
 	}
 
 	defer db.CloseConnectionContext(ctx, connection, s.logger)
@@ -104,17 +104,17 @@ func (s *Storage) GetUserByTelegramID(telegramID int) (entities.User, error) {
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
-		return entities.User{}, err
+		return nil, err
 	}
 
 	user := &entities.User{}
 
 	columns := db.GetEntityColumns(user)
 	if err = connection.QueryRowContext(ctx, stmt, params...).Scan(columns...); err != nil {
-		return entities.User{}, err
+		return nil, err
 	}
 
-	return *user, nil
+	return user, nil
 }
 
 func (s *Storage) CreateTemporary(temp entities.Temporary) error {
@@ -131,11 +131,13 @@ func (s *Storage) CreateTemporary(temp entities.Temporary) error {
 		Columns(
 			userIDColumnName,
 			stepColumnName,
+			messageIDColumnName,
 			dataColumnName,
 		).
 		Values(
 			temp.UserID,
 			temp.Step,
+			temp.MessageID,
 			temp.Data,
 		).
 		PlaceholderFormat(sq.Dollar). // pq postgres driver works only with $ placeholders
@@ -144,7 +146,8 @@ func (s *Storage) CreateTemporary(temp entities.Temporary) error {
 		return err
 	}
 
-	return connection.QueryRowContext(ctx, stmt, params...).Err()
+	_, err = connection.ExecContext(ctx, stmt, params...)
+	return err
 }
 
 func (s *Storage) UpdateTemporary(temp entities.Temporary) error {
@@ -160,6 +163,7 @@ func (s *Storage) UpdateTemporary(temp entities.Temporary) error {
 		Update(temporaryTableName).
 		Where(sq.Eq{idColumnName: temp.ID}).
 		Set(stepColumnName, temp.Step).
+		Set(messageIDColumnName, temp.MessageID).
 		Set(dataColumnName, temp.Data).
 		PlaceholderFormat(sq.Dollar). // pq postgres driver works only with $ placeholders
 		ToSql()
@@ -171,11 +175,11 @@ func (s *Storage) UpdateTemporary(temp entities.Temporary) error {
 	return err
 }
 
-func (s *Storage) GetTemporaryByUserID(userID int) (entities.Temporary, error) {
+func (s *Storage) GetTemporaryByUserID(userID int) (*entities.Temporary, error) {
 	ctx := context.Background()
 	connection, err := s.dbConnector.Connection(ctx)
 	if err != nil {
-		return entities.Temporary{}, err
+		return nil, err
 	}
 
 	defer db.CloseConnectionContext(ctx, connection, s.logger)
@@ -187,17 +191,17 @@ func (s *Storage) GetTemporaryByUserID(userID int) (entities.Temporary, error) {
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
-		return entities.Temporary{}, err
+		return nil, err
 	}
 
 	temporary := &entities.Temporary{}
 
 	columns := db.GetEntityColumns(temporary)
 	if err = connection.QueryRowContext(ctx, stmt, params...).Scan(columns...); err != nil {
-		return entities.Temporary{}, err
+		return nil, err
 	}
 
-	return *temporary, nil
+	return temporary, nil
 }
 
 func (s *Storage) CreateGroup(group entities.Group) (int, error) {
@@ -247,8 +251,8 @@ func (s *Storage) CountUserGroups(userID int) (int, error) {
 	return count, nil
 }
 
-func (s *Storage) GetGroup(id int) (entities.Group, error) {
-	return entities.Group{}, nil
+func (s *Storage) GetGroup(id int) (*entities.Group, error) {
+	return nil, nil
 }
 
 func (s *Storage) CreatePlant(plant entities.Plant) (int, error) {
@@ -298,6 +302,6 @@ func (s *Storage) CountUserPlants(userID int) (int, error) {
 	return count, nil
 }
 
-func (s *Storage) GetPlant(id int) (entities.Plant, error) {
-	return entities.Plant{}, nil
+func (s *Storage) GetPlant(id int) (*entities.Plant, error) {
+	return nil, nil
 }

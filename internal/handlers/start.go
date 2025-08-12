@@ -29,6 +29,8 @@ func Start(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerF
 			return err
 		}
 
+		// TODO при проблемах логики следует сделать в рамках транзакции.
+		// TODO Тут повторяем вне юзкейсов, чтобы работало даже вне повторной регистрации.
 		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.StartStep); err != nil {
 			return err
 		}
@@ -85,6 +87,7 @@ func AddGroupCallback(useCases interfaces.UseCases, logger logging.Logger) teleb
 			return err
 		}
 
+		// TODO при проблемах логики следует сделать в рамках транзакции
 		if err := useCases.SetTemporaryStep(int(context.Sender().ID), steps.GroupTitleStep); err != nil {
 			return err
 		}
@@ -98,7 +101,9 @@ func AddGroupCallback(useCases interfaces.UseCases, logger logging.Logger) teleb
 			},
 		}
 
-		err := context.Send(
+		// Получаем бота, чтобы при отправке получить messageID для дальнейшего удаления:
+		msg, err := context.Bot().Send(
+			context.Chat(),
 			&telebot.Photo{
 				File:    telebot.FromDisk(addGroupTitleImagePath),
 				Caption: addGroupTitleText,
@@ -111,21 +116,10 @@ func AddGroupCallback(useCases interfaces.UseCases, logger logging.Logger) teleb
 			return err
 		}
 
+		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), msg.ID); err != nil {
+			return err
+		}
+
 		return nil
-	}
-}
-
-func Test(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
-	return func(context telebot.Context) error {
-		//err := context.Delete()
-		//if err != nil {
-		//	return err
-		//}
-		//
-		//return context.Send("some message")
-
-		return context.Respond(&telebot.CallbackResponse{
-			Text: "Ошибка обновления: ",
-		})
 	}
 }
