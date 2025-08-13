@@ -40,6 +40,21 @@ func (m *MockUseCases) EXPECT() *MockUseCasesMockRecorder {
 	return m.recorder
 }
 
+// AddGroupDescription mocks base method.
+func (m *MockUseCases) AddGroupDescription(telegramID int, description string) (*entities.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddGroupDescription", telegramID, description)
+	ret0, _ := ret[0].(*entities.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddGroupDescription indicates an expected call of AddGroupDescription.
+func (mr *MockUseCasesMockRecorder) AddGroupDescription(telegramID, description any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddGroupDescription", reflect.TypeOf((*MockUseCases)(nil).AddGroupDescription), telegramID, description)
+}
+
 // AddGroupTitle mocks base method.
 func (m *MockUseCases) AddGroupTitle(telegramID int, title string) (*entities.Group, error) {
 	m.ctrl.T.Helper()
@@ -158,6 +173,20 @@ func (m *MockUseCases) SaveUser(user entities.User) (int, error) {
 func (mr *MockUseCasesMockRecorder) SaveUser(user any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveUser", reflect.TypeOf((*MockUseCases)(nil).SaveUser), user)
+}
+
+// SetTemporaryMessage mocks base method.
+func (m *MockUseCases) SetTemporaryMessage(telegramID, messageID int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetTemporaryMessage", telegramID, messageID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetTemporaryMessage indicates an expected call of SetTemporaryMessage.
+func (mr *MockUseCasesMockRecorder) SetTemporaryMessage(telegramID, messageID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetTemporaryMessage", reflect.TypeOf((*MockUseCases)(nil).SetTemporaryMessage), telegramID, messageID)
 }
 
 // SetTemporaryStep mocks base method.

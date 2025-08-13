@@ -66,7 +66,7 @@ func (u *temporaryUseCases) SetTemporaryMessage(telegramID int, messageID int) e
 		return err
 	}
 
-	temp.MessageID = messageID
+	temp.MessageID = &messageID
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),
@@ -103,7 +103,53 @@ func (u *temporaryUseCases) AddGroupTitle(telegramID int, title string) (*entiti
 	}
 
 	temp.Data = data
+	temp.MessageID = nil // not to delete already deleted message
 	temp.Step = steps.GroupDescriptionStep
+	if err = u.storage.UpdateTemporary(*temp); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	return group, nil
+}
+
+func (u *temporaryUseCases) AddGroupDescription(telegramID int, description string) (*entities.Group, error) {
+	temp, err := u.GetUserTemporary(telegramID)
+	if err != nil {
+		return nil, err
+	}
+
+	group := &entities.Group{}
+	if err = json.Unmarshal(temp.Data, group); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to unmarshal data for user with ID=%d", temp.UserID),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	group.Description = description
+	data, err := json.Marshal(group)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to marshal data for user with ID=%d", temp.UserID),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	temp.Data = data
+	temp.MessageID = nil // not to delete already deleted message
+	temp.Step = steps.GroupLastWateringDateStep
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),

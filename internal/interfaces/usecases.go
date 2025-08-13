@@ -14,6 +14,7 @@ type UseCases interface {
 	GetUserGroups(userID int) ([]entities.Group, error)
 	CountUserGroups(userID int) (int, error)
 	AddGroupTitle(telegramID int, title string) (*entities.Group, error)
+	AddGroupDescription(telegramID int, description string) (*entities.Group, error)
 
 	// Plants:
 

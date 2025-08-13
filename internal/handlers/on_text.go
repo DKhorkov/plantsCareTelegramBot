@@ -19,6 +19,7 @@ func OnText(useCases interfaces.UseCases, logger logging.Logger) telebot.Handler
 		case steps.GroupTitleStep:
 			return AddGroupTitle(useCases, logger)(context)
 		case steps.GroupDescriptionStep:
+			return AddGroupDescription(useCases, logger)(context)
 		case steps.PlantTitleStep:
 		case steps.PlantDescriptionStep:
 		default:
