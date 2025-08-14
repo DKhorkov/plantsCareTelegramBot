@@ -24,6 +24,6 @@ type UseCases interface {
 	// Temporary:
 
 	GetUserTemporary(telegramID int) (*entities.Temporary, error)
-	SetTemporaryStep(telegramID int, step int) error
-	SetTemporaryMessage(telegramID int, messageID int) error
+	SetTemporaryStep(telegramID, step int) error
+	SetTemporaryMessage(telegramID, messageID int) error
 }

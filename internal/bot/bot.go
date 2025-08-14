@@ -1,8 +1,9 @@
 package bot
 
 import (
-	"gopkg.in/telebot.v4"
 	"time"
+
+	"gopkg.in/telebot.v4"
 )
 
 func New(token string, pollTimeout time.Duration) (*telebot.Bot, error) {

@@ -2,10 +2,13 @@ package storage
 
 import (
 	"context"
+
 	"github.com/DKhorkov/libs/db"
 	"github.com/DKhorkov/libs/logging"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
+
 	sq "github.com/Masterminds/squirrel"
+
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
 )
 
 const (
@@ -50,6 +53,7 @@ func New(
 
 func (s *Storage) SaveUser(user entities.User) (int, error) {
 	ctx := context.Background()
+
 	connection, err := s.dbConnector.Connection(ctx)
 	if err != nil {
 		return 0, err
@@ -90,6 +94,7 @@ func (s *Storage) SaveUser(user entities.User) (int, error) {
 
 func (s *Storage) GetUserByTelegramID(telegramID int) (*entities.User, error) {
 	ctx := context.Background()
+
 	connection, err := s.dbConnector.Connection(ctx)
 	if err != nil {
 		return nil, err
@@ -119,6 +124,7 @@ func (s *Storage) GetUserByTelegramID(telegramID int) (*entities.User, error) {
 
 func (s *Storage) CreateTemporary(temp entities.Temporary) error {
 	ctx := context.Background()
+
 	connection, err := s.dbConnector.Connection(ctx)
 	if err != nil {
 		return err
@@ -147,11 +153,13 @@ func (s *Storage) CreateTemporary(temp entities.Temporary) error {
 	}
 
 	_, err = connection.ExecContext(ctx, stmt, params...)
+
 	return err
 }
 
 func (s *Storage) UpdateTemporary(temp entities.Temporary) error {
 	ctx := context.Background()
+
 	connection, err := s.dbConnector.Connection(ctx)
 	if err != nil {
 		return err
@@ -172,11 +180,13 @@ func (s *Storage) UpdateTemporary(temp entities.Temporary) error {
 	}
 
 	_, err = connection.ExecContext(ctx, stmt, params...)
+
 	return err
 }
 
 func (s *Storage) GetTemporaryByUserID(userID int) (*entities.Temporary, error) {
 	ctx := context.Background()
+
 	connection, err := s.dbConnector.Connection(ctx)
 	if err != nil {
 		return nil, err
@@ -226,6 +236,7 @@ func (s *Storage) GetUserGroups(userID int) ([]entities.Group, error) {
 
 func (s *Storage) CountUserGroups(userID int) (int, error) {
 	ctx := context.Background()
+
 	connection, err := s.dbConnector.Connection(ctx)
 	if err != nil {
 		return 0, err
@@ -277,6 +288,7 @@ func (s *Storage) GetUserPlants(userID int) ([]entities.Plant, error) {
 
 func (s *Storage) CountUserPlants(userID int) (int, error) {
 	ctx := context.Background()
+
 	connection, err := s.dbConnector.Connection(ctx)
 	if err != nil {
 		return 0, err

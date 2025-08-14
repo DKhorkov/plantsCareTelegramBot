@@ -104,38 +104,6 @@ tasks:
       - sudo rm -rf postgres_backups/
       - task: docker_clean
 
-  setup_proto:
-    desc: "Install all go-proto requirements."
-    aliases:
-      - setup
-    cmds:
-      - sudo snap install protobuf --classic
-      - go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-      - go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-      - export PATH="$PATH:$(go env GOPATH)/bin"
-      - task: create_protobuf_folders
-
-  create_protobuf_folders:
-    desc: "Create folders structure for protobuf usage."
-    internal: true
-    dir: ../
-    cmds:
-      - mkdir -p api/protobuf/protofiles
-      - mkdir -p api/protobuf/generated/go
-
-  grpc_generate:
-    desc: "Generate code from .proto files."
-    aliases:
-      - gen
-      - generate
-      - grpc
-    dir: ../
-    cmds:
-      - protoc --proto_path=api/protobuf/protofiles ./api/protobuf/protofiles/toys/masters.proto --go_out=./api/protobuf/generated/go --go_opt=paths=source_relative --go-grpc_out=./api/protobuf/generated/go --go-grpc_opt=paths=source_relative --experimental_allow_proto3_optional
-      - protoc --proto_path=api/protobuf/protofiles ./api/protobuf/protofiles/toys/categories.proto --go_out=./api/protobuf/generated/go --go_opt=paths=source_relative --go-grpc_out=./api/protobuf/generated/go --go-grpc_opt=paths=source_relative --experimental_allow_proto3_optional
-      - protoc --proto_path=api/protobuf/protofiles ./api/protobuf/protofiles/toys/tags.proto --go_out=./api/protobuf/generated/go --go_opt=paths=source_relative --go-grpc_out=./api/protobuf/generated/go --go-grpc_opt=paths=source_relative --experimental_allow_proto3_optional
-      - protoc --proto_path=api/protobuf/protofiles ./api/protobuf/protofiles/toys/toys.proto --go_out=./api/protobuf/generated/go --go_opt=paths=source_relative --go-grpc_out=./api/protobuf/generated/go --go-grpc_opt=paths=source_relative --experimental_allow_proto3_optional
-
   tests:
     desc: "Run tests and save coverage to coverage folder."
     aliases:

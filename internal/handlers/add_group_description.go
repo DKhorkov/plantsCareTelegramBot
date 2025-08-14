@@ -2,13 +2,19 @@ package handlers
 
 import (
 	"fmt"
+
 	"github.com/DKhorkov/libs/logging"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"gopkg.in/telebot.v4"
+
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/calendar"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
 )
 
-func AddGroupDescription(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func AddGroupDescription(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error("Failed to delete message", "Error", err)
@@ -35,31 +41,25 @@ func AddGroupDescription(useCases interfaces.UseCases, logger logging.Logger) te
 			return err
 		}
 
+		c := calendar.NewCalendar(bot, logger, calendar.Options{Language: "ru"})
+		c.SetBackButton(buttons.BackToAddGroupDescriptionButton)
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,
-			InlineKeyboard: [][]telebot.InlineButton{
-				//{
-				//	addGroupLastWateringDateCalendar,
-				//},
-				{
-					backToAddGroupDescriptionButton,
-					menuButton,
-				},
-			},
+			InlineKeyboard: c.GetKeyboard(),
 		}
 
 		// Получаем бота, чтобы при отправке получить messageID для дальнейшего удаления:
 		msg, err := context.Bot().Send(
 			context.Chat(),
 			&telebot.Photo{
-				File:    telebot.FromDisk(addGroupLastWateringDateImagePath),
-				Caption: fmt.Sprintf(addGroupLastWateringDateText, group.Title, group.Description, group.Title),
+				File:    telebot.FromDisk(paths.AddGroupLastWateringDateImagePath),
+				Caption: fmt.Sprintf(texts.AddGroupLastWateringDateText, group.Title, group.Description, group.Title),
 			},
 			menu,
 		)
-
 		if err != nil {
 			logger.Error("Failed to send message", "Error", err)
+
 			return err
 		}
 
@@ -71,10 +71,15 @@ func AddGroupDescription(useCases interfaces.UseCases, logger logging.Logger) te
 	}
 }
 
-func BackToAddGroupDescriptionCallback(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func BackToAddGroupDescriptionCallback(
+	_ *telebot.Bot,
+	useCases interfaces.UseCases,
+	logger logging.Logger,
+) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error("Failed to delete message", "Error", err)
+
 			return err
 		}
 
@@ -87,6 +92,7 @@ func BackToAddGroupDescriptionCallback(useCases interfaces.UseCases, logger logg
 		group, err := temp.GetGroup()
 		if err != nil {
 			logger.Error("Failed to get Group from Temporary", "Error", err)
+
 			return err
 		}
 
@@ -94,11 +100,11 @@ func BackToAddGroupDescriptionCallback(useCases interfaces.UseCases, logger logg
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					skipGroupDescriptionButton,
+					buttons.SkipGroupDescriptionButton,
 				},
 				{
-					backToAddGroupTitleButton,
-					menuButton,
+					buttons.BackToAddGroupTitleButton,
+					buttons.MenuButton,
 				},
 			},
 		}
@@ -107,14 +113,14 @@ func BackToAddGroupDescriptionCallback(useCases interfaces.UseCases, logger logg
 		msg, err := context.Bot().Send(
 			context.Chat(),
 			&telebot.Photo{
-				File:    telebot.FromDisk(addGroupDescriptionImagePath),
-				Caption: fmt.Sprintf(addGroupDescriptionText, group.Title, group.Title),
+				File:    telebot.FromDisk(paths.AddGroupDescriptionImagePath),
+				Caption: fmt.Sprintf(texts.AddGroupDescriptionText, group.Title, group.Title),
 			},
 			menu,
 		)
-
 		if err != nil {
 			logger.Error("Failed to send message", "Error", err)
+
 			return err
 		}
 

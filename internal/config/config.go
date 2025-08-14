@@ -2,9 +2,9 @@ package config
 
 import (
 	"fmt"
-	"github.com/DKhorkov/libs/db"
 	"time"
 
+	"github.com/DKhorkov/libs/db"
 	"github.com/DKhorkov/libs/loadenv"
 	"github.com/DKhorkov/libs/logging"
 )

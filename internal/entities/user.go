@@ -4,11 +4,11 @@ import "time"
 
 type User struct {
 	ID         int       `json:"id"`
-	TelegramID int       `json:"telegram_id"`
+	TelegramID int       `json:"telegramId"`
 	Username   string    `json:"username"`
 	Firstname  string    `json:"firstname"`
 	Lastname   string    `json:"lastname"`
-	IsBot      bool      `json:"is_bot"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	IsBot      bool      `json:"isBot"`
+	CreatedAt  time.Time `json:"createdAt"`
+	UpdatedAt  time.Time `json:"updatedAt"`
 }

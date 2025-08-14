@@ -3,7 +3,9 @@ package usecases
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/DKhorkov/libs/logging"
+
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
@@ -40,7 +42,7 @@ func (u *temporaryUseCases) GetUserTemporary(telegramID int) (*entities.Temporar
 	return temp, nil
 }
 
-func (u *temporaryUseCases) SetTemporaryStep(telegramID int, step int) error {
+func (u *temporaryUseCases) SetTemporaryStep(telegramID, step int) error {
 	temp, err := u.GetUserTemporary(telegramID)
 	if err != nil {
 		return err
@@ -60,7 +62,7 @@ func (u *temporaryUseCases) SetTemporaryStep(telegramID int, step int) error {
 	return nil
 }
 
-func (u *temporaryUseCases) SetTemporaryMessage(telegramID int, messageID int) error {
+func (u *temporaryUseCases) SetTemporaryMessage(telegramID, messageID int) error {
 	temp, err := u.GetUserTemporary(telegramID)
 	if err != nil {
 		return err
@@ -104,7 +106,9 @@ func (u *temporaryUseCases) AddGroupTitle(telegramID int, title string) (*entiti
 
 	temp.Data = data
 	temp.MessageID = nil // not to delete already deleted message
+
 	temp.Step = steps.GroupDescriptionStep
+
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),
@@ -136,6 +140,7 @@ func (u *temporaryUseCases) AddGroupDescription(telegramID int, description stri
 	}
 
 	group.Description = description
+
 	data, err := json.Marshal(group)
 	if err != nil {
 		u.logger.Error(
@@ -149,7 +154,9 @@ func (u *temporaryUseCases) AddGroupDescription(telegramID int, description stri
 
 	temp.Data = data
 	temp.MessageID = nil // not to delete already deleted message
+
 	temp.Step = steps.GroupLastWateringDateStep
+
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),

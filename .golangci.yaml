@@ -22,6 +22,9 @@ linters:
     - cyclop
     - err113
     - funlen
+    - noinlineerr
+    - godox
+    - gochecknoglobals
 
   # Defines a set of rules to ignore issues.
   # It does not skip the analysis, and so does not ignore "typecheck" errors.
@@ -61,6 +64,24 @@ linters:
           - noctx
           - wrapcheck
 
+      - path: "internal/calendar/calendar.go"
+        linters:
+          - nestif
+          - prealloc
+          - ineffassign
+
+      - path: "internal/calendar/validate.go"
+        linters:
+          - mnd
+
+      - path: "internal/utils/random.go"
+        linters:
+          - gosec
+
+      - path: "internal/config/config.go"
+        linters:
+          - mnd
+
       # Run some linter only for test files by excluding its issues for everything else.
       - path-except: _test\.go
         linters:
@@ -83,18 +104,6 @@ linters:
       - linters:
           - lll
         source: "^//go:generate "
-
-    # Which file paths to exclude: they will be analyzed, but issues from them won't be reported.
-    # "/" will be replaced by the current OS file path separator to properly work on Windows.
-    # Default: []
-    paths:
-      - ".*\\.my\\.go$"
-      - lib/bad.go
-    # Which file paths to not exclude.
-    # Default: []
-    paths-except:
-      - ".*\\.my\\.go$"
-      - lib/bad.go
 
 formatters:
   # Enable specific formatter.

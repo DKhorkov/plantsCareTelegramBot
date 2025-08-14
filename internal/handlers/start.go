@@ -2,16 +2,21 @@ package handlers
 
 import (
 	"github.com/DKhorkov/libs/logging"
+	"gopkg.in/telebot.v4"
+
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
-	"gopkg.in/telebot.v4"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
 )
 
-func Start(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error("Failed to delete /start message", "Error", err)
+
 			return err
 		}
 
@@ -24,7 +29,6 @@ func Start(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerF
 				IsBot:      context.Sender().IsBot,
 			},
 		)
-
 		if err != nil {
 			return err
 		}
@@ -39,7 +43,7 @@ func Start(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerF
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					createGroupButton,
+					buttons.CreateGroupButton,
 				},
 			},
 		}
@@ -50,8 +54,8 @@ func Start(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerF
 		}
 
 		if groupsCount > 0 {
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{addFlowerButton})
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{manageGroupsButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.AddFlowerButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManageGroupsButton})
 		}
 
 		plantsCount, err := useCases.CountUserPlants(userID)
@@ -60,19 +64,19 @@ func Start(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerF
 		}
 
 		if plantsCount > 0 {
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{managePlantsButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManagePlantsButton})
 		}
 
 		err = context.Send(
 			&telebot.Photo{
-				File:    telebot.FromDisk(startImagePath),
-				Caption: startMessageText,
+				File:    telebot.FromDisk(paths.StartImagePath),
+				Caption: texts.StartMessageText,
 			},
 			menu,
 		)
-
 		if err != nil {
 			logger.Error("Failed to send message", "Error", err)
+
 			return err
 		}
 
@@ -80,10 +84,11 @@ func Start(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerF
 	}
 }
 
-func AddGroupCallback(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func AddGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error("Failed to delete message", "Error", err)
+
 			return err
 		}
 
@@ -96,7 +101,7 @@ func AddGroupCallback(useCases interfaces.UseCases, logger logging.Logger) teleb
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					backToStartButton,
+					buttons.BackToStartButton,
 				},
 			},
 		}
@@ -105,14 +110,14 @@ func AddGroupCallback(useCases interfaces.UseCases, logger logging.Logger) teleb
 		msg, err := context.Bot().Send(
 			context.Chat(),
 			&telebot.Photo{
-				File:    telebot.FromDisk(addGroupTitleImagePath),
-				Caption: addGroupTitleText,
+				File:    telebot.FromDisk(paths.AddGroupTitleImagePath),
+				Caption: texts.AddGroupTitleText,
 			},
 			menu,
 		)
-
 		if err != nil {
 			logger.Error("Failed to send message", "Error", err)
+
 			return err
 		}
 

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/DKhorkov/libs/db"
 	"github.com/DKhorkov/libs/logging"
+
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/app"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/bot"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/config"
@@ -35,7 +36,8 @@ func main() {
 	}
 
 	defer func() {
-		if err = dbConnector.Close(); err != nil {
+		err = dbConnector.Close()
+		if err != nil {
 			logger.Error("Failed to close db connections pool", "Error", err)
 		}
 	}()

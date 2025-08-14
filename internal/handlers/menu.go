@@ -2,15 +2,20 @@ package handlers
 
 import (
 	"github.com/DKhorkov/libs/logging"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"gopkg.in/telebot.v4"
+
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
 )
 
-func BackToMenu(useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func BackToMenu(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error("Failed to delete message", "Error", err)
+
 			return err
 		}
 
@@ -28,7 +33,7 @@ func BackToMenu(useCases interfaces.UseCases, logger logging.Logger) telebot.Han
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					createGroupButton,
+					buttons.CreateGroupButton,
 				},
 			},
 		}
@@ -39,8 +44,8 @@ func BackToMenu(useCases interfaces.UseCases, logger logging.Logger) telebot.Han
 		}
 
 		if groupsCount > 0 {
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{addFlowerButton})
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{manageGroupsButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.AddFlowerButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManageGroupsButton})
 		}
 
 		plantsCount, err := useCases.CountUserPlants(user.ID)
@@ -49,19 +54,19 @@ func BackToMenu(useCases interfaces.UseCases, logger logging.Logger) telebot.Han
 		}
 
 		if plantsCount > 0 {
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{managePlantsButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManageGroupsButton})
 		}
 
 		err = context.Send(
 			&telebot.Photo{
-				File:    telebot.FromDisk(startImagePath),
-				Caption: startMessageText,
+				File:    telebot.FromDisk(paths.StartImagePath),
+				Caption: texts.StartMessageText,
 			},
 			menu,
 		)
-
 		if err != nil {
 			logger.Error("Failed to send message", "Error", err)
+
 			return err
 		}
 

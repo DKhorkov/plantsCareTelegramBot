@@ -1,20 +1,25 @@
 package handlers
 
-import "gopkg.in/telebot.v4"
+import (
+	"gopkg.in/telebot.v4"
 
-var Default = map[any]Handler{
-	"/start":                         Start,
-	&createGroupButton:               AddGroupCallback,
-	&manageGroupsButton:              Delete,
-	&managePlantsButton:              Delete,
-	&addFlowerButton:                 Delete,
-	&backToStartButton:               BackToMenu,
-	&backToAddGroupTitleButton:       AddGroupCallback,
-	&backToAddGroupDescriptionButton: BackToAddGroupDescriptionCallback,
-	&skipGroupDescriptionButton:      SkipGroupDescriptionCallback,
-	&menuButton:                      BackToMenu,
-	telebot.OnText:                   OnText,
-	//telebot.OnPhoto:     OnPhoto,
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
+)
+
+var Default = map[any]interfaces.Handler{
+	"/start":                                 Start,
+	&buttons.CreateGroupButton:               AddGroupCallback,
+	&buttons.ManageGroupsButton:              Delete,
+	&buttons.ManagePlantsButton:              Delete,
+	&buttons.AddFlowerButton:                 Delete,
+	&buttons.BackToStartButton:               BackToMenu,
+	&buttons.BackToAddGroupTitleButton:       AddGroupCallback,
+	&buttons.BackToAddGroupDescriptionButton: BackToAddGroupDescriptionCallback,
+	&buttons.SkipGroupDescriptionButton:      SkipGroupDescriptionCallback,
+	&buttons.MenuButton:                      BackToMenu,
+	telebot.OnText:                           OnText,
+	// telebot.OnPhoto:     OnPhoto,
 	telebot.OnMedia:     Delete,
 	telebot.OnAudio:     Delete,
 	telebot.OnAnimation: Delete,
