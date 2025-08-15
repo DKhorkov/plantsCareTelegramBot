@@ -16,12 +16,12 @@ func OnText(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logge
 		}
 
 		switch temp.Step {
-		case steps.GroupTitleStep:
+		case steps.AddGroupTitleStep:
 			return AddGroupTitle(bot, useCases, logger)(context)
-		case steps.GroupDescriptionStep:
+		case steps.AddGroupDescriptionStep:
 			return AddGroupDescription(bot, useCases, logger)(context)
-		case steps.PlantTitleStep:
-		case steps.PlantDescriptionStep:
+		case steps.AddPlantTitleStep:
+		case steps.AddPlantDescriptionStep:
 		default:
 			return Delete(bot, useCases, logger)(context)
 		}

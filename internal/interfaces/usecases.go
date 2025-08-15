@@ -1,6 +1,10 @@
 package interfaces
 
-import "github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
+import (
+	"time"
+
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
+)
 
 //go:generate mockgen -source=usecases.go -destination=../../mocks/usecases/usecases.go -package=mockusecases
 type UseCases interface {
@@ -15,6 +19,7 @@ type UseCases interface {
 	CountUserGroups(userID int) (int, error)
 	AddGroupTitle(telegramID int, title string) (*entities.Group, error)
 	AddGroupDescription(telegramID int, description string) (*entities.Group, error)
+	AddGroupLastWateringDate(telegramID int, lastWateringDate time.Time) (*entities.Group, error)
 
 	// Plants:
 

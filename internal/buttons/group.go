@@ -22,4 +22,9 @@ var (
 		Unique: "backToAddGroupDescription",
 		Text:   "Назад ↩️",
 	}
+
+	BackToAddGroupLastWateringDateButton = telebot.InlineButton{
+		Unique: "backToAddGroupLastWateringDate",
+		Text:   "Назад ↩️",
+	}
 )

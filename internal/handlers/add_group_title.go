@@ -100,9 +100,7 @@ func SkipGroupDescriptionCallback(
 			InlineKeyboard: c.GetKeyboard(),
 		}
 
-		// Получаем бота, чтобы при отправке получить messageID для дальнейшего удаления:
-		msg, err := context.Bot().Send(
-			context.Chat(),
+		err = context.Send(
 			&telebot.Photo{
 				File:    telebot.FromDisk(paths.AddGroupLastWateringDateImagePath),
 				Caption: fmt.Sprintf(texts.AddGroupLastWateringDateText, group.Title, group.Description, group.Title),
@@ -112,10 +110,6 @@ func SkipGroupDescriptionCallback(
 		if err != nil {
 			logger.Error("Failed to send message", "Error", err)
 
-			return err
-		}
-
-		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), msg.ID); err != nil {
 			return err
 		}
 

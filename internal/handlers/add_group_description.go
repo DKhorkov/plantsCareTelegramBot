@@ -48,9 +48,7 @@ func AddGroupDescription(bot *telebot.Bot, useCases interfaces.UseCases, logger 
 			InlineKeyboard: c.GetKeyboard(),
 		}
 
-		// Получаем бота, чтобы при отправке получить messageID для дальнейшего удаления:
-		msg, err := context.Bot().Send(
-			context.Chat(),
+		err = context.Send(
 			&telebot.Photo{
 				File:    telebot.FromDisk(paths.AddGroupLastWateringDateImagePath),
 				Caption: fmt.Sprintf(texts.AddGroupLastWateringDateText, group.Title, group.Description, group.Title),
@@ -60,10 +58,6 @@ func AddGroupDescription(bot *telebot.Bot, useCases interfaces.UseCases, logger 
 		if err != nil {
 			logger.Error("Failed to send message", "Error", err)
 
-			return err
-		}
-
-		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), msg.ID); err != nil {
 			return err
 		}
 
@@ -125,7 +119,7 @@ func BackToAddGroupDescriptionCallback(
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.GroupDescriptionStep); err != nil {
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupDescriptionStep); err != nil {
 			return err
 		}
 

@@ -2,7 +2,6 @@ package calendar
 
 import (
 	"fmt"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 	"log"
 	"strconv"
 	"time"
@@ -11,6 +10,7 @@ import (
 	"gopkg.in/telebot.v4"
 
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
 const (

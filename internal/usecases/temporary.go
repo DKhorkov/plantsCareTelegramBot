@@ -3,6 +3,7 @@ package usecases
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/DKhorkov/libs/logging"
 
@@ -20,7 +21,7 @@ func (u *temporaryUseCases) GetUserTemporary(telegramID int) (*entities.Temporar
 	user, err := u.storage.GetUserByTelegramID(telegramID)
 	if err != nil {
 		u.logger.Error(
-			fmt.Sprintf("Failed to get user with telegramID=%d", user.TelegramID),
+			fmt.Sprintf("Failed to get user with telegramID=%d", telegramID),
 			"Error",
 			err,
 		)
@@ -107,7 +108,7 @@ func (u *temporaryUseCases) AddGroupTitle(telegramID int, title string) (*entiti
 	temp.Data = data
 	temp.MessageID = nil // not to delete already deleted message
 
-	temp.Step = steps.GroupDescriptionStep
+	temp.Step = steps.AddGroupDescriptionStep
 
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
@@ -155,7 +156,56 @@ func (u *temporaryUseCases) AddGroupDescription(telegramID int, description stri
 	temp.Data = data
 	temp.MessageID = nil // not to delete already deleted message
 
-	temp.Step = steps.GroupLastWateringDateStep
+	temp.Step = steps.AddGroupLastWateringDateStep
+
+	if err = u.storage.UpdateTemporary(*temp); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	return group, nil
+}
+
+func (u *temporaryUseCases) AddGroupLastWateringDate(
+	telegramID int,
+	lastWateringDate time.Time,
+) (*entities.Group, error) {
+	temp, err := u.GetUserTemporary(telegramID)
+	if err != nil {
+		return nil, err
+	}
+
+	group := &entities.Group{}
+	if err = json.Unmarshal(temp.Data, group); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to unmarshal data for user with ID=%d", temp.UserID),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	group.LastWateringDate = lastWateringDate
+
+	data, err := json.Marshal(group)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to marshal data for user with ID=%d", temp.UserID),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	temp.Data = data
+	temp.Step = steps.AddGroupWateringIntervalStep
 
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(

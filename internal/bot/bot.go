@@ -7,11 +7,11 @@ import (
 )
 
 func New(token string, pollTimeout time.Duration) (*telebot.Bot, error) {
-	botConfig := telebot.Settings{
+	cfg := telebot.Settings{
 		Token:     token,
 		Poller:    &telebot.LongPoller{Timeout: pollTimeout},
 		ParseMode: telebot.ModeHTML,
 	}
 
-	return telebot.NewBot(botConfig)
+	return telebot.NewBot(cfg)
 }

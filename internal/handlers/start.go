@@ -93,7 +93,7 @@ func AddGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err := useCases.SetTemporaryStep(int(context.Sender().ID), steps.GroupTitleStep); err != nil {
+		if err := useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupTitleStep); err != nil {
 			return err
 		}
 

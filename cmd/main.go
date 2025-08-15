@@ -14,22 +14,22 @@ import (
 )
 
 func main() {
-	settings := config.New()
+	cfg := config.New()
 	logger := logging.New(
-		settings.Logging.Level,
-		settings.Logging.LogFilePath,
+		cfg.Logging.Level,
+		cfg.Logging.LogFilePath,
 	)
 
 	logger.Info("test")
 
 	dbConnector, err := db.New(
-		db.BuildDsn(settings.Database),
-		settings.Database.Driver,
+		db.BuildDsn(cfg.Database),
+		cfg.Database.Driver,
 		logger,
-		db.WithMaxOpenConnections(settings.Database.Pool.MaxOpenConnections),
-		db.WithMaxIdleConnections(settings.Database.Pool.MaxIdleConnections),
-		db.WithMaxConnectionLifetime(settings.Database.Pool.MaxConnectionLifetime),
-		db.WithMaxConnectionIdleTime(settings.Database.Pool.MaxConnectionIdleTime),
+		db.WithMaxOpenConnections(cfg.Database.Pool.MaxOpenConnections),
+		db.WithMaxIdleConnections(cfg.Database.Pool.MaxIdleConnections),
+		db.WithMaxConnectionLifetime(cfg.Database.Pool.MaxConnectionLifetime),
+		db.WithMaxConnectionIdleTime(cfg.Database.Pool.MaxConnectionIdleTime),
 	)
 	if err != nil {
 		panic(err)
@@ -47,7 +47,7 @@ func main() {
 		logger,
 	)
 
-	b, err := bot.New(settings.Bot.Token, settings.Bot.PollTimeout)
+	b, err := bot.New(cfg.Bot.Token, cfg.Bot.PollTimeout)
 	if err != nil {
 		panic(err)
 	}
