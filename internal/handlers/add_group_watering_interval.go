@@ -3,16 +3,17 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/DKhorkov/libs/logging"
+	"gopkg.in/telebot.v4"
+
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
-	"gopkg.in/telebot.v4"
-	"strconv"
-
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 )
 
 func AddGroupWateringInterval(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
@@ -205,7 +206,7 @@ func ConfirmAddGroupCallback(
 			err = context.Respond(
 				&telebot.CallbackResponse{
 					CallbackID: context.Callback().ID,
-					Text:       fmt.Sprintf(texts.GroupAlreadyExists),
+					Text:       texts.GroupAlreadyExists,
 				},
 			)
 			if err != nil {

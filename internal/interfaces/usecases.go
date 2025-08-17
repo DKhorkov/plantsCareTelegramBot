@@ -1,8 +1,9 @@
 package interfaces
 
 import (
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
 	"time"
+
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
 )
 
 //go:generate mockgen -source=usecases.go -destination=../../mocks/usecases/usecases.go -package=mockusecases
@@ -32,5 +33,5 @@ type UseCases interface {
 	AddGroupTitle(telegramID int, title string) (*entities.Group, error)
 	AddGroupDescription(telegramID int, description string) (*entities.Group, error)
 	AddGroupLastWateringDate(telegramID int, lastWateringDate time.Time) (*entities.Group, error)
-	AddGroupWateringInterval(telegramID int, wateringInterval int) (*entities.Group, error)
+	AddGroupWateringInterval(telegramID, wateringInterval int) (*entities.Group, error)
 }

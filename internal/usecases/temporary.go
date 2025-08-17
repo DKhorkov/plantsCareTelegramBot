@@ -220,7 +220,7 @@ func (u *temporaryUseCases) AddGroupLastWateringDate(
 	return group, nil
 }
 
-func (u *temporaryUseCases) AddGroupWateringInterval(telegramID int, wateringInterval int) (*entities.Group, error) {
+func (u *temporaryUseCases) AddGroupWateringInterval(telegramID, wateringInterval int) (*entities.Group, error) {
 	temp, err := u.GetUserTemporary(telegramID)
 	if err != nil {
 		return nil, err
@@ -239,6 +239,7 @@ func (u *temporaryUseCases) AddGroupWateringInterval(telegramID int, wateringInt
 
 	group.WateringInterval = wateringInterval
 	group.NextWateringDate = group.LastWateringDate.AddDate(0, 0, wateringInterval)
+
 	data, err := json.Marshal(group)
 	if err != nil {
 		u.logger.Error(

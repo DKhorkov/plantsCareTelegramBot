@@ -51,6 +51,7 @@ func (u *groupsUseCases) CreateGroup(group entities.Group) (*entities.Group, err
 	}
 
 	group.ID = groupID
+
 	return &group, err
 }
 
