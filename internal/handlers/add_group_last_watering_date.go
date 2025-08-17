@@ -121,7 +121,7 @@ func BackToAddGroupLastWateringDateCallback(
 			return err
 		}
 
-		// Получаем группу для корректного отображения данных прошлых этапов (Title):
+		// Получаем группу для корректного отображения данных прошлых этапов::
 		group, err := temp.GetGroup()
 		if err != nil {
 			logger.Error("Failed to get Group from Temporary", "Error", err)

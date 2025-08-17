@@ -14,15 +14,15 @@ CREATE TABLE IF NOT EXISTS users
 
 CREATE TABLE IF NOT EXISTS groups
 (
-    id                      SERIAL PRIMARY KEY,
-    user_id                 INTEGER      NOT NULL,
-    title                   VARCHAR(100) NOT NULL,
-    description             TEXT,
-    last_watering_date      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    next_watering_date      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    watering_interval_hours INTEGER      NOT NULL,
-    created_at              TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at              TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id                 SERIAL PRIMARY KEY,
+    user_id            INTEGER      NOT NULL,
+    title              VARCHAR(100) NOT NULL,
+    description        TEXT,
+    last_watering_date TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    next_watering_date TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    watering_interval  INTEGER      NOT NULL,
+    created_at         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 

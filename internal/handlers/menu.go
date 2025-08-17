@@ -44,7 +44,7 @@ func BackToMenu(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Log
 		}
 
 		if groupsCount > 0 {
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.AddFlowerButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.AddPlantButton})
 			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManageGroupsButton})
 		}
 

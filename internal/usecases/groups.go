@@ -39,3 +39,30 @@ func (u *groupsUseCases) CountUserGroups(userID int) (int, error) {
 
 	return count, err
 }
+
+func (u *groupsUseCases) CreateGroup(group entities.Group) (*entities.Group, error) {
+	groupID, err := u.storage.CreateGroup(group)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to create group for user with ID=%d", group.UserID),
+			"Error",
+			err,
+		)
+	}
+
+	group.ID = groupID
+	return &group, err
+}
+
+func (u *groupsUseCases) GroupExists(group entities.Group) (bool, error) {
+	exists, err := u.storage.GroupExists(group)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to check Group existence for user with ID=%d", group.UserID),
+			"Error",
+			err,
+		)
+	}
+
+	return exists, err
+}

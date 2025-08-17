@@ -54,7 +54,7 @@ func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) 
 		}
 
 		if groupsCount > 0 {
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.AddFlowerButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.AddPlantButton})
 			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManageGroupsButton})
 		}
 

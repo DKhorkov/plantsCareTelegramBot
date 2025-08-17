@@ -1,9 +1,8 @@
 package interfaces
 
 import (
-	"time"
-
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
+	"time"
 )
 
 //go:generate mockgen -source=usecases.go -destination=../../mocks/usecases/usecases.go -package=mockusecases
@@ -17,9 +16,8 @@ type UseCases interface {
 
 	GetUserGroups(userID int) ([]entities.Group, error)
 	CountUserGroups(userID int) (int, error)
-	AddGroupTitle(telegramID int, title string) (*entities.Group, error)
-	AddGroupDescription(telegramID int, description string) (*entities.Group, error)
-	AddGroupLastWateringDate(telegramID int, lastWateringDate time.Time) (*entities.Group, error)
+	CreateGroup(group entities.Group) (*entities.Group, error)
+	GroupExists(group entities.Group) (bool, error)
 
 	// Plants:
 
@@ -31,4 +29,8 @@ type UseCases interface {
 	GetUserTemporary(telegramID int) (*entities.Temporary, error)
 	SetTemporaryStep(telegramID, step int) error
 	SetTemporaryMessage(telegramID, messageID int) error
+	AddGroupTitle(telegramID int, title string) (*entities.Group, error)
+	AddGroupDescription(telegramID int, description string) (*entities.Group, error)
+	AddGroupLastWateringDate(telegramID int, lastWateringDate time.Time) (*entities.Group, error)
+	AddGroupWateringInterval(telegramID int, wateringInterval int) (*entities.Group, error)
 }

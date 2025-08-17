@@ -2,6 +2,8 @@ package storage
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/DKhorkov/libs/db"
 	"github.com/DKhorkov/libs/logging"
@@ -12,28 +14,34 @@ import (
 )
 
 const (
-	selectAllColumns       = "*"
-	selectCount            = "COUNT(*)"
-	usersTableName         = "users"
-	plantsTableName        = "plants"
-	groupsTableName        = "groups"
-	notificationsTableName = "notifications"
-	temporaryTableName     = "temporary"
-	idColumnName           = "id"
-	userIDColumnName       = "user_id"
-	stepColumnName         = "step"
-	messageIDColumnName    = "message_id"
-	dataColumnName         = "data"
-	telegramIDColumnName   = "telegram_id"
-	usernameColumnName     = "username"
-	firstnameColumnName    = "firstname"
-	lastnameColumnName     = "lastname"
-	isBotColumnName        = "is_bot"
-	returningIDSuffix      = "RETURNING id"
-	createdAtColumnName    = "created_at"
-	updatedAtColumnName    = "updated_at"
-	desc                   = "DESC"
-	asc                    = "ASC"
+	selectAllColumns           = "*"
+	selectCount                = "COUNT(*)"
+	usersTableName             = "users"
+	plantsTableName            = "plants"
+	groupsTableName            = "groups"
+	notificationsTableName     = "notifications"
+	temporaryTableName         = "temporary"
+	idColumnName               = "id"
+	userIDColumnName           = "user_id"
+	titleColumnName            = "title"
+	descriptionColumnName      = "description"
+	lastWateringDateColumnName = "last_watering_date"
+	nextWateringDateColumnName = "next_watering_date"
+	wateringIntervalColumnName = "watering_interval"
+	stepColumnName             = "step"
+	messageIDColumnName        = "message_id"
+	dataColumnName             = "data"
+	telegramIDColumnName       = "telegram_id"
+	usernameColumnName         = "username"
+	firstnameColumnName        = "firstname"
+	lastnameColumnName         = "lastname"
+	isBotColumnName            = "is_bot"
+	returningIDSuffix          = "RETURNING id"
+	createdAtColumnName        = "created_at"
+	updatedAtColumnName        = "updated_at"
+	desc                       = "DESC"
+	asc                        = "ASC"
+	selectExists               = "1"
 )
 
 type Storage struct {
@@ -215,7 +223,46 @@ func (s *Storage) GetTemporaryByUserID(userID int) (*entities.Temporary, error) 
 }
 
 func (s *Storage) CreateGroup(group entities.Group) (int, error) {
-	return 0, nil
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Insert(groupsTableName).
+		Columns(
+			userIDColumnName,
+			titleColumnName,
+			descriptionColumnName,
+			lastWateringDateColumnName,
+			nextWateringDateColumnName,
+			wateringIntervalColumnName,
+		).
+		Values(
+			group.UserID,
+			group.Title,
+			group.Description,
+			group.LastWateringDate,
+			group.NextWateringDate,
+			group.WateringInterval,
+		).
+		Suffix(returningIDSuffix).
+		PlaceholderFormat(sq.Dollar). // pq postgres driver works only with $ placeholders
+		ToSql()
+	if err != nil {
+		return 0, err
+	}
+
+	var groupID int
+	if err = connection.QueryRowContext(ctx, stmt, params...).Scan(&groupID); err != nil {
+		return 0, err
+	}
+
+	return groupID, nil
 }
 
 func (s *Storage) UpdateGroup(group entities.Group) error {
@@ -223,7 +270,41 @@ func (s *Storage) UpdateGroup(group entities.Group) error {
 }
 
 func (s *Storage) GroupExists(group entities.Group) (bool, error) {
-	return false, nil
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Select(selectExists).
+		From(groupsTableName).
+		Where(
+			sq.Eq{
+				userIDColumnName:      group.UserID,
+				titleColumnName:       group.Title,
+				descriptionColumnName: group.Description,
+			},
+		).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return false, err
+	}
+
+	var exists bool
+	if err = connection.QueryRowContext(ctx, stmt, params...).Scan(&exists); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil // Запись не найдена
+		}
+
+		return false, err
+	}
+
+	return exists, nil
 }
 
 func (s *Storage) DeleteGroup(id int) error {

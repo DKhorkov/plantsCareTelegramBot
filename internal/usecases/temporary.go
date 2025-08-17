@@ -219,3 +219,49 @@ func (u *temporaryUseCases) AddGroupLastWateringDate(
 
 	return group, nil
 }
+
+func (u *temporaryUseCases) AddGroupWateringInterval(telegramID int, wateringInterval int) (*entities.Group, error) {
+	temp, err := u.GetUserTemporary(telegramID)
+	if err != nil {
+		return nil, err
+	}
+
+	group := &entities.Group{}
+	if err = json.Unmarshal(temp.Data, group); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to unmarshal data for user with ID=%d", temp.UserID),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	group.WateringInterval = wateringInterval
+	group.NextWateringDate = group.LastWateringDate.AddDate(0, 0, wateringInterval)
+	data, err := json.Marshal(group)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to marshal data for user with ID=%d", temp.UserID),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	temp.Data = data
+	temp.Step = steps.ConfirmAddGroupStep
+
+	if err = u.storage.UpdateTemporary(*temp); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	return group, nil
+}
