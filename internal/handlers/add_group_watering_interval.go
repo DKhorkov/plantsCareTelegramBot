@@ -51,7 +51,7 @@ func AddGroupWateringInterval(_ *telebot.Bot, useCases interfaces.UseCases, logg
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromDisk(paths.AddGroupConfirmDateImagePath),
+				File: telebot.FromDisk(paths.AddGroupConfirmImagePath),
 				Caption: fmt.Sprintf(
 					texts.AddGroupConfirmText,
 					group.Title,
@@ -115,7 +115,7 @@ func BackToAddGroupWateringIntervalCallback(
 			bot.Handle(&btn, AddGroupWateringInterval(bot, useCases, logger))
 
 			row = append(row, btn)
-			if len(row) == buttonsPerRaw {
+			if len(row) == groupWateringIntervalButtonsPerRaw {
 				menu.InlineKeyboard = append(menu.InlineKeyboard, row)
 				row = []telebot.InlineButton{}
 			}
@@ -236,11 +236,20 @@ func ConfirmAddGroupCallback(
 			return err
 		}
 
+		// Только логгируем, поскольку не является критической логикой:
+		if err = useCases.ResetTemporary(int(context.Sender().ID)); err != nil {
+			logger.Error(
+				fmt.Sprintf("Failed to reset Temporary for user with telegramId=%d", context.Sender().ID),
+				"Error",
+				err,
+			)
+		}
+
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.AddPlantButton,
+					buttons.CreatePlantButton,
 				},
 				{
 					buttons.MenuButton,

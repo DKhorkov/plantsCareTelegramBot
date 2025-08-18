@@ -20,3 +20,14 @@ func (t *Temporary) GetGroup() (*Group, error) {
 
 	return group, nil
 }
+
+func (t *Temporary) GetPlant() (*Plant, error) {
+	plant := &Plant{}
+
+	err := json.Unmarshal(t.Data, plant)
+	if err != nil {
+		return nil, err
+	}
+
+	return plant, nil
+}

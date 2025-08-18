@@ -7,9 +7,9 @@ const (
 	AddGroupLastWateringDateStep
 	AddGroupWateringIntervalStep
 	ConfirmAddGroupStep
-	GroupCreatedStep
-	AddPlantGroupStep
 	AddPlantTitleStep
 	AddPlantDescriptionStep
-	PlantPhotoStep
+	AddPlantGroupStep
+	AddPlantPhotoStep
+	ConfirmAddPlantStep
 )

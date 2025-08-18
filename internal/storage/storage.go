@@ -284,9 +284,9 @@ func (s *Storage) GroupExists(group entities.Group) (bool, error) {
 		From(groupsTableName).
 		Where(
 			sq.Eq{
-				userIDColumnName:      group.UserID,
-				titleColumnName:       group.Title,
-				descriptionColumnName: group.Description,
+				userIDColumnName: group.UserID,
+				titleColumnName:  group.Title,
+				// descriptionColumnName: group.Description,
 			},
 		).
 		PlaceholderFormat(sq.Dollar).
@@ -312,7 +312,63 @@ func (s *Storage) DeleteGroup(id int) error {
 }
 
 func (s *Storage) GetUserGroups(userID int) ([]entities.Group, error) {
-	return []entities.Group{}, nil
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Select(selectAllColumns).
+		From(groupsTableName).
+		Where(sq.Eq{userIDColumnName: userID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := connection.QueryContext(
+		ctx,
+		stmt,
+		params...,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err = rows.Close(); err != nil {
+			logging.LogErrorContext(
+				ctx,
+				s.logger,
+				"error during closing SQL rows",
+				err,
+			)
+		}
+	}()
+
+	var groups []entities.Group
+
+	for rows.Next() {
+		group := entities.Group{}
+		columns := db.GetEntityColumns(&group) // Only pointer to use rows.Scan() successfully
+
+		if err = rows.Scan(columns...); err != nil {
+			return nil, err
+		}
+
+		groups = append(groups, group)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return groups, nil
 }
 
 func (s *Storage) CountUserGroups(userID int) (int, error) {

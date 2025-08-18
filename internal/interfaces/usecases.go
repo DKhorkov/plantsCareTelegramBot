@@ -30,8 +30,13 @@ type UseCases interface {
 	GetUserTemporary(telegramID int) (*entities.Temporary, error)
 	SetTemporaryStep(telegramID, step int) error
 	SetTemporaryMessage(telegramID, messageID int) error
+	ResetTemporary(telegramID int) error
+
 	AddGroupTitle(telegramID int, title string) (*entities.Group, error)
 	AddGroupDescription(telegramID int, description string) (*entities.Group, error)
 	AddGroupLastWateringDate(telegramID int, lastWateringDate time.Time) (*entities.Group, error)
 	AddGroupWateringInterval(telegramID, wateringInterval int) (*entities.Group, error)
+
+	AddPlantTitle(telegramID int, title string) (*entities.Plant, error)
+	AddPlantDescription(telegramID int, description string) (*entities.Plant, error)
 }

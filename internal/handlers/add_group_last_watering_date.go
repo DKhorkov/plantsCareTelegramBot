@@ -19,8 +19,8 @@ import (
 )
 
 const (
-	dateFormat    = "02.01.2006"
-	buttonsPerRaw = 2
+	dateFormat                         = "02.01.2006"
+	groupWateringIntervalButtonsPerRaw = 2
 )
 
 var wateringIntervals = []int{1, 2, 3, 4, 5, 6, 7, 10, 14, 18, 21, 30}
@@ -67,7 +67,7 @@ func AddGroupLastWateringDate(
 			bot.Handle(&btn, AddGroupWateringInterval(bot, useCases, logger))
 
 			row = append(row, btn)
-			if len(row) == buttonsPerRaw {
+			if len(row) == groupWateringIntervalButtonsPerRaw {
 				menu.InlineKeyboard = append(menu.InlineKeyboard, row)
 				row = []telebot.InlineButton{}
 			}

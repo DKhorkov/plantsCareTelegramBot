@@ -21,11 +21,11 @@ func OnText(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logge
 		case steps.AddGroupDescriptionStep:
 			return AddGroupDescription(bot, useCases, logger)(context)
 		case steps.AddPlantTitleStep:
+			return AddPlantTitle(bot, useCases, logger)(context)
 		case steps.AddPlantDescriptionStep:
+			return AddPlantDescription(bot, useCases, logger)(context)
 		default:
 			return Delete(bot, useCases, logger)(context)
 		}
-
-		panic("unreachable")
 	}
 }

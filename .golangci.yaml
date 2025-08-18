@@ -82,6 +82,30 @@ linters:
         linters:
           - mnd
 
+      - path: "internal/usecases/temporary.go"
+        linters:
+          - dupl
+
+      - path: "internal/handlers/start.go"
+        linters:
+          - dupl
+
+      - path: "internal/handlers/add_plant_title.go"
+        linters:
+          - dupl
+
+      - path: "internal/handlers/add_plant_description.go"
+        linters:
+          - dupl
+
+      - path: "internal/handlers/add_group_title.go"
+        linters:
+          - dupl
+
+      - path: "internal/handlers/add_group_description.go"
+        linters:
+          - dupl
+
       # Run some linter only for test files by excluding its issues for everything else.
       - path-except: _test\.go
         linters:

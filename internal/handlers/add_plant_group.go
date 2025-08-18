@@ -1,0 +1,149 @@
+package handlers
+
+import (
+	"github.com/DKhorkov/libs/logging"
+	"gopkg.in/telebot.v4"
+
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
+)
+
+func AddPlantGroup(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+	return func(context telebot.Context) error {
+		if err := context.Delete(); err != nil {
+			logger.Error("Failed to delete message", "Error", err)
+
+			return err
+		}
+
+		// groupID, err := strconv.Atoi(context.Data())
+		// if err != nil {
+		//	logger.Error("Failed to parse groupID", "Error", err)
+		//
+		//	return err
+		//}
+		//
+		// plant, err := useCases.AddPlantGroup(int(context.Sender().ID), groupID)
+		// if err != nil {
+		//	return err
+		//}
+		//
+		// menu := &telebot.ReplyMarkup{
+		//	ResizeKeyboard: true,
+		//	InlineKeyboard: [][]telebot.InlineButton{
+		//		{
+		//			buttons.ConfirmAddGroupButton,
+		//		},
+		//		{
+		//			buttons.BackToAddPlantGroupButton,
+		//			buttons.MenuButton,
+		//		},
+		//	},
+		//}
+		//
+		//err = context.Send(
+		//	&telebot.Photo{
+		//		File: telebot.FromDisk(paths.AddGroupConfirmImagePath),
+		//		Caption: fmt.Sprintf(
+		//			texts.AddGroupConfirmText,
+		//			group.Title,
+		//			group.Description,
+		//			group.LastWateringDate.Format(dateFormat),
+		//			getWateringIntervalText(group.WateringInterval),
+		//			group.NextWateringDate.Format(dateFormat),
+		//		),
+		//	},
+		//	menu,
+		//)
+		//if err != nil {
+		//	logger.Error("Failed to send message", "Error", err)
+		//
+		//	return err
+		//}
+
+		return nil
+	}
+}
+
+func BackToAddPlantGroupCallback(
+	bot *telebot.Bot,
+	useCases interfaces.UseCases,
+	logger logging.Logger,
+) telebot.HandlerFunc {
+	return func(context telebot.Context) error {
+		if err := context.Delete(); err != nil {
+			logger.Error("Failed to delete message", "Error", err)
+
+			return err
+		}
+
+		// temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
+		// if err != nil {
+		//	return err
+		//}
+		//
+		//// Получаем группу для корректного отображения данных прошлых этапов::
+		// group, err := temp.GetGroup()
+		// if err != nil {
+		//	logger.Error("Failed to get Group from Temporary", "Error", err)
+		//
+		//	return err
+		//}
+		//
+		// menu := &telebot.ReplyMarkup{
+		//	ResizeKeyboard: true,
+		//	InlineKeyboard: [][]telebot.InlineButton{},
+		//}
+		//
+		//var row []telebot.InlineButton
+		//
+		//for _, value := range wateringIntervals {
+		//	btn := telebot.InlineButton{
+		//		Unique: utils.GenUniqueParam("watering_interval"),
+		//		Text:   getWateringIntervalText(value),
+		//		Data:   strconv.Itoa(value),
+		//	}
+		//
+		//	bot.Handle(&btn, AddGroupWateringInterval(bot, useCases, logger))
+		//
+		//	row = append(row, btn)
+		//	if len(row) == groupWateringIntervalButtonsPerRaw {
+		//		menu.InlineKeyboard = append(menu.InlineKeyboard, row)
+		//		row = []telebot.InlineButton{}
+		//	}
+		//}
+		//
+		//menu.InlineKeyboard = append(
+		//	menu.InlineKeyboard,
+		//	[]telebot.InlineButton{
+		//		buttons.BackToAddGroupLastWateringDateButton,
+		//		buttons.MenuButton,
+		//	},
+		//)
+		//
+		//err = context.Send(
+		//	&telebot.Photo{
+		//		File: telebot.FromDisk(paths.AddGroupWateringIntervalImagePath),
+		//		Caption: fmt.Sprintf(
+		//			texts.AddGroupWateringIntervalText,
+		//			group.Title,
+		//			group.Description,
+		//			group.LastWateringDate.Format(dateFormat),
+		//			group.Title,
+		//		),
+		//	},
+		//	menu,
+		//)
+		//if err != nil {
+		//	logger.Error("Failed to send message", "Error", err)
+		//
+		//	return err
+		//}
+		//
+		//// TODO при проблемах логики следует сделать в рамках транзакции
+		//if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupWateringIntervalStep); err != nil {
+		//	return err
+		//}
+
+		return nil
+	}
+}

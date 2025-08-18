@@ -7,7 +7,6 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
 )
 
@@ -25,7 +24,7 @@ func BackToMenu(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Log
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.StartStep); err != nil {
+		if err = useCases.ResetTemporary(int(context.Sender().ID)); err != nil {
 			return err
 		}
 
@@ -44,7 +43,7 @@ func BackToMenu(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Log
 		}
 
 		if groupsCount > 0 {
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.AddPlantButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.CreatePlantButton})
 			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManageGroupsButton})
 		}
 
