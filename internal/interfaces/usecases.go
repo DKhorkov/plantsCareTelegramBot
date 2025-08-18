@@ -19,6 +19,7 @@ type UseCases interface {
 	CountUserGroups(userID int) (int, error)
 	CreateGroup(group entities.Group) (*entities.Group, error)
 	GroupExists(group entities.Group) (bool, error)
+	GetGroup(id int) (*entities.Group, error)
 
 	// Plants:
 
@@ -29,7 +30,7 @@ type UseCases interface {
 
 	GetUserTemporary(telegramID int) (*entities.Temporary, error)
 	SetTemporaryStep(telegramID, step int) error
-	SetTemporaryMessage(telegramID, messageID int) error
+	SetTemporaryMessage(telegramID int, messageID *int) error
 	ResetTemporary(telegramID int) error
 
 	AddGroupTitle(telegramID int, title string) (*entities.Group, error)
@@ -39,4 +40,5 @@ type UseCases interface {
 
 	AddPlantTitle(telegramID int, title string) (*entities.Plant, error)
 	AddPlantDescription(telegramID int, description string) (*entities.Plant, error)
+	AddPlantGroup(telegramID, groupID int) (*entities.Plant, error)
 }

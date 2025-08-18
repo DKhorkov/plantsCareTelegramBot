@@ -78,6 +78,10 @@ linters:
         linters:
           - gosec
 
+      - path: "internal/utils/strings.go"
+        linters:
+          - revive
+
       - path: "internal/config/config.go"
         linters:
           - mnd

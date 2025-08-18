@@ -68,7 +68,7 @@ func AddGroupTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 			return err
 		}
 
-		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), msg.ID); err != nil {
+		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), &msg.ID); err != nil {
 			return err
 		}
 

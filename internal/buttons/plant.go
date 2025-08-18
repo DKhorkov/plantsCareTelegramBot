@@ -27,4 +27,24 @@ var (
 		Unique: "backToAddPlantDescription",
 		Text:   "Назад ↩️",
 	}
+
+	BackToAddPlantGroupButton = telebot.InlineButton{
+		Unique: "backToAddPlantGroup",
+		Text:   "Назад ↩️",
+	}
+
+	AcceptAddPlantPhotoButton = telebot.InlineButton{
+		Unique: "acceptAddPlantPhoto",
+		Text:   "Да️",
+	}
+
+	RejectAddPlantPhotoButton = telebot.InlineButton{
+		Unique: "rejectAddPlantPhoto",
+		Text:   "Нет",
+	}
+
+	BackToAddPlantPhotoQuestionButton = telebot.InlineButton{
+		Unique: "backToAddPlantPhotoQuestion",
+		Text:   "Назад ↩️",
+	}
 )

@@ -10,6 +10,7 @@ const (
 	AddPlantTitleStep
 	AddPlantDescriptionStep
 	AddPlantGroupStep
+	AddPlantPhotoQuestionStep
 	AddPlantPhotoStep
 	ConfirmAddPlantStep
 )

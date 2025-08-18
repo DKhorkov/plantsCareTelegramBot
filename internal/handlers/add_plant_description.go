@@ -70,7 +70,7 @@ func AddPlantDescription(bot *telebot.Bot, useCases interfaces.UseCases, logger 
 				Data:   strconv.Itoa(group.ID),
 			}
 
-			bot.Handle(&btn, AddPlantGroup(bot, useCases, logger))
+			bot.Handle(&btn, AddPlantGroupCallback(bot, useCases, logger))
 
 			row = append(row, btn)
 			if len(row) == plantGroupButtonsPerRaw {
@@ -121,7 +121,7 @@ func BackToAddPlantDescriptionCallback(
 			return err
 		}
 
-		// Получаем группу для корректного отображения данных прошлых этапов::
+		// Получаем растение для корректного отображения данных прошлых этапов:
 		plant, err := temp.GetPlant()
 		if err != nil {
 			logger.Error("Failed to get Plant from Temporary", "Error", err)
@@ -162,7 +162,7 @@ func BackToAddPlantDescriptionCallback(
 			return err
 		}
 
-		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), msg.ID); err != nil {
+		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), &msg.ID); err != nil {
 			return err
 		}
 

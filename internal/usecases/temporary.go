@@ -63,13 +63,13 @@ func (u *temporaryUseCases) SetTemporaryStep(telegramID, step int) error {
 	return nil
 }
 
-func (u *temporaryUseCases) SetTemporaryMessage(telegramID, messageID int) error {
+func (u *temporaryUseCases) SetTemporaryMessage(telegramID int, messageID *int) error {
 	temp, err := u.GetUserTemporary(telegramID)
 	if err != nil {
 		return err
 	}
 
-	temp.MessageID = &messageID
+	temp.MessageID = messageID
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),
@@ -235,8 +235,16 @@ func (u *temporaryUseCases) AddGroupWateringInterval(telegramID, wateringInterva
 		return nil, err
 	}
 
+	nextWateringDate := group.LastWateringDate.AddDate(0, 0, wateringInterval)
+
+	today := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, nextWateringDate.Location())
+
+	if nextWateringDate.Before(today) {
+		nextWateringDate = today
+	}
+
 	group.WateringInterval = wateringInterval
-	group.NextWateringDate = group.LastWateringDate.AddDate(0, 0, wateringInterval)
+	group.NextWateringDate = nextWateringDate
 
 	data, err := json.Marshal(group)
 	if err != nil {
@@ -272,6 +280,7 @@ func (u *temporaryUseCases) ResetTemporary(telegramID int) error {
 	}
 
 	temp.Data = nil
+	temp.MessageID = nil
 	temp.Step = steps.StartStep
 
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
@@ -358,6 +367,52 @@ func (u *temporaryUseCases) AddPlantDescription(telegramID int, description stri
 	temp.Data = data
 	temp.Step = steps.AddPlantGroupStep
 	temp.MessageID = nil // not to delete already deleted message
+
+	if err = u.storage.UpdateTemporary(*temp); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update temporary data with ID=%d", temp.ID),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	return plant, nil
+}
+
+func (u *temporaryUseCases) AddPlantGroup(telegramID, groupID int) (*entities.Plant, error) {
+	temp, err := u.GetUserTemporary(telegramID)
+	if err != nil {
+		return nil, err
+	}
+
+	plant := &entities.Plant{}
+	if err = json.Unmarshal(temp.Data, plant); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to unmarshal data for user with ID=%d", temp.UserID),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	plant.GroupID = groupID
+
+	data, err := json.Marshal(plant)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to marshal data for user with ID=%d", temp.UserID),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	temp.Data = data
+	temp.Step = steps.AddPlantPhotoQuestionStep
 
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(

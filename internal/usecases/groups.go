@@ -67,3 +67,16 @@ func (u *groupsUseCases) GroupExists(group entities.Group) (bool, error) {
 
 	return exists, err
 }
+
+func (u *groupsUseCases) GetGroup(id int) (*entities.Group, error) {
+	group, err := u.storage.GetGroup(id)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to get group with ID=%d", id),
+			"Error",
+			err,
+		)
+	}
+
+	return group, err
+}

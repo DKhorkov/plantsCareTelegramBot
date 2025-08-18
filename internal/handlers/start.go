@@ -121,7 +121,7 @@ func AddGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 			return err
 		}
 
-		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), msg.ID); err != nil {
+		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), &msg.ID); err != nil {
 			return err
 		}
 
@@ -166,7 +166,7 @@ func AddPlantCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 			return err
 		}
 
-		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), msg.ID); err != nil {
+		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), &msg.ID); err != nil {
 			return err
 		}
 

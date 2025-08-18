@@ -16,7 +16,11 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
-func AddGroupWateringInterval(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func AddGroupWateringIntervalCallback(
+	_ *telebot.Bot,
+	useCases interfaces.UseCases,
+	logger logging.Logger,
+) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error("Failed to delete message", "Error", err)
@@ -90,7 +94,7 @@ func BackToAddGroupWateringIntervalCallback(
 			return err
 		}
 
-		// Получаем группу для корректного отображения данных прошлых этапов::
+		// Получаем группу для корректного отображения данных прошлых этапов:
 		group, err := temp.GetGroup()
 		if err != nil {
 			logger.Error("Failed to get Group from Temporary", "Error", err)
@@ -112,7 +116,7 @@ func BackToAddGroupWateringIntervalCallback(
 				Data:   strconv.Itoa(value),
 			}
 
-			bot.Handle(&btn, AddGroupWateringInterval(bot, useCases, logger))
+			bot.Handle(&btn, AddGroupWateringIntervalCallback(bot, useCases, logger))
 
 			row = append(row, btn)
 			if len(row) == groupWateringIntervalButtonsPerRaw {

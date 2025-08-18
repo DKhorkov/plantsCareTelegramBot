@@ -82,7 +82,7 @@ func BackToAddGroupDescriptionCallback(
 			return err
 		}
 
-		// Получаем группу для корректного отображения данных прошлых этапов::
+		// Получаем группу для корректного отображения данных прошлых этапов:
 		group, err := temp.GetGroup()
 		if err != nil {
 			logger.Error("Failed to get Group from Temporary", "Error", err)
@@ -123,7 +123,7 @@ func BackToAddGroupDescriptionCallback(
 			return err
 		}
 
-		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), msg.ID); err != nil {
+		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), &msg.ID); err != nil {
 			return err
 		}
 

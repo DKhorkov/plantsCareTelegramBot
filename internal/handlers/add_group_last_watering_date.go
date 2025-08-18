@@ -64,7 +64,7 @@ func AddGroupLastWateringDate(
 				Data:   strconv.Itoa(value),
 			}
 
-			bot.Handle(&btn, AddGroupWateringInterval(bot, useCases, logger))
+			bot.Handle(&btn, AddGroupWateringIntervalCallback(bot, useCases, logger))
 
 			row = append(row, btn)
 			if len(row) == groupWateringIntervalButtonsPerRaw {
@@ -121,7 +121,7 @@ func BackToAddGroupLastWateringDateCallback(
 			return err
 		}
 
-		// Получаем группу для корректного отображения данных прошлых этапов::
+		// Получаем группу для корректного отображения данных прошлых этапов:
 		group, err := temp.GetGroup()
 		if err != nil {
 			logger.Error("Failed to get Group from Temporary", "Error", err)

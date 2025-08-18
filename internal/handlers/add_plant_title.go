@@ -69,7 +69,7 @@ func AddPlantTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 			return err
 		}
 
-		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), msg.ID); err != nil {
+		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), &msg.ID); err != nil {
 			return err
 		}
 
@@ -118,7 +118,7 @@ func SkipPlantDescriptionCallback(
 				Data:   strconv.Itoa(group.ID),
 			}
 
-			bot.Handle(&btn, AddPlantGroup(bot, useCases, logger))
+			bot.Handle(&btn, AddPlantGroupCallback(bot, useCases, logger))
 
 			row = append(row, btn)
 			if len(row) == plantGroupButtonsPerRaw {
