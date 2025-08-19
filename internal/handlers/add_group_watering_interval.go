@@ -44,20 +44,20 @@ func AddGroupWateringIntervalCallback(
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.ConfirmAddGroupButton,
+					buttons.ConfirmAddGroup,
 				},
 				{
-					buttons.BackToAddGroupWateringIntervalButton,
-					buttons.MenuButton,
+					buttons.BackToAddGroupWateringInterval,
+					buttons.Menu,
 				},
 			},
 		}
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromDisk(paths.AddGroupConfirmImagePath),
+				File: telebot.FromDisk(paths.AddGroupConfirmImage),
 				Caption: fmt.Sprintf(
-					texts.AddGroupConfirmText,
+					texts.ConfirmAddGroup,
 					group.Title,
 					group.Description,
 					group.LastWateringDate.Format(dateFormat),
@@ -128,16 +128,16 @@ func BackToAddGroupWateringIntervalCallback(
 		menu.InlineKeyboard = append(
 			menu.InlineKeyboard,
 			[]telebot.InlineButton{
-				buttons.BackToAddGroupLastWateringDateButton,
-				buttons.MenuButton,
+				buttons.BackToAddGroupLastWateringDate,
+				buttons.Menu,
 			},
 		)
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromDisk(paths.AddGroupWateringIntervalImagePath),
+				File: telebot.FromDisk(paths.AddGroupWateringIntervalImage),
 				Caption: fmt.Sprintf(
-					texts.AddGroupWateringIntervalText,
+					texts.AddGroupWateringInterval,
 					group.Title,
 					group.Description,
 					group.LastWateringDate.Format(dateFormat),
@@ -153,7 +153,7 @@ func BackToAddGroupWateringIntervalCallback(
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupWateringIntervalStep); err != nil {
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupWateringInterval); err != nil {
 			return err
 		}
 
@@ -253,19 +253,19 @@ func ConfirmAddGroupCallback(
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.CreatePlantButton,
+					buttons.CreatePlant,
 				},
 				{
-					buttons.MenuButton,
+					buttons.Menu,
 				},
 			},
 		}
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromDisk(paths.GroupCreatedImagePath),
+				File: telebot.FromDisk(paths.GroupCreatedImage),
 				Caption: fmt.Sprintf(
-					texts.GroupCreatedText,
+					texts.GroupCreated,
 					group.Title,
 					group.Description,
 					group.LastWateringDate.Format(dateFormat),

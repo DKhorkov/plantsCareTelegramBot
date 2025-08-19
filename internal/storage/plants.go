@@ -2,6 +2,8 @@ package storage
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/DKhorkov/libs/db"
 	"github.com/DKhorkov/libs/logging"
@@ -12,9 +14,9 @@ import (
 )
 
 const (
-	plantsTableName  = "plants"
-	idColumnName     = "id"
-	userIDColumnName = "user_id"
+	plantsTableName   = "plants"
+	groupIDColumnName = "group_id"
+	photoColumnName   = "photo"
 )
 
 type plantsStorage struct {
@@ -23,7 +25,44 @@ type plantsStorage struct {
 }
 
 func (s *plantsStorage) CreatePlant(plant entities.Plant) (int, error) {
-	return 0, nil
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Insert(plantsTableName).
+		Columns(
+			groupIDColumnName,
+			userIDColumnName,
+			titleColumnName,
+			descriptionColumnName,
+			photoColumnName,
+		).
+		Values(
+			plant.GroupID,
+			plant.UserID,
+			plant.Title,
+			plant.Description,
+			plant.Photo,
+		).
+		Suffix(returningIDSuffix).
+		PlaceholderFormat(sq.Dollar). // pq postgres driver works only with $ placeholders
+		ToSql()
+	if err != nil {
+		return 0, err
+	}
+
+	var plantID int
+	if err = connection.QueryRowContext(ctx, stmt, params...).Scan(&plantID); err != nil {
+		return 0, err
+	}
+
+	return plantID, nil
 }
 
 func (s *plantsStorage) UpdatePlant(plant entities.Plant) error {
@@ -31,7 +70,41 @@ func (s *plantsStorage) UpdatePlant(plant entities.Plant) error {
 }
 
 func (s *plantsStorage) PlantExists(plant entities.Plant) (bool, error) {
-	return false, nil
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Select(selectExists).
+		From(plantsTableName).
+		Where(
+			sq.Eq{
+				groupIDColumnName:     plant.GroupID,
+				titleColumnName:       plant.Title,
+				descriptionColumnName: plant.Description,
+			},
+		).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return false, err
+	}
+
+	var exists bool
+	if err = connection.QueryRowContext(ctx, stmt, params...).Scan(&exists); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil // Запись не найдена
+		}
+
+		return false, err
+	}
+
+	return exists, nil
 }
 
 func (s *plantsStorage) DeletePlant(id int) error {

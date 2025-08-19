@@ -32,8 +32,8 @@ func New() Config {
 			SSLMode:      loadenv.GetEnv("POSTGRES_SSL_MODE", "disable"),
 			Driver:       loadenv.GetEnv("POSTGRES_DRIVER", "postgres"),
 			Pool: db.PoolConfig{
-				MaxIdleConnections: loadenv.GetEnvAsInt("MAX_IDLE_CONNECTIONS", 1),
-				MaxOpenConnections: loadenv.GetEnvAsInt("MAX_OPEN_CONNECTIONS", 1),
+				MaxIdleConnections: loadenv.GetEnvAsInt("MAX_IDLE_CONNECTIONS", 3),
+				MaxOpenConnections: loadenv.GetEnvAsInt("MAX_OPEN_CONNECTIONS", 3),
 				MaxConnectionLifetime: time.Second * time.Duration(
 					loadenv.GetEnvAsInt("MAX_CONNECTION_LIFETIME", 20),
 				),

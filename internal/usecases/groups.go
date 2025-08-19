@@ -18,7 +18,7 @@ func (u *groupsUseCases) GetUserGroups(userID int) ([]entities.Group, error) {
 	groups, err := u.storage.GetUserGroups(userID)
 	if err != nil {
 		u.logger.Error(
-			fmt.Sprintf("Failed to get groups for user with ID=%d", userID),
+			fmt.Sprintf("Failed to get Groups for User with ID=%d", userID),
 			"Error",
 			err,
 		)
@@ -31,7 +31,7 @@ func (u *groupsUseCases) CountUserGroups(userID int) (int, error) {
 	count, err := u.storage.CountUserGroups(userID)
 	if err != nil {
 		u.logger.Error(
-			fmt.Sprintf("Failed to count groups for user with ID=%d", userID),
+			fmt.Sprintf("Failed to count Groups for User with ID=%d", userID),
 			"Error",
 			err,
 		)
@@ -44,7 +44,7 @@ func (u *groupsUseCases) CreateGroup(group entities.Group) (*entities.Group, err
 	groupID, err := u.storage.CreateGroup(group)
 	if err != nil {
 		u.logger.Error(
-			fmt.Sprintf("Failed to create group for user with ID=%d", group.UserID),
+			fmt.Sprintf("Failed to create Group for User with ID=%d", group.UserID),
 			"Error",
 			err,
 		)
@@ -59,7 +59,7 @@ func (u *groupsUseCases) GroupExists(group entities.Group) (bool, error) {
 	exists, err := u.storage.GroupExists(group)
 	if err != nil {
 		u.logger.Error(
-			fmt.Sprintf("Failed to check Group existence for user with ID=%d", group.UserID),
+			fmt.Sprintf("Failed to check Group existence for User with ID=%d", group.UserID),
 			"Error",
 			err,
 		)
@@ -72,7 +72,7 @@ func (u *groupsUseCases) GetGroup(id int) (*entities.Group, error) {
 	group, err := u.storage.GetGroup(id)
 	if err != nil {
 		u.logger.Error(
-			fmt.Sprintf("Failed to get group with ID=%d", id),
+			fmt.Sprintf("Failed to get Group with ID=%d", id),
 			"Error",
 			err,
 		)

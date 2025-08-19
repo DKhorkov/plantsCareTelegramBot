@@ -64,6 +64,10 @@ linters:
           - noctx
           - wrapcheck
 
+      - path: "internal/interfaces/handler.go"
+        linters:
+          - revive
+
       - path: "internal/calendar/calendar.go"
         linters:
           - nestif

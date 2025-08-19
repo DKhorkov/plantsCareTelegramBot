@@ -25,6 +25,8 @@ type UseCases interface {
 
 	GetUserPlants(userID int) ([]entities.Plant, error)
 	CountUserPlants(userID int) (int, error)
+	CreatePlant(plant entities.Plant) (*entities.Plant, error)
+	PlantExists(plant entities.Plant) (bool, error)
 
 	// Temporary:
 
@@ -41,4 +43,5 @@ type UseCases interface {
 	AddPlantTitle(telegramID int, title string) (*entities.Plant, error)
 	AddPlantDescription(telegramID int, description string) (*entities.Plant, error)
 	AddPlantGroup(telegramID, groupID int) (*entities.Plant, error)
+	AddPlantPhoto(telegramID int, photo []byte) (*entities.Plant, error)
 }

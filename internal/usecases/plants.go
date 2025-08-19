@@ -18,7 +18,7 @@ func (u *plantsUseCases) GetUserPlants(userID int) ([]entities.Plant, error) {
 	plants, err := u.storage.GetUserPlants(userID)
 	if err != nil {
 		u.logger.Error(
-			fmt.Sprintf("Failed to get plants for user with ID=%d", userID),
+			fmt.Sprintf("Failed to get Plants for User with ID=%d", userID),
 			"Error",
 			err,
 		)
@@ -31,11 +31,39 @@ func (u *plantsUseCases) CountUserPlants(userID int) (int, error) {
 	count, err := u.storage.CountUserPlants(userID)
 	if err != nil {
 		u.logger.Error(
-			fmt.Sprintf("Failed to count plants for user with ID=%d", userID),
+			fmt.Sprintf("Failed to count Plants for User with ID=%d", userID),
 			"Error",
 			err,
 		)
 	}
 
 	return count, err
+}
+
+func (u *plantsUseCases) CreatePlant(plant entities.Plant) (*entities.Plant, error) {
+	plantID, err := u.storage.CreatePlant(plant)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to create Plant for Group with ID=%d", plant.GroupID),
+			"Error",
+			err,
+		)
+	}
+
+	plant.ID = plantID
+
+	return &plant, err
+}
+
+func (u *plantsUseCases) PlantExists(plant entities.Plant) (bool, error) {
+	exists, err := u.storage.PlantExists(plant)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to check Plant existence for Group with ID=%d", plant.GroupID),
+			"Error",
+			err,
+		)
+	}
+
+	return exists, err
 }

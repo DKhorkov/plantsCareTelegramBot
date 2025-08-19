@@ -12,17 +12,19 @@ func OnText(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logge
 	return func(context telebot.Context) error {
 		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
 		if err != nil {
-			return err
+			// Ошибка уже заллогирована, удаляем сообщение.
+			// Может быть, когда пользователь не жал /start и написал что-то боту:
+			return Delete(bot, useCases, logger)(context)
 		}
 
 		switch temp.Step {
-		case steps.AddGroupTitleStep:
+		case steps.AddGroupTitle:
 			return AddGroupTitle(bot, useCases, logger)(context)
-		case steps.AddGroupDescriptionStep:
+		case steps.AddGroupDescription:
 			return AddGroupDescription(bot, useCases, logger)(context)
-		case steps.AddPlantTitleStep:
+		case steps.AddPlantTitle:
 			return AddPlantTitle(bot, useCases, logger)(context)
-		case steps.AddPlantDescriptionStep:
+		case steps.AddPlantDescription:
 			return AddPlantDescription(bot, useCases, logger)(context)
 		default:
 			return Delete(bot, useCases, logger)(context)

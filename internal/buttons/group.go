@@ -3,42 +3,42 @@ package buttons
 import "gopkg.in/telebot.v4"
 
 var (
-	CreateGroupButton = telebot.InlineButton{
+	CreateGroup = telebot.InlineButton{
 		Unique: "createGroup",
 		Text:   "Добавить сценарий полива",
 	}
 
-	ManageGroupsButton = telebot.InlineButton{
+	ManageGroups = telebot.InlineButton{
 		Unique: "manageGroups",
 		Text:   "Управление сценариями полива",
 	}
 
-	SkipGroupDescriptionButton = telebot.InlineButton{
+	SkipGroupDescription = telebot.InlineButton{
 		Unique: "skipGroupDescription",
 		Text:   "Пропустить",
 	}
 
-	BackToAddGroupTitleButton = telebot.InlineButton{
+	BackToAddGroupTitle = telebot.InlineButton{
 		Unique: "backToAddGroupTitle",
 		Text:   "Назад ↩️",
 	}
 
-	BackToAddGroupDescriptionButton = telebot.InlineButton{
+	BackToAddGroupDescription = telebot.InlineButton{
 		Unique: "backToAddGroupDescription",
 		Text:   "Назад ↩️",
 	}
 
-	BackToAddGroupLastWateringDateButton = telebot.InlineButton{
+	BackToAddGroupLastWateringDate = telebot.InlineButton{
 		Unique: "backToAddGroupLastWateringDate",
 		Text:   "Назад ↩️",
 	}
 
-	BackToAddGroupWateringIntervalButton = telebot.InlineButton{
+	BackToAddGroupWateringInterval = telebot.InlineButton{
 		Unique: "backToAddGroupWateringInterval",
 		Text:   "Назад ↩️",
 	}
 
-	ConfirmAddGroupButton = telebot.InlineButton{
+	ConfirmAddGroup = telebot.InlineButton{
 		Unique: "confirmAddGroupButton",
 		Text:   "Все верно ✅",
 	}

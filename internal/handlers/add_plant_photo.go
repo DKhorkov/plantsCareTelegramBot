@@ -1,20 +1,21 @@
 package handlers
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
+	"io"
 
 	"github.com/DKhorkov/libs/logging"
 	"gopkg.in/telebot.v4"
 
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
 )
 
-func AcceptAddPlantPhotoCallback(
-	_ *telebot.Bot,
+func AddPlantPhoto(
+	bot *telebot.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -25,16 +26,40 @@ func AcceptAddPlantPhotoCallback(
 			return err
 		}
 
-		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
+		// Для календаря используем context.Chat().ID. В случае с фото будет равен context.Sender().ID:
+		temp, err := useCases.GetUserTemporary(int(context.Chat().ID))
 		if err != nil {
 			return err
 		}
 
-		// Получаем растение для корректного отображения данных прошлых этапов:
-		plant, err := temp.GetPlant()
-		if err != nil {
-			logger.Error("Failed to get Plant from Temporary", "Error", err)
+		if temp.MessageID != nil {
+			err = context.Bot().Delete(&telebot.Message{ID: *temp.MessageID, Chat: context.Chat()})
+			if err != nil {
+				logger.Error("Failed to delete message", "Error", err)
 
+				return err
+			}
+		}
+
+		photoReader, err := bot.File(context.Message().Photo.MediaFile())
+		if err != nil {
+			return err
+		}
+
+		defer func() {
+			if err = photoReader.Close(); err != nil {
+				logger.Error("Failed to close photo reader", "Error", err)
+			}
+		}()
+
+		// После копирования photoReader будет пустым:
+		buffer := new(bytes.Buffer)
+		if _, err = io.Copy(buffer, photoReader); err != nil {
+			return err
+		}
+
+		plant, err := useCases.AddPlantPhoto(int(context.Sender().ID), buffer.Bytes())
+		if err != nil {
 			return err
 		}
 
@@ -47,23 +72,23 @@ func AcceptAddPlantPhotoCallback(
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.BackToAddPlantPhotoQuestionButton,
-					buttons.MenuButton,
+					buttons.ConfirmAddPlant,
+				},
+				{
+					buttons.BackToAddPlantPhoto,
+					buttons.Menu,
 				},
 			},
 		}
 
-		// Получаем бота, чтобы при отправке получить messageID для дальнейшего удаления:
-		msg, err := context.Bot().Send(
-			context.Chat(),
+		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromDisk(paths.AddPlantPhotoImagePath),
+				File: telebot.FromReader(bytes.NewReader(plant.Photo)),
 				Caption: fmt.Sprintf(
-					texts.AddPlantPhotoText,
+					texts.ConfirmAddPlant,
 					plant.Title,
 					plant.Description,
 					group.Title,
-					plant.Title,
 				),
 			},
 			menu,
@@ -71,15 +96,6 @@ func AcceptAddPlantPhotoCallback(
 		if err != nil {
 			logger.Error("Failed to send message", "Error", err)
 
-			return err
-		}
-
-		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddPlantPhotoStep); err != nil {
-			return err
-		}
-
-		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), &msg.ID); err != nil {
 			return err
 		}
 
@@ -87,27 +103,31 @@ func AcceptAddPlantPhotoCallback(
 	}
 }
 
-func BackToAddPlantPhotoQuestionCallback(
+func ConfirmAddPlantCallback(
 	_ *telebot.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
-		if err := context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
-
-			return err
-		}
-
 		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
 		if err != nil {
 			return err
 		}
 
-		// Получаем растение для корректного отображения данных прошлых этапов:
 		plant, err := temp.GetPlant()
 		if err != nil {
 			logger.Error("Failed to get Plant from Temporary", "Error", err)
+
+			return err
+		}
+
+		plantExists, err := useCases.PlantExists(*plant)
+		if err != nil {
+			logger.Error(
+				fmt.Sprintf("Failed to check Plant existence for user with telegramId=%d", context.Sender().ID),
+				"Error",
+				err,
+			)
 
 			return err
 		}
@@ -117,32 +137,85 @@ func BackToAddPlantPhotoQuestionCallback(
 			return err
 		}
 
+		if plantExists {
+			if context.Callback() == nil {
+				logger.Warn(
+					"Failed to send Response due to nil callback",
+					"Message",
+					context.Message(),
+					"Sender",
+					context.Sender(),
+					"Chat",
+					context.Chat(),
+					"Callback",
+					context.Callback(),
+				)
+
+				return errors.New("failed to send Response due to nil callback")
+			}
+
+			err = context.Respond(
+				&telebot.CallbackResponse{
+					CallbackID: context.Callback().ID,
+					Text:       fmt.Sprintf(texts.PlantAlreadyExists, group.Title),
+				},
+			)
+			if err != nil {
+				logger.Error("Failed to send Response", "Error", err)
+
+				return err
+			}
+
+			return nil
+		}
+
+		// Удаляем сообщение только если нет такой группы, чтобы отправить корректно CallbackResponse:
+		if err = context.Delete(); err != nil {
+			logger.Error("Failed to delete message", "Error", err)
+
+			return err
+		}
+
+		plant, err = useCases.CreatePlant(*plant)
+		if err != nil {
+			logger.Error(
+				fmt.Sprintf("Failed to create Plant for user with telegramId=%d", context.Sender().ID),
+				"Error",
+				err,
+			)
+
+			return err
+		}
+
+		// Только логгируем, поскольку не является критической логикой:
+		if err = useCases.ResetTemporary(int(context.Sender().ID)); err != nil {
+			logger.Error(
+				fmt.Sprintf("Failed to reset Temporary for user with telegramId=%d", context.Sender().ID),
+				"Error",
+				err,
+			)
+		}
+
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.AcceptAddPlantPhotoButton,
+					buttons.CreateAnotherPlant,
 				},
 				{
-					buttons.RejectAddPlantPhotoButton,
-				},
-				{
-					buttons.BackToAddPlantGroupButton,
-					buttons.MenuButton,
+					buttons.Menu,
 				},
 			},
 		}
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromDisk(paths.AddPlantPhotoQuestionImagePath),
+				File: telebot.FromReader(bytes.NewReader(plant.Photo)),
 				Caption: fmt.Sprintf(
-					texts.AddPlantPhotoQuestionText,
+					texts.PlantCreated,
 					plant.Title,
 					plant.Description,
 					group.Title,
-					group.Title,
-					plant.Title,
 				),
 			},
 			menu,
@@ -150,16 +223,6 @@ func BackToAddPlantPhotoQuestionCallback(
 		if err != nil {
 			logger.Error("Failed to send message", "Error", err)
 
-			return err
-		}
-
-		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddPlantPhotoQuestionStep); err != nil {
-			return err
-		}
-
-		// Обнуляем сообщение для удаления:
-		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), nil); err != nil {
 			return err
 		}
 

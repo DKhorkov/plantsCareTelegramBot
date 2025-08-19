@@ -3,48 +3,63 @@ package buttons
 import "gopkg.in/telebot.v4"
 
 var (
-	CreatePlantButton = telebot.InlineButton{
+	CreatePlant = telebot.InlineButton{
 		Unique: "addPlant",
 		Text:   "Добавить растение",
 	}
 
-	ManagePlantsButton = telebot.InlineButton{
+	ManagePlants = telebot.InlineButton{
 		Unique: "managePlants",
 		Text:   "Управление растениями",
 	}
 
-	SkipPlantDescriptionButton = telebot.InlineButton{
+	SkipPlantDescription = telebot.InlineButton{
 		Unique: "skipPlantDescription",
 		Text:   "Пропустить",
 	}
 
-	BackToAddPlantTitleButton = telebot.InlineButton{
+	BackToAddPlantTitle = telebot.InlineButton{
 		Unique: "backToAddPlantTitle",
 		Text:   "Назад ↩️",
 	}
 
-	BackToAddPlantDescriptionButton = telebot.InlineButton{
+	BackToAddPlantDescription = telebot.InlineButton{
 		Unique: "backToAddPlantDescription",
 		Text:   "Назад ↩️",
 	}
 
-	BackToAddPlantGroupButton = telebot.InlineButton{
+	BackToAddPlantGroup = telebot.InlineButton{
 		Unique: "backToAddPlantGroup",
 		Text:   "Назад ↩️",
 	}
 
-	AcceptAddPlantPhotoButton = telebot.InlineButton{
+	AcceptAddPlantPhoto = telebot.InlineButton{
 		Unique: "acceptAddPlantPhoto",
 		Text:   "Да️",
 	}
 
-	RejectAddPlantPhotoButton = telebot.InlineButton{
+	RejectAddPlantPhoto = telebot.InlineButton{
 		Unique: "rejectAddPlantPhoto",
 		Text:   "Нет",
 	}
 
-	BackToAddPlantPhotoQuestionButton = telebot.InlineButton{
+	BackToAddPlantPhotoQuestion = telebot.InlineButton{
 		Unique: "backToAddPlantPhotoQuestion",
 		Text:   "Назад ↩️",
+	}
+
+	ConfirmAddPlant = telebot.InlineButton{
+		Unique: "confirmAddPlant",
+		Text:   "Все верно ✅",
+	}
+
+	BackToAddPlantPhoto = telebot.InlineButton{
+		Unique: "backToAddPlantPhoto",
+		Text:   "Назад ↩️",
+	}
+
+	CreateAnotherPlant = telebot.InlineButton{
+		Unique: "createAnotherPlant",
+		Text:   "Добавить еще одно растение",
 	}
 )

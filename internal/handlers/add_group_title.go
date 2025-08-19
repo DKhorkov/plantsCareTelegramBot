@@ -13,12 +13,26 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
 )
 
+const (
+	groupTitleMaxLength = 50
+)
+
 func AddGroupTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error("Failed to delete message", "Error", err)
 
 			return err
+		}
+
+		if len(context.Message().Text) > groupTitleMaxLength {
+			if err := context.Send(fmt.Sprintf(texts.GroupTitleTooLong, groupTitleMaxLength)); err != nil {
+				logger.Error("Failed to send message", "Error", err)
+
+				return err
+			}
+
+			return nil
 		}
 
 		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
@@ -44,11 +58,11 @@ func AddGroupTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.SkipGroupDescriptionButton,
+					buttons.SkipGroupDescription,
 				},
 				{
-					buttons.BackToAddGroupTitleButton,
-					buttons.MenuButton,
+					buttons.BackToAddGroupTitle,
+					buttons.Menu,
 				},
 			},
 		}
@@ -57,8 +71,8 @@ func AddGroupTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 		msg, err := context.Bot().Send(
 			context.Chat(),
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.AddGroupDescriptionImagePath),
-				Caption: fmt.Sprintf(texts.AddGroupDescriptionText, group.Title, group.Title),
+				File:    telebot.FromDisk(paths.AddGroupDescriptionImage),
+				Caption: fmt.Sprintf(texts.AddGroupDescription, group.Title, group.Title),
 			},
 			menu,
 		)
@@ -94,7 +108,7 @@ func SkipGroupDescriptionCallback(
 		}
 
 		c := calendar.NewCalendar(bot, logger, calendar.Options{Language: "ru"})
-		c.SetBackButton(buttons.BackToAddGroupDescriptionButton)
+		c.SetBackButton(buttons.BackToAddGroupDescription)
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,
 			InlineKeyboard: c.GetKeyboard(),
@@ -102,8 +116,8 @@ func SkipGroupDescriptionCallback(
 
 		err = context.Send(
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.AddGroupLastWateringDateImagePath),
-				Caption: fmt.Sprintf(texts.AddGroupLastWateringDateText, group.Title, group.Description, group.Title),
+				File:    telebot.FromDisk(paths.AddGroupLastWateringDateImage),
+				Caption: fmt.Sprintf(texts.AddGroupLastWateringDate, group.Title, group.Description, group.Title),
 			},
 			menu,
 		)

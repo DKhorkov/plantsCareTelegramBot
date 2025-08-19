@@ -20,8 +20,6 @@ func main() {
 		cfg.Logging.LogFilePath,
 	)
 
-	logger.Info("test")
-
 	dbConnector, err := db.New(
 		db.BuildDsn(cfg.Database),
 		cfg.Database.Driver,

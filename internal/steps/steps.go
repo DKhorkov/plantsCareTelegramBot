@@ -1,16 +1,16 @@
 package steps
 
 const (
-	StartStep = iota
-	AddGroupTitleStep
-	AddGroupDescriptionStep
-	AddGroupLastWateringDateStep
-	AddGroupWateringIntervalStep
-	ConfirmAddGroupStep
-	AddPlantTitleStep
-	AddPlantDescriptionStep
-	AddPlantGroupStep
-	AddPlantPhotoQuestionStep
-	AddPlantPhotoStep
-	ConfirmAddPlantStep
+	Start = iota
+	AddGroupTitle
+	AddGroupDescription
+	AddGroupLastWateringDate
+	AddGroupWateringInterval
+	ConfirmAddGroup
+	AddPlantTitle
+	AddPlantDescription
+	AddPlantGroup
+	AddPlantPhotoQuestion
+	AddPlantPhoto
+	ConfirmAddPlant
 )

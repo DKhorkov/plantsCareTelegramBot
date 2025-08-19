@@ -43,7 +43,7 @@ func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) 
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.CreateGroupButton,
+					buttons.CreateGroup,
 				},
 			},
 		}
@@ -54,8 +54,8 @@ func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) 
 		}
 
 		if groupsCount > 0 {
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.CreatePlantButton})
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManageGroupsButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.CreatePlant})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManageGroups})
 		}
 
 		plantsCount, err := useCases.CountUserPlants(userID)
@@ -64,13 +64,13 @@ func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) 
 		}
 
 		if plantsCount > 0 {
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManagePlantsButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManagePlants})
 		}
 
 		err = context.Send(
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.StartImagePath),
-				Caption: texts.StartMessageText,
+				File:    telebot.FromDisk(paths.StartImage),
+				Caption: texts.OnStart,
 			},
 			menu,
 		)
@@ -93,7 +93,7 @@ func AddGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err := useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupTitleStep); err != nil {
+		if err := useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupTitle); err != nil {
 			return err
 		}
 
@@ -101,7 +101,7 @@ func AddGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.BackToStartButton,
+					buttons.BackToStart,
 				},
 			},
 		}
@@ -110,8 +110,8 @@ func AddGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 		msg, err := context.Bot().Send(
 			context.Chat(),
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.AddGroupTitleImagePath),
-				Caption: texts.AddGroupTitleText,
+				File:    telebot.FromDisk(paths.AddGroupTitleImage),
+				Caption: texts.AddGroupTitle,
 			},
 			menu,
 		)
@@ -138,7 +138,7 @@ func AddPlantCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err := useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddPlantTitleStep); err != nil {
+		if err := useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddPlantTitle); err != nil {
 			return err
 		}
 
@@ -146,7 +146,7 @@ func AddPlantCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.BackToStartButton,
+					buttons.BackToStart,
 				},
 			},
 		}
@@ -155,8 +155,8 @@ func AddPlantCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 		msg, err := context.Bot().Send(
 			context.Chat(),
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.AddPlantTitleImagePath),
-				Caption: texts.AddPlantTitleText,
+				File:    telebot.FromDisk(paths.AddPlantTitleImage),
+				Caption: texts.AddPlantTitle,
 			},
 			menu,
 		)

@@ -32,7 +32,7 @@ func BackToMenu(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Log
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.CreateGroupButton,
+					buttons.CreateGroup,
 				},
 			},
 		}
@@ -43,8 +43,8 @@ func BackToMenu(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Log
 		}
 
 		if groupsCount > 0 {
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.CreatePlantButton})
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManageGroupsButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.CreatePlant})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManageGroups})
 		}
 
 		plantsCount, err := useCases.CountUserPlants(user.ID)
@@ -53,13 +53,13 @@ func BackToMenu(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Log
 		}
 
 		if plantsCount > 0 {
-			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManageGroupsButton})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManagePlants})
 		}
 
 		err = context.Send(
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.StartImagePath),
-				Caption: texts.StartMessageText,
+				File:    telebot.FromDisk(paths.StartImage),
+				Caption: texts.OnStart,
 			},
 			menu,
 		)

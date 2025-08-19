@@ -14,12 +14,26 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
+const (
+	plantTitleMaxLength = 50
+)
+
 func AddPlantTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error("Failed to delete message", "Error", err)
 
 			return err
+		}
+
+		if len(context.Message().Text) > plantTitleMaxLength {
+			if err := context.Send(fmt.Sprintf(texts.PlantTitleTooLong, plantTitleMaxLength)); err != nil {
+				logger.Error("Failed to send message", "Error", err)
+
+				return err
+			}
+
+			return nil
 		}
 
 		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
@@ -45,11 +59,11 @@ func AddPlantTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.SkipPlantDescriptionButton,
+					buttons.SkipPlantDescription,
 				},
 				{
-					buttons.BackToAddPlantTitleButton,
-					buttons.MenuButton,
+					buttons.BackToAddPlantTitle,
+					buttons.Menu,
 				},
 			},
 		}
@@ -58,8 +72,8 @@ func AddPlantTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 		msg, err := context.Bot().Send(
 			context.Chat(),
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.AddPlantDescriptionImagePath),
-				Caption: fmt.Sprintf(texts.AddPlantDescriptionText, plant.Title, plant.Title),
+				File:    telebot.FromDisk(paths.AddPlantDescriptionImage),
+				Caption: fmt.Sprintf(texts.AddPlantDescription, plant.Title, plant.Title),
 			},
 			menu,
 		)
@@ -130,15 +144,15 @@ func SkipPlantDescriptionCallback(
 		menu.InlineKeyboard = append(
 			menu.InlineKeyboard,
 			[]telebot.InlineButton{
-				buttons.BackToAddPlantDescriptionButton,
-				buttons.MenuButton,
+				buttons.BackToAddPlantDescription,
+				buttons.Menu,
 			},
 		)
 
 		err = context.Send(
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.AddPlantGroupImagePath),
-				Caption: fmt.Sprintf(texts.AddPlantGroupText, plant.Title, plant.Description, plant.Title),
+				File:    telebot.FromDisk(paths.AddPlantGroupImage),
+				Caption: fmt.Sprintf(texts.AddPlantGroup, plant.Title, plant.Description, plant.Title),
 			},
 			menu,
 		)

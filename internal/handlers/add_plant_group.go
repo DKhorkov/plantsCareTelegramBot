@@ -44,23 +44,23 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.AcceptAddPlantPhotoButton,
+					buttons.AcceptAddPlantPhoto,
 				},
 				{
-					buttons.RejectAddPlantPhotoButton,
+					buttons.RejectAddPlantPhoto,
 				},
 				{
-					buttons.BackToAddPlantGroupButton,
-					buttons.MenuButton,
+					buttons.BackToAddPlantGroup,
+					buttons.Menu,
 				},
 			},
 		}
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromDisk(paths.AddPlantPhotoQuestionImagePath),
+				File: telebot.FromDisk(paths.AddPlantPhotoQuestionImage),
 				Caption: fmt.Sprintf(
-					texts.AddPlantPhotoQuestionText,
+					texts.AddPlantPhotoQuestion,
 					plant.Title,
 					plant.Description,
 					group.Title,
@@ -141,15 +141,15 @@ func BackToAddPlantGroupCallback(
 		menu.InlineKeyboard = append(
 			menu.InlineKeyboard,
 			[]telebot.InlineButton{
-				buttons.BackToAddPlantDescriptionButton,
-				buttons.MenuButton,
+				buttons.BackToAddPlantDescription,
+				buttons.Menu,
 			},
 		)
 
 		err = context.Send(
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.AddPlantGroupImagePath),
-				Caption: fmt.Sprintf(texts.AddPlantGroupText, plant.Title, plant.Description, plant.Title),
+				File:    telebot.FromDisk(paths.AddPlantGroupImage),
+				Caption: fmt.Sprintf(texts.AddPlantGroup, plant.Title, plant.Description, plant.Title),
 			},
 			menu,
 		)
@@ -160,7 +160,7 @@ func BackToAddPlantGroupCallback(
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddPlantGroupStep); err != nil {
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddPlantGroup); err != nil {
 			return err
 		}
 

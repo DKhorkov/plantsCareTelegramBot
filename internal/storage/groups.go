@@ -16,6 +16,8 @@ import (
 const (
 	selectCount                = "COUNT(*)"
 	groupsTableName            = "groups"
+	idColumnName               = "id"
+	userIDColumnName           = "user_id"
 	titleColumnName            = "title"
 	descriptionColumnName      = "description"
 	lastWateringDateColumnName = "last_watering_date"

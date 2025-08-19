@@ -82,15 +82,15 @@ func AddPlantDescription(bot *telebot.Bot, useCases interfaces.UseCases, logger 
 		menu.InlineKeyboard = append(
 			menu.InlineKeyboard,
 			[]telebot.InlineButton{
-				buttons.BackToAddPlantDescriptionButton,
-				buttons.MenuButton,
+				buttons.BackToAddPlantDescription,
+				buttons.Menu,
 			},
 		)
 
 		err = context.Send(
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.AddPlantGroupImagePath),
-				Caption: fmt.Sprintf(texts.AddPlantGroupText, plant.Title, plant.Description, plant.Title),
+				File:    telebot.FromDisk(paths.AddPlantGroupImage),
+				Caption: fmt.Sprintf(texts.AddPlantGroup, plant.Title, plant.Description, plant.Title),
 			},
 			menu,
 		)
@@ -133,11 +133,11 @@ func BackToAddPlantDescriptionCallback(
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.SkipPlantDescriptionButton,
+					buttons.SkipPlantDescription,
 				},
 				{
-					buttons.BackToAddPlantTitleButton,
-					buttons.MenuButton,
+					buttons.BackToAddPlantTitle,
+					buttons.Menu,
 				},
 			},
 		}
@@ -146,8 +146,8 @@ func BackToAddPlantDescriptionCallback(
 		msg, err := context.Bot().Send(
 			context.Chat(),
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.AddPlantDescriptionImagePath),
-				Caption: fmt.Sprintf(texts.AddPlantDescriptionText, plant.Title, plant.Title),
+				File:    telebot.FromDisk(paths.AddPlantDescriptionImage),
+				Caption: fmt.Sprintf(texts.AddPlantDescription, plant.Title, plant.Title),
 			},
 			menu,
 		)
@@ -158,7 +158,7 @@ func BackToAddPlantDescriptionCallback(
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddPlantDescriptionStep); err != nil {
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddPlantDescription); err != nil {
 			return err
 		}
 

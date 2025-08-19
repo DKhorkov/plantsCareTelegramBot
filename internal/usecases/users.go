@@ -24,7 +24,7 @@ func (u *usersUseCases) SaveUser(user entities.User) (int, error) {
 	userID, err := u.storage.SaveUser(user)
 	if err != nil {
 		u.logger.Error(
-			fmt.Sprintf("Failed to save user with telegramID=%d", user.TelegramID),
+			fmt.Sprintf("Failed to save User with telegramID=%d", user.TelegramID),
 			"Error",
 			err,
 		)
@@ -34,13 +34,13 @@ func (u *usersUseCases) SaveUser(user entities.User) (int, error) {
 
 	temp := entities.Temporary{
 		UserID: userID,
-		Step:   steps.StartStep,
+		Step:   steps.Start,
 	}
 
 	// TODO при проблемах логики следует сделать в рамках транзакции с сохранением пользователя
 	if err = u.storage.CreateTemporary(temp); err != nil {
 		u.logger.Error(
-			fmt.Sprintf("Failed to save temporary info for user with ID=%d", userID),
+			fmt.Sprintf("Failed to save Temporary for User with ID=%d", userID),
 			"Temp",
 			temp,
 			"Error",
@@ -57,7 +57,7 @@ func (u *usersUseCases) GetUserByTelegramID(telegramID int) (*entities.User, err
 	user, err := u.storage.GetUserByTelegramID(telegramID)
 	if err != nil {
 		u.logger.Error(
-			fmt.Sprintf("Failed to get user with telegramID=%d", telegramID),
+			fmt.Sprintf("Failed to get User with telegramID=%d", telegramID),
 			"Error",
 			err,
 		)

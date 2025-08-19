@@ -12,6 +12,12 @@ type App struct {
 	bot *telebot.Bot
 }
 
+func New(bot *telebot.Bot) *App {
+	return &App{
+		bot: bot,
+	}
+}
+
 func (application *App) Run() {
 	// Launch asynchronous for graceful shutdown purpose:
 	go application.bot.Start()
@@ -23,10 +29,4 @@ func (application *App) Run() {
 	signal.Notify(stopChannel, syscall.SIGINT, syscall.SIGTERM)
 	<-stopChannel
 	application.bot.Stop()
-}
-
-func New(bot *telebot.Bot) *App {
-	return &App{
-		bot: bot,
-	}
 }

@@ -42,7 +42,7 @@ func AddGroupDescription(bot *telebot.Bot, useCases interfaces.UseCases, logger 
 		}
 
 		c := calendar.NewCalendar(bot, logger, calendar.Options{Language: "ru"})
-		c.SetBackButton(buttons.BackToAddGroupDescriptionButton)
+		c.SetBackButton(buttons.BackToAddGroupDescription)
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,
 			InlineKeyboard: c.GetKeyboard(),
@@ -50,8 +50,8 @@ func AddGroupDescription(bot *telebot.Bot, useCases interfaces.UseCases, logger 
 
 		err = context.Send(
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.AddGroupLastWateringDateImagePath),
-				Caption: fmt.Sprintf(texts.AddGroupLastWateringDateText, group.Title, group.Description, group.Title),
+				File:    telebot.FromDisk(paths.AddGroupLastWateringDateImage),
+				Caption: fmt.Sprintf(texts.AddGroupLastWateringDate, group.Title, group.Description, group.Title),
 			},
 			menu,
 		)
@@ -94,11 +94,11 @@ func BackToAddGroupDescriptionCallback(
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.SkipGroupDescriptionButton,
+					buttons.SkipGroupDescription,
 				},
 				{
-					buttons.BackToAddGroupTitleButton,
-					buttons.MenuButton,
+					buttons.BackToAddGroupTitle,
+					buttons.Menu,
 				},
 			},
 		}
@@ -107,8 +107,8 @@ func BackToAddGroupDescriptionCallback(
 		msg, err := context.Bot().Send(
 			context.Chat(),
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.AddGroupDescriptionImagePath),
-				Caption: fmt.Sprintf(texts.AddGroupDescriptionText, group.Title, group.Title),
+				File:    telebot.FromDisk(paths.AddGroupDescriptionImage),
+				Caption: fmt.Sprintf(texts.AddGroupDescription, group.Title, group.Title),
 			},
 			menu,
 		)
@@ -119,7 +119,7 @@ func BackToAddGroupDescriptionCallback(
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupDescriptionStep); err != nil {
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupDescription); err != nil {
 			return err
 		}
 

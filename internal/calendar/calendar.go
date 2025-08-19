@@ -231,7 +231,8 @@ func (cal *Calendar) addDaysRows() {
 		dayText := strconv.Itoa(i)
 		cell := telebot.InlineButton{
 			Unique: utils.GenUniqueParam("day_" + strconv.Itoa(i)),
-			Text:   dayText, Data: dayText,
+			Text:   dayText,
+			Data:   dayText,
 		}
 
 		cal.bot.Handle(&cell, func(ctx telebot.Context) error {
@@ -353,7 +354,7 @@ func (cal *Calendar) addControlButtonsRow() {
 func (cal *Calendar) addBackAndMenuButtonsRow() {
 	var row []telebot.InlineButton
 
-	row = append(row, cal.backButton, buttons.MenuButton)
+	row = append(row, cal.backButton, buttons.Menu)
 	cal.addRowToKeyboard(&row)
 }
 

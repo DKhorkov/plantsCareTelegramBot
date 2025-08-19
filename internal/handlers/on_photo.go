@@ -8,9 +8,10 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 )
 
-func OnMedia(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+// OnPhoto После добавления бот считает колбэк на калндарь как фото, а не медиа.
+func OnPhoto(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
-		// Для календаря используем context.Chat().ID:
+		// Для календаря используем context.Chat().ID. В случае с фото будет равен context.Sender().ID:
 		temp, err := useCases.GetUserTemporary(int(context.Chat().ID))
 		if err != nil {
 			// Ошибка уже заллогирована, удаляем сообщение.
@@ -21,6 +22,8 @@ func OnMedia(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logg
 		switch temp.Step {
 		case steps.AddGroupLastWateringDate:
 			return AddGroupLastWateringDate(bot, useCases, logger)(context)
+		case steps.AddPlantPhoto:
+			return AddPlantPhoto(bot, useCases, logger)(context)
 		default:
 			return Delete(bot, useCases, logger)(context)
 		}

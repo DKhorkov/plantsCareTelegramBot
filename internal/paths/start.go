@@ -1,5 +1,5 @@
 package paths
 
 const (
-	StartImagePath = "./static/images/start_picture.jpeg"
+	StartImage = "./static/images/start_picture.jpeg"
 )

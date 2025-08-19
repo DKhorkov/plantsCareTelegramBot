@@ -44,7 +44,7 @@ func AddGroupLastWateringDate(
 			return err
 		}
 
-		// Для календаря используем context.Chat().ID
+		// Для календаря используем context.Chat().ID:
 		group, err := useCases.AddGroupLastWateringDate(int(context.Chat().ID), lastWateringDate)
 		if err != nil {
 			return err
@@ -76,16 +76,16 @@ func AddGroupLastWateringDate(
 		menu.InlineKeyboard = append(
 			menu.InlineKeyboard,
 			[]telebot.InlineButton{
-				buttons.BackToAddGroupLastWateringDateButton,
-				buttons.MenuButton,
+				buttons.BackToAddGroupLastWateringDate,
+				buttons.Menu,
 			},
 		)
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromDisk(paths.AddGroupWateringIntervalImagePath),
+				File: telebot.FromDisk(paths.AddGroupWateringIntervalImage),
 				Caption: fmt.Sprintf(
-					texts.AddGroupWateringIntervalText,
+					texts.AddGroupWateringInterval,
 					group.Title,
 					group.Description,
 					group.LastWateringDate.Format(dateFormat),
@@ -130,7 +130,7 @@ func BackToAddGroupLastWateringDateCallback(
 		}
 
 		c := calendar.NewCalendar(bot, logger, calendar.Options{Language: "ru"})
-		c.SetBackButton(buttons.BackToAddGroupDescriptionButton)
+		c.SetBackButton(buttons.BackToAddGroupDescription)
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,
 			InlineKeyboard: c.GetKeyboard(),
@@ -138,8 +138,8 @@ func BackToAddGroupLastWateringDateCallback(
 
 		err = context.Send(
 			&telebot.Photo{
-				File:    telebot.FromDisk(paths.AddGroupLastWateringDateImagePath),
-				Caption: fmt.Sprintf(texts.AddGroupLastWateringDateText, group.Title, group.Description, group.Title),
+				File:    telebot.FromDisk(paths.AddGroupLastWateringDateImage),
+				Caption: fmt.Sprintf(texts.AddGroupLastWateringDate, group.Title, group.Description, group.Title),
 			},
 			menu,
 		)
@@ -150,7 +150,7 @@ func BackToAddGroupLastWateringDateCallback(
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupLastWateringDateStep); err != nil {
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupLastWateringDate); err != nil {
 			return err
 		}
 
