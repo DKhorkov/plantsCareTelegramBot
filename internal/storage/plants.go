@@ -143,6 +143,34 @@ func (s *plantsStorage) CountUserPlants(userID int) (int, error) {
 	return count, nil
 }
 
+func (s *plantsStorage) CountGroupPlants(groupID int) (int, error) {
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Select(selectCount).
+		From(plantsTableName).
+		Where(sq.Eq{groupIDColumnName: groupID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return 0, err
+	}
+
+	var count int
+	if err = connection.QueryRowContext(ctx, stmt, params...).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 func (s *plantsStorage) GetPlant(id int) (*entities.Plant, error) {
 	return nil, nil
 }

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -15,17 +16,58 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
+const (
+	plantsPerGroupLimit = 50
+)
+
 func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
-		if err := context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+		groupID, err := strconv.Atoi(context.Data())
+		if err != nil {
+			logger.Error("Failed to parse groupID", "Error", err)
 
 			return err
 		}
 
-		groupID, err := strconv.Atoi(context.Data())
+		groupPlantsCount, err := useCases.CountGroupPlants(groupID)
 		if err != nil {
-			logger.Error("Failed to parse groupID", "Error", err)
+			return err
+		}
+
+		if groupPlantsCount >= plantsPerGroupLimit {
+			if context.Callback() == nil {
+				logger.Warn(
+					"Failed to send Response due to nil callback",
+					"Message",
+					context.Message(),
+					"Sender",
+					context.Sender(),
+					"Chat",
+					context.Chat(),
+					"Callback",
+					context.Callback(),
+				)
+
+				return errors.New("failed to send Response due to nil callback")
+			}
+
+			err = context.Respond(
+				&telebot.CallbackResponse{
+					CallbackID: context.Callback().ID,
+					Text:       fmt.Sprintf(texts.PlantsPerGroupLimit, plantsPerGroupLimit),
+				},
+			)
+			if err != nil {
+				logger.Error("Failed to send Response", "Error", err)
+
+				return err
+			}
+
+			return nil
+		}
+
+		if err = context.Delete(); err != nil {
+			logger.Error("Failed to delete message", "Error", err)
 
 			return err
 		}

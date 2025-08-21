@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/DKhorkov/libs/logging"
 	"gopkg.in/telebot.v4"
 
@@ -10,6 +13,10 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
+)
+
+const (
+	groupsPerUserLimit = 5
 )
 
 func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
@@ -86,14 +93,56 @@ func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) 
 
 func AddGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
-		if err := context.Delete(); err != nil {
+		user, err := useCases.GetUserByTelegramID(int(context.Sender().ID))
+		if err != nil {
+			return err
+		}
+
+		groupsCount, err := useCases.CountUserGroups(user.ID)
+		if err != nil {
+			return err
+		}
+
+		if groupsCount >= groupsPerUserLimit {
+			if context.Callback() == nil {
+				logger.Warn(
+					"Failed to send Response due to nil callback",
+					"Message",
+					context.Message(),
+					"Sender",
+					context.Sender(),
+					"Chat",
+					context.Chat(),
+					"Callback",
+					context.Callback(),
+				)
+
+				return errors.New("failed to send Response due to nil callback")
+			}
+
+			err = context.Respond(
+				&telebot.CallbackResponse{
+					CallbackID: context.Callback().ID,
+					Text:       fmt.Sprintf(texts.GroupsPerUserLimit, groupsPerUserLimit),
+				},
+			)
+			if err != nil {
+				logger.Error("Failed to send Response", "Error", err)
+
+				return err
+			}
+
+			return nil
+		}
+
+		if err = context.Delete(); err != nil {
 			logger.Error("Failed to delete message", "Error", err)
 
 			return err
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err := useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupTitle); err != nil {
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupTitle); err != nil {
 			return err
 		}
 

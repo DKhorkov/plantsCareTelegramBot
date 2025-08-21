@@ -7,6 +7,7 @@ type Storage interface {
 	// Users:
 
 	SaveUser(user entities.User) (int, error)
+	GetUserByID(id int) (*entities.User, error)
 	GetUserByTelegramID(telegramID int) (*entities.User, error)
 
 	// Temporary:
@@ -24,6 +25,7 @@ type Storage interface {
 	GetUserGroups(userID int) ([]entities.Group, error)
 	CountUserGroups(userID int) (int, error)
 	GetGroup(id int) (*entities.Group, error)
+	GetGroupsForNotify(limit, offset int) ([]entities.Group, error)
 
 	// Plants:
 
@@ -33,5 +35,6 @@ type Storage interface {
 	DeletePlant(id int) error
 	GetUserPlants(userID int) ([]entities.Plant, error)
 	CountUserPlants(userID int) (int, error)
+	CountGroupPlants(groupID int) (int, error)
 	GetPlant(id int) (*entities.Plant, error)
 }

@@ -40,6 +40,19 @@ func (u *plantsUseCases) CountUserPlants(userID int) (int, error) {
 	return count, err
 }
 
+func (u *plantsUseCases) CountGroupPlants(groupID int) (int, error) {
+	count, err := u.storage.CountGroupPlants(groupID)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to count Plants for Group with ID=%d", groupID),
+			"Error",
+			err,
+		)
+	}
+
+	return count, err
+}
+
 func (u *plantsUseCases) CreatePlant(plant entities.Plant) (*entities.Plant, error) {
 	plantID, err := u.storage.CreatePlant(plant)
 	if err != nil {
