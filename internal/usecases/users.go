@@ -67,3 +67,18 @@ func (u *usersUseCases) GetUserByTelegramID(telegramID int) (*entities.User, err
 
 	return user, nil
 }
+
+func (u *usersUseCases) GetUserByID(id int) (*entities.User, error) {
+	user, err := u.storage.GetUserByID(id)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to get User with ID=%d", id),
+			"Error",
+			err,
+		)
+
+		return nil, err
+	}
+
+	return user, nil
+}

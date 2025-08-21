@@ -42,6 +42,13 @@ func New() Config {
 				),
 			},
 		},
+		Notifications: NotificationsConfig{
+			GroupsLimitPerQuery: loadenv.GetEnvAsInt("GROUPS_LIMIT_PER_QUERY", 100),
+			CronCheckInterval: time.Minute * time.Duration(
+				loadenv.GetEnvAsInt("CRON_CHECK_INTERVAL", 1),
+			),
+			CronsCount: loadenv.GetEnvAsInt("CRONS_COUNT", 1),
+		},
 	}
 }
 
@@ -50,10 +57,17 @@ type BotConfig struct {
 	PollTimeout time.Duration
 }
 
+type NotificationsConfig struct {
+	GroupsLimitPerQuery int
+	CronCheckInterval   time.Duration
+	CronsCount          int
+}
+
 type Config struct {
-	Bot         BotConfig
-	Database    db.Config
-	Logging     logging.Config
-	Environment string
-	Version     string
+	Bot           BotConfig
+	Database      db.Config
+	Notifications NotificationsConfig
+	Logging       logging.Config
+	Environment   string
+	Version       string
 }

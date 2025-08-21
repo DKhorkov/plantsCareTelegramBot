@@ -11,6 +11,7 @@ type UseCases struct {
 	groupsUseCases
 	plantsUseCases
 	temporaryUseCases
+	notificationsUseCases
 }
 
 func New(
@@ -31,6 +32,10 @@ func New(
 			logger:  logger,
 		},
 		temporaryUseCases: temporaryUseCases{
+			storage: storage,
+			logger:  logger,
+		},
+		notificationsUseCases: notificationsUseCases{
 			storage: storage,
 			logger:  logger,
 		},

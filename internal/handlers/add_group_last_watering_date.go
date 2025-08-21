@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"slices"
 	"strconv"
 	"time"
 
@@ -60,7 +59,7 @@ func AddGroupLastWateringDate(
 		for _, value := range wateringIntervals {
 			btn := telebot.InlineButton{
 				Unique: utils.GenUniqueParam("watering_interval"),
-				Text:   getWateringIntervalText(value),
+				Text:   utils.GetWateringInterval(value),
 				Data:   strconv.Itoa(value),
 			}
 
@@ -155,16 +154,5 @@ func BackToAddGroupLastWateringDateCallback(
 		}
 
 		return nil
-	}
-}
-
-func getWateringIntervalText(wateringInterval int) string {
-	switch {
-	case wateringInterval%10 == 1:
-		return fmt.Sprintf("%d день", wateringInterval)
-	case slices.Contains([]int{2, 3, 4}, wateringInterval):
-		return fmt.Sprintf("%d дня", wateringInterval)
-	default:
-		return fmt.Sprintf("%d дней", wateringInterval)
 	}
 }

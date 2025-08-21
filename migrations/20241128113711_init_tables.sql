@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS notifications
     id         SERIAL PRIMARY KEY,
     group_id   INTEGER   NOT NULL,
     message_id INTEGER   NOT NULL,
+    text       TEXT      NOT NULL,
     sent_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (group_id) REFERENCES groups (id) ON DELETE CASCADE
 );

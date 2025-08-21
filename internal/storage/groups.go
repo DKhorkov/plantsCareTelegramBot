@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/DKhorkov/libs/db"
 	"github.com/DKhorkov/libs/logging"
@@ -75,7 +76,33 @@ func (s *groupsStorage) CreateGroup(group entities.Group) (int, error) {
 }
 
 func (s *groupsStorage) UpdateGroup(group entities.Group) error {
-	return nil
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Update(groupsTableName).
+		Where(sq.Eq{idColumnName: group.ID}).
+		Set(userIDColumnName, group.UserID).
+		Set(titleColumnName, group.Title).
+		Set(lastWateringDateColumnName, group.LastWateringDate).
+		Set(wateringIntervalColumnName, group.WateringInterval).
+		Set(nextWateringDateColumnName, group.NextWateringDate).
+		Set(updatedAtColumnName, time.Now()).
+		PlaceholderFormat(sq.Dollar). // pq postgres driver works only with $ placeholders
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	_, err = connection.ExecContext(ctx, stmt, params...)
+
+	return err
 }
 
 func (s *groupsStorage) GroupExists(group entities.Group) (bool, error) {
@@ -236,4 +263,70 @@ func (s *groupsStorage) GetGroup(id int) (*entities.Group, error) {
 	}
 
 	return group, nil
+}
+
+func (s *groupsStorage) GetGroupsForNotify(limit, offset int) ([]entities.Group, error) {
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Select(selectAllColumns).
+		From(groupsTableName).
+		Where(
+			sq.Expr(
+				nextWateringDateColumnName + " < CURRENT_TIMESTAMP",
+			),
+		).
+		Limit(uint64(limit)).
+		Offset(uint64(offset)).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := connection.QueryContext(
+		ctx,
+		stmt,
+		params...,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err = rows.Close(); err != nil {
+			logging.LogErrorContext(
+				ctx,
+				s.logger,
+				"error during closing SQL rows",
+				err,
+			)
+		}
+	}()
+
+	var groups []entities.Group
+
+	for rows.Next() {
+		group := entities.Group{}
+		columns := db.GetEntityColumns(&group) // Only pointer to use rows.Scan() successfully
+
+		if err = rows.Scan(columns...); err != nil {
+			return nil, err
+		}
+
+		groups = append(groups, group)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return groups, nil
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/app"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/bot"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/config"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/crons/notifications"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/handlers"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/middlewares"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/storage"
@@ -53,6 +54,8 @@ func main() {
 	b.Use(middlewares.Logging(logger))
 	handlers.Prepare(b, useCases, logger, handlers.Default)
 
-	application := app.New(b)
+	cron := notifications.New(b, useCases, logger)
+
+	application := app.New(b, logger, cron, cfg.Notifications)
 	application.Run()
 }

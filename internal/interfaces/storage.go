@@ -35,6 +35,11 @@ type Storage interface {
 	DeletePlant(id int) error
 	GetUserPlants(userID int) ([]entities.Plant, error)
 	CountUserPlants(userID int) (int, error)
+	GetGroupPlants(groupID int) ([]entities.Plant, error)
 	CountGroupPlants(groupID int) (int, error)
 	GetPlant(id int) (*entities.Plant, error)
+
+	// Notifications:
+
+	SaveNotification(notification entities.Notification) (int, error)
 }

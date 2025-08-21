@@ -61,7 +61,7 @@ func AddGroupWateringIntervalCallback(
 					group.Title,
 					group.Description,
 					group.LastWateringDate.Format(dateFormat),
-					getWateringIntervalText(group.WateringInterval),
+					utils.GetWateringInterval(group.WateringInterval),
 					group.NextWateringDate.Format(dateFormat),
 				),
 			},
@@ -112,7 +112,7 @@ func BackToAddGroupWateringIntervalCallback(
 		for _, value := range wateringIntervals {
 			btn := telebot.InlineButton{
 				Unique: utils.GenUniqueParam("watering_interval"),
-				Text:   getWateringIntervalText(value),
+				Text:   utils.GetWateringInterval(value),
 				Data:   strconv.Itoa(value),
 			}
 
@@ -269,7 +269,7 @@ func ConfirmAddGroupCallback(
 					group.Title,
 					group.Description,
 					group.LastWateringDate.Format(dateFormat),
-					getWateringIntervalText(group.WateringInterval),
+					utils.GetWateringInterval(group.WateringInterval),
 					group.NextWateringDate.Format(dateFormat),
 				),
 			},

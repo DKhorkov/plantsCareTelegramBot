@@ -143,6 +143,66 @@ func (s *plantsStorage) CountUserPlants(userID int) (int, error) {
 	return count, nil
 }
 
+func (s *plantsStorage) GetGroupPlants(groupID int) ([]entities.Plant, error) {
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Select(selectAllColumns).
+		From(plantsTableName).
+		Where(sq.Eq{groupIDColumnName: groupID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := connection.QueryContext(
+		ctx,
+		stmt,
+		params...,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err = rows.Close(); err != nil {
+			logging.LogErrorContext(
+				ctx,
+				s.logger,
+				"error during closing SQL rows",
+				err,
+			)
+		}
+	}()
+
+	var plants []entities.Plant
+
+	for rows.Next() {
+		plant := entities.Plant{}
+		columns := db.GetEntityColumns(&plant) // Only pointer to use rows.Scan() successfully
+
+		if err = rows.Scan(columns...); err != nil {
+			return nil, err
+		}
+
+		plants = append(plants, plant)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return plants, nil
+}
+
 func (s *plantsStorage) CountGroupPlants(groupID int) (int, error) {
 	ctx := context.Background()
 

@@ -86,6 +86,10 @@ linters:
         linters:
           - revive
 
+      - path: "internal/utils/texts.go"
+        linters:
+          - revive
+
       - path: "internal/config/config.go"
         linters:
           - mnd
@@ -115,6 +119,15 @@ linters:
           - dupl
 
       - path: "internal/storage/groups.go"
+        linters:
+          - gosec
+          - dupl
+
+      - path: "internal/storage/plants.go"
+        linters:
+          - dupl
+
+      - path: "internal/texts/group.go"
         linters:
           - gosec
 

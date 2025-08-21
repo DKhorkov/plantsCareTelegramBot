@@ -10,6 +10,7 @@ type Storage struct {
 	temporaryStorage
 	groupsStorage
 	plantsStorage
+	notificationsStorage
 }
 
 func New(
@@ -30,6 +31,10 @@ func New(
 			logger:      logger,
 		},
 		plantsStorage: plantsStorage{
+			dbConnector: dbConnector,
+			logger:      logger,
+		},
+		notificationsStorage: notificationsStorage{
 			dbConnector: dbConnector,
 			logger:      logger,
 		},

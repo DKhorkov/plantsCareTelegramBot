@@ -97,3 +97,33 @@ func (s *usersStorage) GetUserByTelegramID(telegramID int) (*entities.User, erro
 
 	return user, nil
 }
+
+func (s *usersStorage) GetUserByID(id int) (*entities.User, error) {
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Select(selectAllColumns).
+		From(usersTableName).
+		Where(sq.Eq{idColumnName: id}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	user := &entities.User{}
+
+	columns := db.GetEntityColumns(user)
+	if err = connection.QueryRowContext(ctx, stmt, params...).Scan(columns...); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

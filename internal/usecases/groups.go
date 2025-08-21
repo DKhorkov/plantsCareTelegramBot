@@ -55,6 +55,19 @@ func (u *groupsUseCases) CreateGroup(group entities.Group) (*entities.Group, err
 	return &group, err
 }
 
+func (u *groupsUseCases) UpdateGroup(group entities.Group) error {
+	err := u.storage.UpdateGroup(group)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update Group for with ID=%d", group.ID),
+			"Error",
+			err,
+		)
+	}
+
+	return err
+}
+
 func (u *groupsUseCases) GroupExists(group entities.Group) (bool, error) {
 	exists, err := u.storage.GroupExists(group)
 	if err != nil {
@@ -79,4 +92,17 @@ func (u *groupsUseCases) GetGroup(id int) (*entities.Group, error) {
 	}
 
 	return group, err
+}
+
+func (u *groupsUseCases) GetGroupsForNotify(limit, offset int) ([]entities.Group, error) {
+	groups, err := u.storage.GetGroupsForNotify(limit, offset)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to get Groups for Notify with limit=%d and offset=%d", limit, offset),
+			"Error",
+			err,
+		)
+	}
+
+	return groups, err
 }
