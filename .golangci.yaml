@@ -131,6 +131,10 @@ linters:
         linters:
           - gosec
 
+      - path: "cmd/main.go"
+        linters:
+          - prealloc
+
       # Run some linter only for test files by excluding its issues for everything else.
       - path-except: _test\.go
         linters:

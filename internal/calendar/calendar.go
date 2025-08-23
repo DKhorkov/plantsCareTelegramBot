@@ -14,7 +14,8 @@ import (
 )
 
 const (
-	monthsPerYear = 12
+	monthsPerYear         = 12
+	loggingTraceSkipLevel = 1
 )
 
 // Calendar represents the main object.
@@ -119,11 +120,19 @@ func (cal *Calendar) addMonthYearRow() {
 			},
 		)
 		if err != nil {
-			cal.logger.Error("Failed to edit reply markup", "Error", err)
+			cal.logger.Error(
+				"Failed to edit reply markup",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 		}
 
 		if err = ctx.Respond(); err != nil {
-			cal.logger.Error("Failed to reply to message", "Error", err)
+			cal.logger.Error(
+				"Failed to reply to message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 		}
 
 		return nil
@@ -163,11 +172,19 @@ func (cal *Calendar) getMonthPickKeyboard() [][]telebot.InlineButton {
 				},
 			)
 			if err != nil {
-				cal.logger.Error("Failed to edit reply markup", "Error", err)
+				cal.logger.Error(
+					"Failed to edit reply markup",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 			}
 
 			if err = ctx.Respond(); err != nil {
-				cal.logger.Error("Failed to reply to message", "Error", err)
+				cal.logger.Error(
+					"Failed to reply to message",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 			}
 
 			return nil
@@ -247,7 +264,11 @@ func (cal *Calendar) addDaysRows() {
 			cal.bot.ProcessUpdate(upd)
 
 			if err = ctx.Respond(); err != nil {
-				cal.logger.Error("Failed to reply to message", "Error", err)
+				cal.logger.Error(
+					"Failed to reply to message",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 			}
 
 			return nil
@@ -299,11 +320,19 @@ func (cal *Calendar) addControlButtonsRow() {
 				},
 			)
 			if err != nil {
-				cal.logger.Error("Failed to edit reply markup", "Error", err)
+				cal.logger.Error(
+					"Failed to edit reply markup",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 			}
 
 			if err = ctx.Respond(); err != nil {
-				cal.logger.Error("Failed to reply to message", "Error", err)
+				cal.logger.Error(
+					"Failed to reply to message",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 			}
 
 			return nil
@@ -335,11 +364,19 @@ func (cal *Calendar) addControlButtonsRow() {
 				},
 			)
 			if err != nil {
-				cal.logger.Error("Failed to edit reply markup", "Error", err)
+				cal.logger.Error(
+					"Failed to edit reply markup",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 			}
 
 			if err = ctx.Respond(); err != nil {
-				cal.logger.Error("Failed to reply to message", "Error", err)
+				cal.logger.Error(
+					"Failed to reply to message",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 			}
 
 			return nil
@@ -382,7 +419,11 @@ func (cal *Calendar) ignoreQuery() func(ctx telebot.Context) error {
 	return func(ctx telebot.Context) error {
 		err := ctx.Respond()
 		if err != nil {
-			cal.logger.Error("Failed to reply to message", "Error", err)
+			cal.logger.Error(
+				"Failed to reply to message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 		}
 
 		return nil

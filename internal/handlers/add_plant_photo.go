@@ -21,7 +21,11 @@ func AddPlantPhoto(
 ) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -35,7 +39,11 @@ func AddPlantPhoto(
 		if temp.MessageID != nil {
 			err = context.Bot().Delete(&telebot.Message{ID: *temp.MessageID, Chat: context.Chat()})
 			if err != nil {
-				logger.Error("Failed to delete message", "Error", err)
+				logger.Error(
+					"Failed to delete message",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 
 				return err
 			}
@@ -48,7 +56,11 @@ func AddPlantPhoto(
 
 		defer func() {
 			if err = photoReader.Close(); err != nil {
-				logger.Error("Failed to close photo reader", "Error", err)
+				logger.Error(
+					"Failed to close photo reader",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 			}
 		}()
 
@@ -94,7 +106,11 @@ func AddPlantPhoto(
 			menu,
 		)
 		if err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -116,7 +132,11 @@ func ConfirmAddPlantCallback(
 
 		plant, err := temp.GetPlant()
 		if err != nil {
-			logger.Error("Failed to get Plant from Temporary", "Error", err)
+			logger.Error(
+				"Failed to get Plant from Temporary",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -125,8 +145,8 @@ func ConfirmAddPlantCallback(
 		if err != nil {
 			logger.Error(
 				fmt.Sprintf("Failed to check Plant existence for user with telegramId=%d", context.Sender().ID),
-				"Error",
-				err,
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
 
 			return err
@@ -141,14 +161,11 @@ func ConfirmAddPlantCallback(
 			if context.Callback() == nil {
 				logger.Warn(
 					"Failed to send Response due to nil callback",
-					"Message",
-					context.Message(),
-					"Sender",
-					context.Sender(),
-					"Chat",
-					context.Chat(),
-					"Callback",
-					context.Callback(),
+					"Message", context.Message(),
+					"Sender", context.Sender(),
+					"Chat", context.Chat(),
+					"Callback", context.Callback(),
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 				)
 
 				return errors.New("failed to send Response due to nil callback")
@@ -161,7 +178,11 @@ func ConfirmAddPlantCallback(
 				},
 			)
 			if err != nil {
-				logger.Error("Failed to send Response", "Error", err)
+				logger.Error(
+					"Failed to send Response",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 
 				return err
 			}
@@ -171,7 +192,11 @@ func ConfirmAddPlantCallback(
 
 		// Удаляем сообщение только если нет такой группы, чтобы отправить корректно CallbackResponse:
 		if err = context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -180,8 +205,8 @@ func ConfirmAddPlantCallback(
 		if err != nil {
 			logger.Error(
 				fmt.Sprintf("Failed to create Plant for user with telegramId=%d", context.Sender().ID),
-				"Error",
-				err,
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
 
 			return err
@@ -191,8 +216,8 @@ func ConfirmAddPlantCallback(
 		if err = useCases.ResetTemporary(int(context.Sender().ID)); err != nil {
 			logger.Error(
 				fmt.Sprintf("Failed to reset Temporary for user with telegramId=%d", context.Sender().ID),
-				"Error",
-				err,
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
 		}
 
@@ -221,7 +246,11 @@ func ConfirmAddPlantCallback(
 			menu,
 		)
 		if err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}

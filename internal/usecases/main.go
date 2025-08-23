@@ -14,6 +14,10 @@ type UseCases struct {
 	notificationsUseCases
 }
 
+const (
+	loggingTraceSkipLevel = 1
+)
+
 func New(
 	storage interfaces.Storage,
 	logger logging.Logger,

@@ -9,28 +9,28 @@ import (
 	"github.com/DKhorkov/libs/logging"
 	"gopkg.in/telebot.v4"
 
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/config"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 )
 
+const (
+	loggingTraceSkipLevel = 1
+)
+
 type App struct {
-	bot                 *telebot.Bot
-	logger              logging.Logger
-	notificationsCron   interfaces.Cron
-	notificationsConfig config.NotificationsConfig
+	bot    *telebot.Bot
+	logger logging.Logger
+	crons  []interfaces.Cron
 }
 
 func New(
 	bot *telebot.Bot,
 	logger logging.Logger,
-	notificationsCron interfaces.Cron,
-	notificationsConfig config.NotificationsConfig,
+	crons []interfaces.Cron,
 ) *App {
 	return &App{
-		bot:                 bot,
-		logger:              logger,
-		notificationsCron:   notificationsCron,
-		notificationsConfig: notificationsConfig,
+		bot:    bot,
+		logger: logger,
+		crons:  crons,
 	}
 }
 
@@ -40,19 +40,18 @@ func (application *App) Run() {
 
 	// Запускаем кроны для отправки уведомлений
 	wg := new(sync.WaitGroup)
-	for i := range application.notificationsConfig.CronsCount {
+	for _, cron := range application.crons {
 		wg.Add(1)
 
 		go func() {
 			defer wg.Done()
 
-			err := application.notificationsCron.Run(
-				application.notificationsConfig.GroupsLimitPerQuery,
-				application.notificationsConfig.GroupsLimitPerQuery*i,
-				application.notificationsConfig.CronCheckInterval,
-			)
-			if err != nil {
-				application.logger.Error("Error running cron job", "Error", err)
+			if err := cron.Run(); err != nil {
+				application.logger.Error(
+					"Error running cron job",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 			}
 		}()
 	}
@@ -65,8 +64,10 @@ func (application *App) Run() {
 	<-stopChannel
 
 	// Убиваем кроны до бота, чтобы не резать отправки:
-	if err := application.notificationsCron.Stop(); err != nil {
-		application.logger.Error("Error stopping cron job", "Error", err)
+	for _, cron := range application.crons {
+		if err := cron.Stop(); err != nil {
+			application.logger.Error("Error stopping cron job", "Error", err)
+		}
 	}
 
 	// Дожидаемся остановки всех горутин:

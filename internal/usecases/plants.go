@@ -19,8 +19,8 @@ func (u *plantsUseCases) GetUserPlants(userID int) ([]entities.Plant, error) {
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to get Plants for User with ID=%d", userID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 
@@ -32,8 +32,8 @@ func (u *plantsUseCases) CountUserPlants(userID int) (int, error) {
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to count Plants for User with ID=%d", userID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 
@@ -45,8 +45,8 @@ func (u *plantsUseCases) GetGroupPlants(groupID int) ([]entities.Plant, error) {
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to get Plants for Group with ID=%d", groupID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 
@@ -58,8 +58,8 @@ func (u *plantsUseCases) CountGroupPlants(groupID int) (int, error) {
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to count Plants for Group with ID=%d", groupID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 
@@ -71,8 +71,8 @@ func (u *plantsUseCases) CreatePlant(plant entities.Plant) (*entities.Plant, err
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to create Plant for Group with ID=%d", plant.GroupID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 
@@ -86,8 +86,8 @@ func (u *plantsUseCases) PlantExists(plant entities.Plant) (bool, error) {
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to check Plant existence for Group with ID=%d", plant.GroupID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 

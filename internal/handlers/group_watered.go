@@ -15,7 +15,11 @@ func GroupWateredCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger l
 	return func(context telebot.Context) error {
 		groupID, err := strconv.Atoi(context.Data())
 		if err != nil {
-			logger.Error("Failed to parse groupID", "Error", err)
+			logger.Error(
+				"Failed to parse groupID",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -36,21 +40,22 @@ func GroupWateredCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger l
 		if context.Callback() == nil {
 			logger.Warn(
 				"Failed to send Response due to nil callback",
-				"Message",
-				context.Message(),
-				"Sender",
-				context.Sender(),
-				"Chat",
-				context.Chat(),
-				"Callback",
-				context.Callback(),
+				"Message", context.Message(),
+				"Sender", context.Sender(),
+				"Chat", context.Chat(),
+				"Callback", context.Callback(),
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
 
 			return errors.New("failed to send Response due to nil callback")
 		}
 
 		if _, err = context.Bot().EditReplyMarkup(context.Message(), &telebot.ReplyMarkup{}); err != nil {
-			logger.Error("Failed to delete ReplyMarkup", "Error", err)
+			logger.Error(
+				"Failed to delete ReplyMarkup",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -62,7 +67,11 @@ func GroupWateredCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger l
 			},
 		)
 		if err != nil {
-			logger.Error("Failed to send Response", "Error", err)
+			logger.Error(
+				"Failed to send Response",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/DKhorkov/libs/db"
@@ -24,7 +25,11 @@ const (
 	lastWateringDateColumnName = "last_watering_date"
 	nextWateringDateColumnName = "next_watering_date"
 	wateringIntervalColumnName = "watering_interval"
+	updatedAtColumnName        = "updated_at"
+	createdAtColumnName        = "created_at"
 	selectExists               = "1"
+	asc                        = "ASC"
+	desc                       = "DESC"
 )
 
 type groupsStorage struct {
@@ -285,6 +290,14 @@ func (s *groupsStorage) GetGroupsForNotify(limit, offset int) ([]entities.Group,
 		).
 		Limit(uint64(limit)).
 		Offset(uint64(offset)).
+		OrderBy( // В порядке формирования сценариев
+			fmt.Sprintf(
+				"%s.%s %s",
+				groupsTableName,
+				idColumnName,
+				asc,
+			),
+		).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {

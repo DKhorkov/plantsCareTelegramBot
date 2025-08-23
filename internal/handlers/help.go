@@ -11,13 +11,21 @@ import (
 func Help(_ *telebot.Bot, _ interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
-			logger.Error("Failed to delete /help message", "Error", err)
+			logger.Error(
+				"Failed to delete /help message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
 
 		if err := context.Send(texts.OnHelp); err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}

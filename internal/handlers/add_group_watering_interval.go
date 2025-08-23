@@ -23,14 +23,22 @@ func AddGroupWateringIntervalCallback(
 ) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
 
 		wateringInterval, err := strconv.Atoi(context.Data())
 		if err != nil {
-			logger.Error("Failed to parse watering interval", "Error", err)
+			logger.Error(
+				"Failed to parse watering interval",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -68,7 +76,11 @@ func AddGroupWateringIntervalCallback(
 			menu,
 		)
 		if err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -84,7 +96,11 @@ func BackToAddGroupWateringIntervalCallback(
 ) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -97,7 +113,11 @@ func BackToAddGroupWateringIntervalCallback(
 		// Получаем группу для корректного отображения данных прошлых этапов:
 		group, err := temp.GetGroup()
 		if err != nil {
-			logger.Error("Failed to get Group from Temporary", "Error", err)
+			logger.Error(
+				"Failed to get Group from Temporary",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -147,7 +167,11 @@ func BackToAddGroupWateringIntervalCallback(
 			menu,
 		)
 		if err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -174,7 +198,11 @@ func ConfirmAddGroupCallback(
 
 		group, err := temp.GetGroup()
 		if err != nil {
-			logger.Error("Failed to get Group from Temporary", "Error", err)
+			logger.Error(
+				"Failed to get Group from Temporary",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -183,8 +211,8 @@ func ConfirmAddGroupCallback(
 		if err != nil {
 			logger.Error(
 				fmt.Sprintf("Failed to check Group existence for user with telegramId=%d", context.Sender().ID),
-				"Error",
-				err,
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
 
 			return err
@@ -194,14 +222,11 @@ func ConfirmAddGroupCallback(
 			if context.Callback() == nil {
 				logger.Warn(
 					"Failed to send Response due to nil callback",
-					"Message",
-					context.Message(),
-					"Sender",
-					context.Sender(),
-					"Chat",
-					context.Chat(),
-					"Callback",
-					context.Callback(),
+					"Message", context.Message(),
+					"Sender", context.Sender(),
+					"Chat", context.Chat(),
+					"Callback", context.Callback(),
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 				)
 
 				return errors.New("failed to send Response due to nil callback")
@@ -214,7 +239,11 @@ func ConfirmAddGroupCallback(
 				},
 			)
 			if err != nil {
-				logger.Error("Failed to send Response", "Error", err)
+				logger.Error(
+					"Failed to send Response",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 
 				return err
 			}
@@ -224,7 +253,11 @@ func ConfirmAddGroupCallback(
 
 		// Удаляем сообщение только если нет такой группы, чтобы отправить корректно CallbackResponse:
 		if err = context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -233,8 +266,8 @@ func ConfirmAddGroupCallback(
 		if err != nil {
 			logger.Error(
 				fmt.Sprintf("Failed to create Group for user with telegramId=%d", context.Sender().ID),
-				"Error",
-				err,
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
 
 			return err
@@ -244,8 +277,8 @@ func ConfirmAddGroupCallback(
 		if err = useCases.ResetTemporary(int(context.Sender().ID)); err != nil {
 			logger.Error(
 				fmt.Sprintf("Failed to reset Temporary for user with telegramId=%d", context.Sender().ID),
-				"Error",
-				err,
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
 		}
 
@@ -276,7 +309,11 @@ func ConfirmAddGroupCallback(
 			menu,
 		)
 		if err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}

@@ -19,8 +19,8 @@ func (u *groupsUseCases) GetUserGroups(userID int) ([]entities.Group, error) {
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to get Groups for User with ID=%d", userID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 
@@ -32,8 +32,8 @@ func (u *groupsUseCases) CountUserGroups(userID int) (int, error) {
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to count Groups for User with ID=%d", userID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 
@@ -45,8 +45,8 @@ func (u *groupsUseCases) CreateGroup(group entities.Group) (*entities.Group, err
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to create Group for User with ID=%d", group.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 
@@ -60,8 +60,8 @@ func (u *groupsUseCases) UpdateGroup(group entities.Group) error {
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update Group for with ID=%d", group.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 
@@ -73,8 +73,8 @@ func (u *groupsUseCases) GroupExists(group entities.Group) (bool, error) {
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to check Group existence for User with ID=%d", group.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 
@@ -86,8 +86,8 @@ func (u *groupsUseCases) GetGroup(id int) (*entities.Group, error) {
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to get Group with ID=%d", id),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 
@@ -99,8 +99,8 @@ func (u *groupsUseCases) GetGroupsForNotify(limit, offset int) ([]entities.Group
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to get Groups for Notify with limit=%d and offset=%d", limit, offset),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 

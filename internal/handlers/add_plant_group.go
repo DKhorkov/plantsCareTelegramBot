@@ -24,7 +24,11 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 	return func(context telebot.Context) error {
 		groupID, err := strconv.Atoi(context.Data())
 		if err != nil {
-			logger.Error("Failed to parse groupID", "Error", err)
+			logger.Error(
+				"Failed to parse groupID",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -38,14 +42,11 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 			if context.Callback() == nil {
 				logger.Warn(
 					"Failed to send Response due to nil callback",
-					"Message",
-					context.Message(),
-					"Sender",
-					context.Sender(),
-					"Chat",
-					context.Chat(),
-					"Callback",
-					context.Callback(),
+					"Message", context.Message(),
+					"Sender", context.Sender(),
+					"Chat", context.Chat(),
+					"Callback", context.Callback(),
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 				)
 
 				return errors.New("failed to send Response due to nil callback")
@@ -58,7 +59,11 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 				},
 			)
 			if err != nil {
-				logger.Error("Failed to send Response", "Error", err)
+				logger.Error(
+					"Failed to send Response",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 
 				return err
 			}
@@ -67,7 +72,11 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 		}
 
 		if err = context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -113,7 +122,11 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 			menu,
 		)
 		if err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -129,7 +142,11 @@ func BackToAddPlantGroupCallback(
 ) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -142,7 +159,11 @@ func BackToAddPlantGroupCallback(
 		// Получаем растение для корректного отображения данных прошлых этапов:
 		plant, err := temp.GetPlant()
 		if err != nil {
-			logger.Error("Failed to get Plant from Temporary", "Error", err)
+			logger.Error(
+				"Failed to get Plant from Temporary",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -196,7 +217,11 @@ func BackToAddPlantGroupCallback(
 			menu,
 		)
 		if err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}

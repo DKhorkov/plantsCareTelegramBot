@@ -43,11 +43,11 @@ func New() Config {
 			},
 		},
 		Notifications: NotificationsConfig{
-			GroupsLimitPerQuery: loadenv.GetEnvAsInt("GROUPS_LIMIT_PER_QUERY", 100),
+			GroupsLimitPerQuery: loadenv.GetEnvAsInt("GROUPS_LIMIT_PER_QUERY", 10),
 			CronCheckInterval: time.Minute * time.Duration(
-				loadenv.GetEnvAsInt("CRON_CHECK_INTERVAL", 1),
+				loadenv.GetEnvAsInt("CRON_CHECK_INTERVAL", 5),
 			),
-			CronsCount: loadenv.GetEnvAsInt("CRONS_COUNT", 1),
+			CronsCount: loadenv.GetEnvAsInt("CRONS_COUNT", 3),
 		},
 	}
 }

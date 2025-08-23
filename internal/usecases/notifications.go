@@ -19,8 +19,8 @@ func (u *notificationsUseCases) SaveNotification(notification entities.Notificat
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to save Notification for Group with ID=%d", notification.GroupID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 

@@ -22,7 +22,11 @@ func AcceptAddPlantPhotoCallback(
 ) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -35,7 +39,11 @@ func AcceptAddPlantPhotoCallback(
 		// Получаем растение для корректного отображения данных прошлых этапов:
 		plant, err := temp.GetPlant()
 		if err != nil {
-			logger.Error("Failed to get Plant from Temporary", "Error", err)
+			logger.Error(
+				"Failed to get Plant from Temporary",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -71,7 +79,11 @@ func AcceptAddPlantPhotoCallback(
 			menu,
 		)
 		if err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -96,7 +108,11 @@ func BackToAddPlantPhotoQuestionCallback(
 ) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -109,7 +125,11 @@ func BackToAddPlantPhotoQuestionCallback(
 		// Получаем растение для корректного отображения данных прошлых этапов:
 		plant, err := temp.GetPlant()
 		if err != nil {
-			logger.Error("Failed to get Plant from Temporary", "Error", err)
+			logger.Error(
+				"Failed to get Plant from Temporary",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -150,7 +170,11 @@ func BackToAddPlantPhotoQuestionCallback(
 			menu,
 		)
 		if err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -176,14 +200,22 @@ func RejectAddPlantPhotoCallback(
 ) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
 
 		photo, err := os.ReadFile(paths.PlantBasePhotoImage)
 		if err != nil {
-			logger.Error("Error reading file", "Error", err)
+			logger.Error(
+				"Error reading file",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -224,7 +256,11 @@ func RejectAddPlantPhotoCallback(
 			menu,
 		)
 		if err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}

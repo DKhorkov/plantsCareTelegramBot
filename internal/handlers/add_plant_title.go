@@ -21,14 +21,22 @@ const (
 func AddPlantTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
 
 		if len(context.Message().Text) > plantTitleMaxLength {
 			if err := context.Send(fmt.Sprintf(texts.PlantTitleTooLong, plantTitleMaxLength)); err != nil {
-				logger.Error("Failed to send message", "Error", err)
+				logger.Error(
+					"Failed to send message",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 
 				return err
 			}
@@ -44,7 +52,11 @@ func AddPlantTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 		if temp.MessageID != nil {
 			err = context.Bot().Delete(&telebot.Message{ID: *temp.MessageID, Chat: context.Chat()})
 			if err != nil {
-				logger.Error("Failed to delete message", "Error", err)
+				logger.Error(
+					"Failed to delete message",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
 
 				return err
 			}
@@ -78,7 +90,11 @@ func AddPlantTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 			menu,
 		)
 		if err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -98,7 +114,11 @@ func SkipPlantDescriptionCallback(
 ) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}
@@ -157,7 +177,11 @@ func SkipPlantDescriptionCallback(
 			menu,
 		)
 		if err != nil {
-			logger.Error("Failed to send message", "Error", err)
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
 			return err
 		}

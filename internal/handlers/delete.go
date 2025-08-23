@@ -7,11 +7,19 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 )
 
+const (
+	loggingTraceSkipLevel = 1
+)
+
 func Delete(_ *telebot.Bot, _ interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		err := context.Delete()
 		if err != nil {
-			logger.Error("Failed to delete message", "Error", err)
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 		}
 
 		return err

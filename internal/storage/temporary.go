@@ -2,7 +2,6 @@ package storage
 
 import (
 	"context"
-	"time"
 
 	"github.com/DKhorkov/libs/db"
 	"github.com/DKhorkov/libs/logging"
@@ -17,7 +16,6 @@ const (
 	stepColumnName      = "step"
 	messageIDColumnName = "message_id"
 	dataColumnName      = "data"
-	updatedAtColumnName = "updated_at"
 )
 
 type temporaryStorage struct {
@@ -76,7 +74,6 @@ func (s *temporaryStorage) UpdateTemporary(temp entities.Temporary) error {
 		Set(stepColumnName, temp.Step).
 		Set(messageIDColumnName, temp.MessageID).
 		Set(dataColumnName, temp.Data).
-		Set(updatedAtColumnName, time.Now()).
 		PlaceholderFormat(sq.Dollar). // pq postgres driver works only with $ placeholders
 		ToSql()
 	if err != nil {

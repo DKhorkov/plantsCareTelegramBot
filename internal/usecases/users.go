@@ -25,8 +25,8 @@ func (u *usersUseCases) SaveUser(user entities.User) (int, error) {
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to save User with telegramID=%d", user.TelegramID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return 0, err
@@ -41,10 +41,9 @@ func (u *usersUseCases) SaveUser(user entities.User) (int, error) {
 	if err = u.storage.CreateTemporary(temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to save Temporary for User with ID=%d", userID),
-			"Temp",
-			temp,
-			"Error",
-			err,
+			"Temp", temp,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return 0, err
@@ -58,8 +57,8 @@ func (u *usersUseCases) GetUserByTelegramID(telegramID int) (*entities.User, err
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to get User with telegramID=%d", telegramID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -73,8 +72,8 @@ func (u *usersUseCases) GetUserByID(id int) (*entities.User, error) {
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to get User with ID=%d", id),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err

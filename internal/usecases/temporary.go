@@ -22,8 +22,8 @@ func (u *temporaryUseCases) GetUserTemporary(telegramID int) (*entities.Temporar
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to get Temporary User with telegramID=%d", telegramID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -33,8 +33,8 @@ func (u *temporaryUseCases) GetUserTemporary(telegramID int) (*entities.Temporar
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to get Temporary for User with ID=%d", user.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -53,8 +53,8 @@ func (u *temporaryUseCases) SetTemporaryStep(telegramID, step int) error {
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return err
@@ -73,8 +73,8 @@ func (u *temporaryUseCases) SetTemporaryMessage(telegramID int, messageID *int) 
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return err
@@ -98,8 +98,8 @@ func (u *temporaryUseCases) AddGroupTitle(telegramID int, title string) (*entiti
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to marshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -112,8 +112,8 @@ func (u *temporaryUseCases) AddGroupTitle(telegramID int, title string) (*entiti
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -132,8 +132,8 @@ func (u *temporaryUseCases) AddGroupDescription(telegramID int, description stri
 	if err = json.Unmarshal(temp.Data, group); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to unmarshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -145,8 +145,8 @@ func (u *temporaryUseCases) AddGroupDescription(telegramID int, description stri
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to marshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -159,8 +159,8 @@ func (u *temporaryUseCases) AddGroupDescription(telegramID int, description stri
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -182,8 +182,8 @@ func (u *temporaryUseCases) AddGroupLastWateringDate(
 	if err = json.Unmarshal(temp.Data, group); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to unmarshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -195,8 +195,8 @@ func (u *temporaryUseCases) AddGroupLastWateringDate(
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to marshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -208,8 +208,8 @@ func (u *temporaryUseCases) AddGroupLastWateringDate(
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -228,8 +228,8 @@ func (u *temporaryUseCases) AddGroupWateringInterval(telegramID, wateringInterva
 	if err = json.Unmarshal(temp.Data, group); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to unmarshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -250,8 +250,8 @@ func (u *temporaryUseCases) AddGroupWateringInterval(telegramID, wateringInterva
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to marshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -263,8 +263,8 @@ func (u *temporaryUseCases) AddGroupWateringInterval(telegramID, wateringInterva
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -286,8 +286,8 @@ func (u *temporaryUseCases) ResetTemporary(telegramID int) error {
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return err
@@ -311,8 +311,8 @@ func (u *temporaryUseCases) AddPlantTitle(telegramID int, title string) (*entiti
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to marshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -325,8 +325,8 @@ func (u *temporaryUseCases) AddPlantTitle(telegramID int, title string) (*entiti
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -345,8 +345,8 @@ func (u *temporaryUseCases) AddPlantDescription(telegramID int, description stri
 	if err = json.Unmarshal(temp.Data, plant); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to unmarshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -358,8 +358,8 @@ func (u *temporaryUseCases) AddPlantDescription(telegramID int, description stri
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to marshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -372,8 +372,8 @@ func (u *temporaryUseCases) AddPlantDescription(telegramID int, description stri
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -392,8 +392,8 @@ func (u *temporaryUseCases) AddPlantGroup(telegramID, groupID int) (*entities.Pl
 	if err = json.Unmarshal(temp.Data, plant); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to unmarshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -405,8 +405,8 @@ func (u *temporaryUseCases) AddPlantGroup(telegramID, groupID int) (*entities.Pl
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to marshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -418,8 +418,8 @@ func (u *temporaryUseCases) AddPlantGroup(telegramID, groupID int) (*entities.Pl
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -438,8 +438,8 @@ func (u *temporaryUseCases) AddPlantPhoto(telegramID int, photo []byte) (*entiti
 	if err = json.Unmarshal(temp.Data, plant); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to unmarshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -451,8 +451,8 @@ func (u *temporaryUseCases) AddPlantPhoto(telegramID int, photo []byte) (*entiti
 	if err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to marshal data for User with ID=%d", temp.UserID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
@@ -465,8 +465,8 @@ func (u *temporaryUseCases) AddPlantPhoto(telegramID int, photo []byte) (*entiti
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(
 			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
-			"Error",
-			err,
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 
 		return nil, err
