@@ -73,13 +73,23 @@ var (
 		Text:   "Назад ↩️",
 	}
 
-	ChangePlant = telebot.InlineButton{
-		Unique: "changePlant",
-		Text:   "Редактировать растение",
+	ManagePlantChange = telebot.InlineButton{
+		Unique: "managePlantChange",
+		Text:   "Редактировать растение 🛠",
 	}
 
-	DeletePlant = telebot.InlineButton{
-		Unique: "deletePlant",
-		Text:   "Удалить растение",
+	ManagePlantRemoval = telebot.InlineButton{
+		Unique: "managePlantRemoval",
+		Text:   "Удалить растение 🗑",
+	}
+
+	ConfirmPlantRemoval = telebot.InlineButton{
+		Unique: "confirmPlantRemoval",
+		Text:   "Подтвердить удаление ✅",
+	}
+
+	BackToManagePlantAction = telebot.InlineButton{
+		Unique: "backToManagePlantAction",
+		Text:   "Назад ↩️",
 	}
 )

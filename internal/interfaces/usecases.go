@@ -26,7 +26,6 @@ type UseCases interface {
 
 	// Plants:
 
-	GetUserPlants(userID int) ([]entities.Plant, error)
 	CountUserPlants(userID int) (int, error)
 	GetGroupPlants(groupID int) ([]entities.Plant, error)
 	CountGroupPlants(groupID int) (int, error)
@@ -51,6 +50,7 @@ type UseCases interface {
 	AddPlantGroup(telegramID, groupID int) (*entities.Plant, error)
 	AddPlantPhoto(telegramID int, photo []byte) (*entities.Plant, error)
 	ManagePlant(telegramID, plantID int) error
+	DeletePlant(id int) error
 
 	// Notifications:
 

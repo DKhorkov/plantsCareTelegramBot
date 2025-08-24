@@ -14,19 +14,6 @@ type plantsUseCases struct {
 	logger  logging.Logger
 }
 
-func (u *plantsUseCases) GetUserPlants(userID int) ([]entities.Plant, error) {
-	plants, err := u.storage.GetUserPlants(userID)
-	if err != nil {
-		u.logger.Error(
-			fmt.Sprintf("Failed to get Plants for User with ID=%d", userID),
-			"Error", err,
-			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-		)
-	}
-
-	return plants, err
-}
-
 func (u *plantsUseCases) CountUserPlants(userID int) (int, error) {
 	count, err := u.storage.CountUserPlants(userID)
 	if err != nil {
@@ -105,4 +92,17 @@ func (u *plantsUseCases) GetPlant(id int) (*entities.Plant, error) {
 	}
 
 	return plant, err
+}
+
+func (u *plantsUseCases) DeletePlant(id int) error {
+	err := u.storage.DeletePlant(id)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to delete Plant with ID=%d", id),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+	}
+
+	return err
 }

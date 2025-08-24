@@ -108,11 +108,31 @@ func (s *plantsStorage) PlantExists(plant entities.Plant) (bool, error) {
 }
 
 func (s *plantsStorage) DeletePlant(id int) error {
-	return nil
-}
+	ctx := context.Background()
 
-func (s *plantsStorage) GetUserPlants(userID int) ([]entities.Plant, error) {
-	return []entities.Plant{}, nil
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Delete(plantsTableName).
+		Where(sq.Eq{idColumnName: id}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	_, err = connection.ExecContext(
+		ctx,
+		stmt,
+		params...,
+	)
+
+	return err
 }
 
 func (s *plantsStorage) CountUserPlants(userID int) (int, error) {

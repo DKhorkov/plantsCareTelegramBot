@@ -33,7 +33,6 @@ type Storage interface {
 	UpdatePlant(plant entities.Plant) error
 	PlantExists(plant entities.Plant) (bool, error)
 	DeletePlant(id int) error
-	GetUserPlants(userID int) ([]entities.Plant, error)
 	CountUserPlants(userID int) (int, error)
 	GetGroupPlants(groupID int) ([]entities.Plant, error)
 	CountGroupPlants(groupID int) (int, error)

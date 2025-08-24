@@ -57,10 +57,10 @@ func ManagePlantCallback(
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.ChangePlant,
+					buttons.ManagePlantChange,
 				},
 				{
-					buttons.DeletePlant,
+					buttons.ManagePlantRemoval,
 				},
 				{
 					buttons.BackToManagePlant,

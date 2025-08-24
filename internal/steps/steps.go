@@ -16,4 +16,5 @@ const (
 	ManagePlantsChooseGroup
 	ManagePlant
 	ManagePlantAction
+	ManagePlantRemoval
 )

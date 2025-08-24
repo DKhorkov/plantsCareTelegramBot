@@ -118,6 +118,10 @@ linters:
         linters:
           - dupl
 
+      - path: "internal/handlers/manage_plant_removal.go"
+        linters:
+          - dupl
+
       - path: "internal/storage/groups.go"
         linters:
           - gosec
