@@ -62,4 +62,24 @@ var (
 		Unique: "createAnotherPlant",
 		Text:   "Добавить еще одно растение",
 	}
+
+	BackToManagePlantsChooseGroup = telebot.InlineButton{
+		Unique: "backToManagePlantsChooseGroup",
+		Text:   "Назад ↩️",
+	}
+
+	BackToManagePlant = telebot.InlineButton{
+		Unique: "backToManagePlant",
+		Text:   "Назад ↩️",
+	}
+
+	ChangePlant = telebot.InlineButton{
+		Unique: "changePlant",
+		Text:   "Редактировать растение",
+	}
+
+	DeletePlant = telebot.InlineButton{
+		Unique: "deletePlant",
+		Text:   "Удалить растение",
+	}
 )

@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/DKhorkov/libs/logging"
 	"gopkg.in/telebot.v4"
@@ -13,10 +14,12 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
 const (
-	groupsPerUserLimit = 5
+	groupsPerUserLimit             = 5
+	managePlantsGroupButtonsPerRaw = 1
 )
 
 func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
@@ -41,12 +44,6 @@ func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) 
 			},
 		)
 		if err != nil {
-			return err
-		}
-
-		// TODO при проблемах логики следует сделать в рамках транзакции.
-		// TODO Тут повторяем вне юзкейсов, чтобы работало даже вне повторной регистрации.
-		if err = useCases.ResetTemporary(int(context.Sender().ID)); err != nil {
 			return err
 		}
 
@@ -92,6 +89,12 @@ func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) 
 				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
 
+			return err
+		}
+
+		// TODO при проблемах логики следует сделать в рамках транзакции.
+		// TODO Тут повторяем вне юзкейсов, чтобы работало даже вне повторной регистрации.
+		if err = useCases.ResetTemporary(int(context.Sender().ID)); err != nil {
 			return err
 		}
 
@@ -154,11 +157,6 @@ func AddGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 			return err
 		}
 
-		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupTitle); err != nil {
-			return err
-		}
-
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
@@ -187,6 +185,11 @@ func AddGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 			return err
 		}
 
+		// TODO при проблемах логики следует сделать в рамках транзакции
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupTitle); err != nil {
+			return err
+		}
+
 		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), &msg.ID); err != nil {
 			return err
 		}
@@ -204,11 +207,6 @@ func AddPlantCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
 
-			return err
-		}
-
-		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err := useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddPlantTitle); err != nil {
 			return err
 		}
 
@@ -240,7 +238,104 @@ func AddPlantCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 			return err
 		}
 
+		// TODO при проблемах логики следует сделать в рамках транзакции
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddPlantTitle); err != nil {
+			return err
+		}
+
 		if err = useCases.SetTemporaryMessage(int(context.Sender().ID), &msg.ID); err != nil {
+			return err
+		}
+
+		return nil
+	}
+}
+
+func ManagePlantsCallback(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+	return func(context telebot.Context) error {
+		if err := context.Delete(); err != nil {
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
+		}
+
+		user, err := useCases.GetUserByTelegramID(int(context.Sender().ID))
+		if err != nil {
+			return err
+		}
+
+		groups, err := useCases.GetUserGroups(user.ID)
+		if err != nil {
+			return err
+		}
+
+		// Показываем только те сценарии, где есть растения:
+		var groupsWithPlants []entities.Group
+
+		for _, group := range groups {
+			plants, err := useCases.GetGroupPlants(group.ID)
+			if err != nil {
+				return err
+			}
+
+			if len(plants) > 0 {
+				groupsWithPlants = append(groupsWithPlants, group)
+			}
+		}
+
+		menu := &telebot.ReplyMarkup{
+			ResizeKeyboard: true,
+			InlineKeyboard: [][]telebot.InlineButton{},
+		}
+
+		var row []telebot.InlineButton
+
+		for _, group := range groupsWithPlants {
+			btn := telebot.InlineButton{
+				Unique: utils.GenUniqueParam("manage_plants_group"),
+				Text:   group.Title,
+				Data:   strconv.Itoa(group.ID),
+			}
+
+			bot.Handle(&btn, ManagePlantsGroupCallback(bot, useCases, logger))
+
+			row = append(row, btn)
+			if len(row) == managePlantsGroupButtonsPerRaw {
+				menu.InlineKeyboard = append(menu.InlineKeyboard, row)
+				row = []telebot.InlineButton{}
+			}
+		}
+
+		menu.InlineKeyboard = append(
+			menu.InlineKeyboard,
+			[]telebot.InlineButton{
+				buttons.BackToStart,
+			},
+		)
+
+		err = context.Send(
+			&telebot.Photo{
+				File:    telebot.FromDisk(paths.ManagePlantsChooseGroupImage),
+				Caption: texts.ManagePlantsChooseGroup,
+			},
+			menu,
+		)
+		if err != nil {
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
+		}
+
+		// TODO при проблемах логики следует сделать в рамках транзакции
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.ManagePlantsChooseGroup); err != nil {
 			return err
 		}
 

@@ -93,3 +93,16 @@ func (u *plantsUseCases) PlantExists(plant entities.Plant) (bool, error) {
 
 	return exists, err
 }
+
+func (u *plantsUseCases) GetPlant(id int) (*entities.Plant, error) {
+	plant, err := u.storage.GetPlant(id)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to get Plant with ID=%d", id),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+	}
+
+	return plant, err
+}

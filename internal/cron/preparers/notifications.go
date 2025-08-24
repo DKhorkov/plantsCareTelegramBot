@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/DKhorkov/libs/logging"
@@ -17,11 +18,12 @@ import (
 )
 
 const (
-	dateFormat = "02.01.2006"
-	sendHour   = 12
+	dateFormat            = "02.01.2006"
+	sendHour              = 12
+	loggingTraceSkipLevel = 1
 )
 
-var notifiedGroups = make(map[int]time.Time)
+var notifiedGroups = new(sync.Map)
 
 type NotificationsPreparer struct {
 	bot      *telebot.Bot
@@ -81,8 +83,18 @@ func (p *NotificationsPreparer) canNotifyByTime() bool {
 }
 
 func (p *NotificationsPreparer) alreadyNotified(group entities.Group) bool {
-	date, exists := notifiedGroups[group.ID]
+	value, exists := notifiedGroups.Load(group.ID)
 	if !exists {
+		return false
+	}
+
+	date, ok := value.(time.Time)
+	if !ok {
+		p.logger.Error(
+			"Failed to parse date",
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+
 		return false
 	}
 
@@ -158,7 +170,7 @@ func (p *NotificationsPreparer) notify(group entities.Group) error {
 	}
 
 	// Сохраняем информаци об отправке уведомления пользователю по сценарию:
-	notifiedGroups[group.ID] = time.Now()
+	notifiedGroups.Store(group.ID, time.Now())
 
 	notification := &entities.Notification{
 		GroupID:   group.ID,

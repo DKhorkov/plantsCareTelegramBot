@@ -474,3 +474,41 @@ func (u *temporaryUseCases) AddPlantPhoto(telegramID int, photo []byte) (*entiti
 
 	return plant, nil
 }
+
+func (u *temporaryUseCases) ManagePlant(telegramID, plantID int) error {
+	temp, err := u.GetUserTemporary(telegramID)
+	if err != nil {
+		return err
+	}
+
+	plant := &entities.Plant{
+		ID: plantID,
+	}
+
+	data, err := json.Marshal(plant)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to marshal data for User with ID=%d", temp.UserID),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+
+		return err
+	}
+
+	temp.Data = data
+	temp.Step = steps.ManagePlantAction
+	temp.MessageID = nil // not to delete already deleted message
+
+	if err = u.storage.UpdateTemporary(*temp); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+
+		return err
+	}
+
+	return nil
+}

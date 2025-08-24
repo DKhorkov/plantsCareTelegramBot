@@ -232,5 +232,31 @@ func (s *plantsStorage) CountGroupPlants(groupID int) (int, error) {
 }
 
 func (s *plantsStorage) GetPlant(id int) (*entities.Plant, error) {
-	return nil, nil
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Select(selectAllColumns).
+		From(plantsTableName).
+		Where(sq.Eq{idColumnName: id}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	plant := &entities.Plant{}
+
+	columns := db.GetEntityColumns(plant)
+	if err = connection.QueryRowContext(ctx, stmt, params...).Scan(columns...); err != nil {
+		return nil, err
+	}
+
+	return plant, nil
 }

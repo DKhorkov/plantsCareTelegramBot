@@ -13,4 +13,7 @@ const (
 	AddPlantPhotoQuestion
 	AddPlantPhoto
 	ConfirmAddPlant
+	ManagePlantsChooseGroup
+	ManagePlant
+	ManagePlantAction
 )
