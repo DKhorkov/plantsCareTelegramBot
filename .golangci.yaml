@@ -68,6 +68,10 @@ linters:
         linters:
           - revive
 
+      - path: "internal/interfaces/cron.go"
+        linters:
+          - revive
+
       - path: "internal/calendar/calendar.go"
         linters:
           - nestif
@@ -81,6 +85,7 @@ linters:
       - path: "internal/utils/random.go"
         linters:
           - gosec
+          - revive
 
       - path: "internal/utils/strings.go"
         linters:
