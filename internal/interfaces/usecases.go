@@ -32,6 +32,8 @@ type UseCases interface {
 	CreatePlant(plant entities.Plant) (*entities.Plant, error)
 	PlantExists(plant entities.Plant) (bool, error)
 	GetPlant(id int) (*entities.Plant, error)
+	UpdatePlant(plant entities.Plant) error
+	DeletePlant(id int) error
 
 	// Temporary:
 
@@ -50,7 +52,6 @@ type UseCases interface {
 	AddPlantGroup(telegramID, groupID int) (*entities.Plant, error)
 	AddPlantPhoto(telegramID int, photo []byte) (*entities.Plant, error)
 	ManagePlant(telegramID, plantID int) error
-	DeletePlant(id int) error
 
 	// Notifications:
 

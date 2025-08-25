@@ -95,9 +95,10 @@ func (s *groupsStorage) UpdateGroup(group entities.Group) error {
 		Where(sq.Eq{idColumnName: group.ID}).
 		Set(userIDColumnName, group.UserID).
 		Set(titleColumnName, group.Title).
+		Set(descriptionColumnName, group.Description).
 		Set(lastWateringDateColumnName, group.LastWateringDate).
-		Set(wateringIntervalColumnName, group.WateringInterval).
 		Set(nextWateringDateColumnName, group.NextWateringDate).
+		Set(wateringIntervalColumnName, group.WateringInterval).
 		Set(updatedAtColumnName, time.Now()).
 		PlaceholderFormat(sq.Dollar). // pq postgres driver works only with $ placeholders
 		ToSql()
@@ -127,7 +128,6 @@ func (s *groupsStorage) GroupExists(group entities.Group) (bool, error) {
 			sq.Eq{
 				userIDColumnName: group.UserID,
 				titleColumnName:  group.Title,
-				// descriptionColumnName: group.Description,
 			},
 		).
 		PlaceholderFormat(sq.Dollar).
@@ -149,7 +149,31 @@ func (s *groupsStorage) GroupExists(group entities.Group) (bool, error) {
 }
 
 func (s *groupsStorage) DeleteGroup(id int) error {
-	return nil
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Delete(groupsTableName).
+		Where(sq.Eq{idColumnName: id}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	_, err = connection.ExecContext(
+		ctx,
+		stmt,
+		params...,
+	)
+
+	return err
 }
 
 func (s *groupsStorage) GetUserGroups(userID int) ([]entities.Group, error) {

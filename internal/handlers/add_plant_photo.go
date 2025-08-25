@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 
@@ -30,8 +29,7 @@ func AddPlantPhoto(
 			return err
 		}
 
-		// Для календаря используем context.Chat().ID. В случае с фото будет равен context.Sender().ID:
-		temp, err := useCases.GetUserTemporary(int(context.Chat().ID))
+		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
 		if err != nil {
 			return err
 		}
@@ -125,6 +123,16 @@ func ConfirmAddPlantCallback(
 	logger logging.Logger,
 ) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
+		if err := context.Delete(); err != nil {
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
+		}
+
 		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
 		if err != nil {
 			return err
@@ -141,10 +149,10 @@ func ConfirmAddPlantCallback(
 			return err
 		}
 
-		plantExists, err := useCases.PlantExists(*plant)
+		plant, err = useCases.CreatePlant(*plant)
 		if err != nil {
 			logger.Error(
-				fmt.Sprintf("Failed to check Plant existence for user with telegramId=%d", context.Sender().ID),
+				fmt.Sprintf("Failed to create Plant for user with telegramId=%d", context.Sender().ID),
 				"Error", err,
 				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
@@ -154,61 +162,6 @@ func ConfirmAddPlantCallback(
 
 		group, err := useCases.GetGroup(plant.GroupID)
 		if err != nil {
-			return err
-		}
-
-		if plantExists {
-			if context.Callback() == nil {
-				logger.Warn(
-					"Failed to send Response due to nil callback",
-					"Message", context.Message(),
-					"Sender", context.Sender(),
-					"Chat", context.Chat(),
-					"Callback", context.Callback(),
-					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-				)
-
-				return errors.New("failed to send Response due to nil callback")
-			}
-
-			err = context.Respond(
-				&telebot.CallbackResponse{
-					CallbackID: context.Callback().ID,
-					Text:       fmt.Sprintf(texts.PlantAlreadyExists, group.Title),
-				},
-			)
-			if err != nil {
-				logger.Error(
-					"Failed to send Response",
-					"Error", err,
-					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-				)
-
-				return err
-			}
-
-			return nil
-		}
-
-		// Удаляем сообщение только если нет такой группы, чтобы отправить корректно CallbackResponse:
-		if err = context.Delete(); err != nil {
-			logger.Error(
-				"Failed to delete message",
-				"Error", err,
-				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-			)
-
-			return err
-		}
-
-		plant, err = useCases.CreatePlant(*plant)
-		if err != nil {
-			logger.Error(
-				fmt.Sprintf("Failed to create Plant for user with telegramId=%d", context.Sender().ID),
-				"Error", err,
-				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-			)
-
 			return err
 		}
 

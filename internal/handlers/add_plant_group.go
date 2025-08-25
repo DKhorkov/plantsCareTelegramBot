@@ -71,6 +71,75 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 			return nil
 		}
 
+		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
+		if err != nil {
+			return err
+		}
+
+		plant, err := temp.GetPlant()
+		if err != nil {
+			logger.Error(
+				"Failed to get Plant from Temporary",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
+		}
+
+		plant.GroupID = groupID
+
+		plantExists, err := useCases.PlantExists(*plant)
+		if err != nil {
+			logger.Error(
+				fmt.Sprintf("Failed to check Plant existence for user with telegramId=%d", context.Sender().ID),
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
+		}
+
+		group, err := useCases.GetGroup(plant.GroupID)
+		if err != nil {
+			return err
+		}
+
+		if plantExists {
+			if context.Callback() == nil {
+				logger.Warn(
+					"Failed to send Response due to nil callback",
+					"Message", context.Message(),
+					"Sender", context.Sender(),
+					"Chat", context.Chat(),
+					"Callback", context.Callback(),
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
+
+				return errors.New("failed to send Response due to nil callback")
+			}
+
+			err = context.Respond(
+				&telebot.CallbackResponse{
+					CallbackID: context.Callback().ID,
+					Text:       fmt.Sprintf(texts.PlantAlreadyExists, group.Title),
+				},
+			)
+			if err != nil {
+				logger.Error(
+					"Failed to send Response",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
+
+				return err
+			}
+
+			return nil
+		}
+
+		// Удаляем сообщение только если нет идентичного растения для группы,
+		// чтобы отправить корректно CallbackResponse:
 		if err = context.Delete(); err != nil {
 			logger.Error(
 				"Failed to delete message",
@@ -81,12 +150,7 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 			return err
 		}
 
-		plant, err := useCases.AddPlantGroup(int(context.Sender().ID), groupID)
-		if err != nil {
-			return err
-		}
-
-		group, err := useCases.GetGroup(plant.GroupID)
+		plant, err = useCases.AddPlantGroup(int(context.Sender().ID), groupID)
 		if err != nil {
 			return err
 		}

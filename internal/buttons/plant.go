@@ -92,4 +92,29 @@ var (
 		Unique: "backToManagePlantAction",
 		Text:   "Назад ↩️",
 	}
+
+	ManagePlantChangeTitle = telebot.InlineButton{
+		Unique: "managePlantChangeTitle",
+		Text:   "Изменить название растения",
+	}
+
+	ManagePlantChangeDescription = telebot.InlineButton{
+		Unique: "managePlantChangeDescription",
+		Text:   "Изменить заметки по растению",
+	}
+
+	ManagePlantChangeGroup = telebot.InlineButton{
+		Unique: "managePlantChangeGroup",
+		Text:   "Изменить сценарий полива растения",
+	}
+
+	ManagePlantChangePhoto = telebot.InlineButton{
+		Unique: "managePlantChangePhoto",
+		Text:   "Изменить фотографию растения",
+	}
+
+	BackToManagePlantChange = telebot.InlineButton{
+		Unique: "backToManagePlantChange",
+		Text:   "Назад ↩️",
+	}
 )

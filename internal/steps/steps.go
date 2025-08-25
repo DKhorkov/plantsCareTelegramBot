@@ -17,4 +17,9 @@ const (
 	ManagePlant
 	ManagePlantAction
 	ManagePlantRemoval
+	ManagePlantChange
+	ChangePlantTitle
+	ChangePlantDescription
+	ChangePlantGroup
+	ChangePlantPhoto
 )

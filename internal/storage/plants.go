@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/DKhorkov/libs/db"
 	"github.com/DKhorkov/libs/logging"
@@ -66,7 +67,33 @@ func (s *plantsStorage) CreatePlant(plant entities.Plant) (int, error) {
 }
 
 func (s *plantsStorage) UpdatePlant(plant entities.Plant) error {
-	return nil
+	ctx := context.Background()
+
+	connection, err := s.dbConnector.Connection(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer db.CloseConnectionContext(ctx, connection, s.logger)
+
+	stmt, params, err := sq.
+		Update(plantsTableName).
+		Where(sq.Eq{idColumnName: plant.ID}).
+		Set(groupIDColumnName, plant.GroupID).
+		Set(userIDColumnName, plant.UserID).
+		Set(titleColumnName, plant.Title).
+		Set(descriptionColumnName, plant.Description).
+		Set(photoColumnName, plant.Photo).
+		Set(updatedAtColumnName, time.Now()).
+		PlaceholderFormat(sq.Dollar). // pq postgres driver works only with $ placeholders
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	_, err = connection.ExecContext(ctx, stmt, params...)
+
+	return err
 }
 
 func (s *plantsStorage) PlantExists(plant entities.Plant) (bool, error) {
@@ -84,9 +111,8 @@ func (s *plantsStorage) PlantExists(plant entities.Plant) (bool, error) {
 		From(plantsTableName).
 		Where(
 			sq.Eq{
-				groupIDColumnName:     plant.GroupID,
-				titleColumnName:       plant.Title,
-				descriptionColumnName: plant.Description,
+				groupIDColumnName: plant.GroupID,
+				titleColumnName:   plant.Title,
 			},
 		).
 		PlaceholderFormat(sq.Dollar).

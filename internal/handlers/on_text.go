@@ -26,6 +26,10 @@ func OnText(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logge
 			return AddPlantTitle(bot, useCases, logger)(context)
 		case steps.AddPlantDescription:
 			return AddPlantDescription(bot, useCases, logger)(context)
+		case steps.ChangePlantTitle:
+			return ChangePlantTitle(bot, useCases, logger)(context)
+		case steps.ChangePlantDescription:
+			return ChangePlantDescription(bot, useCases, logger)(context)
 		default:
 			return Delete(bot, useCases, logger)(context)
 		}

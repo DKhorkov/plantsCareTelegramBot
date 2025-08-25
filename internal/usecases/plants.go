@@ -106,3 +106,16 @@ func (u *plantsUseCases) DeletePlant(id int) error {
 
 	return err
 }
+
+func (u *plantsUseCases) UpdatePlant(plant entities.Plant) error {
+	err := u.storage.UpdatePlant(plant)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update Plant for with ID=%d", plant.ID),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+	}
+
+	return err
+}
