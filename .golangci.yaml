@@ -72,6 +72,14 @@ linters:
         linters:
           - revive
 
+      - path: "internal/interfaces/usecases.go"
+        linters:
+          - revive
+
+      - path: "internal/interfaces/storage.go"
+        linters:
+          - revive
+
       - path: "internal/calendar/calendar.go"
         linters:
           - nestif
