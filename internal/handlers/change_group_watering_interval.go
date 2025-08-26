@@ -1,19 +1,21 @@
 package handlers
 
 import (
-	"bytes"
 	"fmt"
+	"strconv"
 
 	"github.com/DKhorkov/libs/logging"
 	"gopkg.in/telebot.v4"
 
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
-func ChangePlantDescription(
+func ChangeGroupWateringIntervalCallback(
 	_ *telebot.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
@@ -29,28 +31,10 @@ func ChangePlantDescription(
 			return err
 		}
 
-		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
-		if err != nil {
-			return err
-		}
-
-		if temp.MessageID != nil {
-			err = context.Bot().Delete(&telebot.Message{ID: *temp.MessageID, Chat: context.Chat()})
-			if err != nil {
-				logger.Error(
-					"Failed to delete message",
-					"Error", err,
-					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-				)
-
-				return err
-			}
-		}
-
-		plant, err := temp.GetPlant()
+		wateringInterval, err := strconv.Atoi(context.Data())
 		if err != nil {
 			logger.Error(
-				"Failed to get Plant from Temporary",
+				"Failed to parse watering interval",
 				"Error", err,
 				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
@@ -58,12 +42,23 @@ func ChangePlantDescription(
 			return err
 		}
 
-		plant, err = useCases.UpdatePlantDescription(plant.ID, context.Message().Text)
+		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
 		if err != nil {
 			return err
 		}
 
-		group, err := useCases.GetGroup(plant.GroupID)
+		group, err := temp.GetGroup()
+		if err != nil {
+			logger.Error(
+				"Failed to get Group from Temporary",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
+		}
+
+		group, err = useCases.UpdateGroupWateringInterval(group.ID, wateringInterval)
 		if err != nil {
 			return err
 		}
@@ -72,19 +67,19 @@ func ChangePlantDescription(
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.ManagePlantChangeTitle,
+					buttons.ManageGroupChangeTitle,
 				},
 				{
-					buttons.ManagePlantChangeDescription,
+					buttons.ManageGroupChangeDescription,
 				},
 				{
-					buttons.ManagePlantChangeGroup,
+					buttons.ManageGroupChangeLastWateringDate,
 				},
 				{
-					buttons.ManagePlantChangePhoto,
+					buttons.ManageGroupChangeWateringInterval,
 				},
 				{
-					buttons.BackToManagePlantAction,
+					buttons.BackToManageGroupAction,
 					buttons.Menu,
 				},
 			},
@@ -92,12 +87,14 @@ func ChangePlantDescription(
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromReader(bytes.NewReader(plant.Photo)),
+				File: telebot.FromDisk(paths.ManageGroupChangeImage),
 				Caption: fmt.Sprintf(
-					texts.ManagePlantChange,
-					plant.Title,
-					plant.Description,
+					texts.ManageGroupChange,
 					group.Title,
+					group.Description,
+					group.LastWateringDate.Format(dateFormat),
+					utils.GetWateringInterval(group.WateringInterval),
+					group.NextWateringDate.Format(dateFormat),
 				),
 			},
 			menu,
@@ -113,7 +110,7 @@ func ChangePlantDescription(
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.ManagePlantChange); err != nil {
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.ManageGroupChange); err != nil {
 			return err
 		}
 

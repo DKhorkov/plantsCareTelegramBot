@@ -30,9 +30,10 @@ func AddGroupLastWateringDate(
 	logger logging.Logger,
 ) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
-		if err := context.Delete(); err != nil {
+		lastWateringDate, err := time.Parse(dateFormat, context.Data())
+		if err != nil {
 			logger.Error(
-				"Failed to delete message",
+				"Failed to parse last watering date",
 				"Error", err,
 				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
@@ -40,10 +41,26 @@ func AddGroupLastWateringDate(
 			return err
 		}
 
-		lastWateringDate, err := time.Parse(dateFormat, context.Data())
-		if err != nil {
+		// Дата последнего полива не может быть позже текущего дня:
+		if time.Now().Before(lastWateringDate) {
+			// Нет context.Callback() для обычного сообщения, поэтому отправляем ответ текстом:
+			if err = context.Send(texts.LastWateringDateInFuture); err != nil {
+				logger.Error(
+					"Failed to send message",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
+
+				return err
+			}
+
+			return nil
+		}
+
+		// Удаляем только если дата выбрана корректно (раньше текущего дня):
+		if err = context.Delete(); err != nil {
 			logger.Error(
-				"Failed to parse last watering date",
+				"Failed to delete message",
 				"Error", err,
 				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)

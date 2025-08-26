@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/DKhorkov/libs/logging"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/calendar"
+	customerrors "github.com/DKhorkov/plantsCareTelegramBot/internal/errors"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
@@ -43,8 +45,29 @@ func AddGroupTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 			return nil
 		}
 
+		// Получаем временные данные, пока есть информация о сообщении для удаления до изменений в AddGroupTitle:
 		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
 		if err != nil {
+			return err
+		}
+
+		group, err := useCases.AddGroupTitle(int(context.Sender().ID), context.Message().Text)
+
+		switch {
+		case errors.Is(err, customerrors.ErrGroupAlreadyExists):
+			// Нет context.Callback() для обычного сообщения, поэтому отправляем ответ текстом:
+			if err = context.Send(texts.GroupAlreadyExists); err != nil {
+				logger.Error(
+					"Failed to send message",
+					"Error", err,
+					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+				)
+
+				return err
+			}
+
+			return nil
+		case err != nil:
 			return err
 		}
 
@@ -59,11 +82,6 @@ func AddGroupTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 
 				return err
 			}
-		}
-
-		group, err := useCases.AddGroupTitle(int(context.Sender().ID), context.Message().Text)
-		if err != nil {
-			return err
 		}
 
 		menu := &telebot.ReplyMarkup{

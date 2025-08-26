@@ -59,11 +59,6 @@ func ChangePlantPhoto(
 			return err
 		}
 
-		plant, err = useCases.GetPlant(plant.ID)
-		if err != nil {
-			return err
-		}
-
 		photoReader, err := bot.File(context.Message().Photo.MediaFile())
 		if err != nil {
 			return err
@@ -85,8 +80,8 @@ func ChangePlantPhoto(
 			return err
 		}
 
-		plant.Photo = buffer.Bytes()
-		if err = useCases.UpdatePlant(*plant); err != nil {
+		plant, err = useCases.UpdatePlantPhoto(plant.ID, buffer.Bytes())
+		if err != nil {
 			return err
 		}
 

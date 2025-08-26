@@ -19,10 +19,13 @@ type UseCases interface {
 	GetUserGroups(userID int) ([]entities.Group, error)
 	CountUserGroups(userID int) (int, error)
 	CreateGroup(group entities.Group) (*entities.Group, error)
-	UpdateGroup(group entities.Group) error
-	GroupExists(group entities.Group) (bool, error)
 	GetGroup(id int) (*entities.Group, error)
 	GetGroupsForNotify(limit, offset int) ([]entities.Group, error)
+	DeleteGroup(id int) error
+	UpdateGroupTitle(id int, title string) (*entities.Group, error)
+	UpdateGroupDescription(id int, description string) (*entities.Group, error)
+	UpdateGroupLastWateringDate(id int, lastWateringDate time.Time) (*entities.Group, error)
+	UpdateGroupWateringInterval(id, wateringInterval int) (*entities.Group, error)
 
 	// Plants:
 
@@ -30,9 +33,11 @@ type UseCases interface {
 	GetGroupPlants(groupID int) ([]entities.Plant, error)
 	CountGroupPlants(groupID int) (int, error)
 	CreatePlant(plant entities.Plant) (*entities.Plant, error)
-	PlantExists(plant entities.Plant) (bool, error)
 	GetPlant(id int) (*entities.Plant, error)
-	UpdatePlant(plant entities.Plant) error
+	UpdatePlantTitle(id int, title string) (*entities.Plant, error)
+	UpdatePlantDescription(id int, description string) (*entities.Plant, error)
+	UpdatePlantGroup(id, groupID int) (*entities.Plant, error)
+	UpdatePlantPhoto(id int, photo []byte) (*entities.Plant, error)
 	DeletePlant(id int) error
 
 	// Temporary:
@@ -52,6 +57,7 @@ type UseCases interface {
 	AddPlantGroup(telegramID, groupID int) (*entities.Plant, error)
 	AddPlantPhoto(telegramID int, photo []byte) (*entities.Plant, error)
 	ManagePlant(telegramID, plantID int) error
+	ManageGroup(telegramID, groupID int) error
 
 	// Notifications:
 

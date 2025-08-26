@@ -9,6 +9,7 @@ import (
 	"gopkg.in/telebot.v4"
 
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
+	customerrors "github.com/DKhorkov/plantsCareTelegramBot/internal/errors"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
@@ -71,41 +72,10 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 			return nil
 		}
 
-		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
-		if err != nil {
-			return err
-		}
+		plant, err := useCases.AddPlantGroup(int(context.Sender().ID), groupID)
 
-		plant, err := temp.GetPlant()
-		if err != nil {
-			logger.Error(
-				"Failed to get Plant from Temporary",
-				"Error", err,
-				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-			)
-
-			return err
-		}
-
-		plant.GroupID = groupID
-
-		plantExists, err := useCases.PlantExists(*plant)
-		if err != nil {
-			logger.Error(
-				fmt.Sprintf("Failed to check Plant existence for user with telegramId=%d", context.Sender().ID),
-				"Error", err,
-				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-			)
-
-			return err
-		}
-
-		group, err := useCases.GetGroup(plant.GroupID)
-		if err != nil {
-			return err
-		}
-
-		if plantExists {
+		switch {
+		case errors.Is(err, customerrors.ErrPlantAlreadyExists):
 			if context.Callback() == nil {
 				logger.Warn(
 					"Failed to send Response due to nil callback",
@@ -122,7 +92,7 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 			err = context.Respond(
 				&telebot.CallbackResponse{
 					CallbackID: context.Callback().ID,
-					Text:       fmt.Sprintf(texts.PlantAlreadyExists, group.Title),
+					Text:       texts.PlantAlreadyExists,
 				},
 			)
 			if err != nil {
@@ -136,6 +106,8 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 			}
 
 			return nil
+		case err != nil:
+			return err
 		}
 
 		// Удаляем сообщение только если нет идентичного растения для группы,
@@ -150,7 +122,7 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 			return err
 		}
 
-		plant, err = useCases.AddPlantGroup(int(context.Sender().ID), groupID)
+		group, err := useCases.GetGroup(plant.GroupID)
 		if err != nil {
 			return err
 		}

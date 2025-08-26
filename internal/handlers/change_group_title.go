@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 
@@ -11,11 +10,13 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
 	customerrors "github.com/DKhorkov/plantsCareTelegramBot/internal/errors"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
-func ChangePlantTitle(
+func ChangeGroupTitle(
 	_ *telebot.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
@@ -31,9 +32,9 @@ func ChangePlantTitle(
 			return err
 		}
 
-		if len(context.Message().Text) > plantTitleMaxLength {
+		if len(context.Message().Text) > groupTitleMaxLength {
 			// Нет context.Callback() для обычного сообщения, поэтому отправляем ответ текстом:
-			if err := context.Send(fmt.Sprintf(texts.PlantTitleTooLong, plantTitleMaxLength)); err != nil {
+			if err := context.Send(fmt.Sprintf(texts.GroupTitleTooLong, groupTitleMaxLength)); err != nil {
 				logger.Error(
 					"Failed to send message",
 					"Error", err,
@@ -51,10 +52,10 @@ func ChangePlantTitle(
 			return err
 		}
 
-		plant, err := temp.GetPlant()
+		group, err := temp.GetGroup()
 		if err != nil {
 			logger.Error(
-				"Failed to get Plant from Temporary",
+				"Failed to get Group from Temporary",
 				"Error", err,
 				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
@@ -62,12 +63,12 @@ func ChangePlantTitle(
 			return err
 		}
 
-		plant, err = useCases.UpdatePlantTitle(plant.ID, context.Message().Text)
+		group, err = useCases.UpdateGroupTitle(group.ID, context.Message().Text)
 
 		switch {
-		case errors.Is(err, customerrors.ErrPlantAlreadyExists):
+		case errors.Is(err, customerrors.ErrGroupAlreadyExists):
 			// Нет context.Callback() для обычного сообщения, поэтому отправляем ответ текстом:
-			if err = context.Send(texts.PlantAlreadyExists); err != nil {
+			if err = context.Send(texts.GroupAlreadyExists); err != nil {
 				logger.Error(
 					"Failed to send message",
 					"Error", err,
@@ -79,11 +80,6 @@ func ChangePlantTitle(
 
 			return nil
 		case err != nil:
-			return err
-		}
-
-		group, err := useCases.GetGroup(plant.GroupID)
-		if err != nil {
 			return err
 		}
 
@@ -105,19 +101,19 @@ func ChangePlantTitle(
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.ManagePlantChangeTitle,
+					buttons.ManageGroupChangeTitle,
 				},
 				{
-					buttons.ManagePlantChangeDescription,
+					buttons.ManageGroupChangeDescription,
 				},
 				{
-					buttons.ManagePlantChangeGroup,
+					buttons.ManageGroupChangeLastWateringDate,
 				},
 				{
-					buttons.ManagePlantChangePhoto,
+					buttons.ManageGroupChangeWateringInterval,
 				},
 				{
-					buttons.BackToManagePlantAction,
+					buttons.BackToManageGroupAction,
 					buttons.Menu,
 				},
 			},
@@ -125,12 +121,14 @@ func ChangePlantTitle(
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromReader(bytes.NewReader(plant.Photo)),
+				File: telebot.FromDisk(paths.ManageGroupChangeImage),
 				Caption: fmt.Sprintf(
-					texts.ManagePlantChange,
-					plant.Title,
-					plant.Description,
+					texts.ManageGroupChange,
 					group.Title,
+					group.Description,
+					group.LastWateringDate.Format(dateFormat),
+					utils.GetWateringInterval(group.WateringInterval),
+					group.NextWateringDate.Format(dateFormat),
 				),
 			},
 			menu,
@@ -146,7 +144,7 @@ func ChangePlantTitle(
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.ManagePlantChange); err != nil {
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.ManageGroupChange); err != nil {
 			return err
 		}
 

@@ -151,12 +151,6 @@ func ConfirmAddPlantCallback(
 
 		plant, err = useCases.CreatePlant(*plant)
 		if err != nil {
-			logger.Error(
-				fmt.Sprintf("Failed to create Plant for user with telegramId=%d", context.Sender().ID),
-				"Error", err,
-				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-			)
-
 			return err
 		}
 
@@ -165,14 +159,7 @@ func ConfirmAddPlantCallback(
 			return err
 		}
 
-		// Только логгируем, поскольку не является критической логикой:
-		if err = useCases.ResetTemporary(int(context.Sender().ID)); err != nil {
-			logger.Error(
-				fmt.Sprintf("Failed to reset Temporary for user with telegramId=%d", context.Sender().ID),
-				"Error", err,
-				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-			)
-		}
+		_ = useCases.ResetTemporary(int(context.Sender().ID))
 
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,

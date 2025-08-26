@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/DKhorkov/libs/logging"
 	"gopkg.in/telebot.v4"
@@ -15,81 +14,8 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
-func AddGroupWateringIntervalCallback(
+func ManageGroupRemovalCallback(
 	_ *telebot.Bot,
-	useCases interfaces.UseCases,
-	logger logging.Logger,
-) telebot.HandlerFunc {
-	return func(context telebot.Context) error {
-		if err := context.Delete(); err != nil {
-			logger.Error(
-				"Failed to delete message",
-				"Error", err,
-				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-			)
-
-			return err
-		}
-
-		wateringInterval, err := strconv.Atoi(context.Data())
-		if err != nil {
-			logger.Error(
-				"Failed to parse watering interval",
-				"Error", err,
-				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-			)
-
-			return err
-		}
-
-		group, err := useCases.AddGroupWateringInterval(int(context.Sender().ID), wateringInterval)
-		if err != nil {
-			return err
-		}
-
-		menu := &telebot.ReplyMarkup{
-			ResizeKeyboard: true,
-			InlineKeyboard: [][]telebot.InlineButton{
-				{
-					buttons.ConfirmAddGroup,
-				},
-				{
-					buttons.BackToAddGroupWateringInterval,
-					buttons.Menu,
-				},
-			},
-		}
-
-		err = context.Send(
-			&telebot.Photo{
-				File: telebot.FromDisk(paths.AddGroupConfirmImage),
-				Caption: fmt.Sprintf(
-					texts.ConfirmAddGroup,
-					group.Title,
-					group.Description,
-					group.LastWateringDate.Format(dateFormat),
-					utils.GetWateringInterval(group.WateringInterval),
-					group.NextWateringDate.Format(dateFormat),
-				),
-			},
-			menu,
-		)
-		if err != nil {
-			logger.Error(
-				"Failed to send message",
-				"Error", err,
-				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-			)
-
-			return err
-		}
-
-		return nil
-	}
-}
-
-func BackToAddGroupWateringIntervalCallback(
-	bot *telebot.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -109,7 +35,6 @@ func BackToAddGroupWateringIntervalCallback(
 			return err
 		}
 
-		// Получаем группу для корректного отображения данных прошлых этапов:
 		group, err := temp.GetGroup()
 		if err != nil {
 			logger.Error(
@@ -121,46 +46,34 @@ func BackToAddGroupWateringIntervalCallback(
 			return err
 		}
 
+		group, err = useCases.GetGroup(group.ID)
+		if err != nil {
+			return err
+		}
+
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,
-			InlineKeyboard: [][]telebot.InlineButton{},
-		}
-
-		var row []telebot.InlineButton
-
-		for _, value := range wateringIntervals {
-			btn := telebot.InlineButton{
-				Unique: utils.GenUniqueParam("watering_interval"),
-				Text:   utils.GetWateringInterval(value),
-				Data:   strconv.Itoa(value),
-			}
-
-			bot.Handle(&btn, AddGroupWateringIntervalCallback(bot, useCases, logger))
-
-			row = append(row, btn)
-			if len(row) == groupWateringIntervalButtonsPerRaw {
-				menu.InlineKeyboard = append(menu.InlineKeyboard, row)
-				row = []telebot.InlineButton{}
-			}
-		}
-
-		menu.InlineKeyboard = append(
-			menu.InlineKeyboard,
-			[]telebot.InlineButton{
-				buttons.BackToAddGroupLastWateringDate,
-				buttons.Menu,
+			InlineKeyboard: [][]telebot.InlineButton{
+				{
+					buttons.ConfirmGroupRemoval,
+				},
+				{
+					buttons.BackToManageGroupAction,
+					buttons.Menu,
+				},
 			},
-		)
+		}
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromDisk(paths.AddGroupWateringIntervalImage),
+				File: telebot.FromDisk(paths.ManageGroupActionImage),
 				Caption: fmt.Sprintf(
-					texts.AddGroupWateringInterval,
+					texts.ManageGroupRemoval,
 					group.Title,
 					group.Description,
 					group.LastWateringDate.Format(dateFormat),
-					group.Title,
+					utils.GetWateringInterval(group.WateringInterval),
+					group.NextWateringDate.Format(dateFormat),
 				),
 			},
 			menu,
@@ -176,7 +89,7 @@ func BackToAddGroupWateringIntervalCallback(
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.AddGroupWateringInterval); err != nil {
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.ManageGroupRemoval); err != nil {
 			return err
 		}
 
@@ -184,7 +97,7 @@ func BackToAddGroupWateringIntervalCallback(
 	}
 }
 
-func ConfirmAddGroupCallback(
+func BackToManageGroupActionCallback(
 	_ *telebot.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
@@ -216,30 +129,49 @@ func ConfirmAddGroupCallback(
 			return err
 		}
 
-		group, err = useCases.CreateGroup(*group)
+		group, err = useCases.GetGroup(group.ID)
 		if err != nil {
 			return err
 		}
 
-		_ = useCases.ResetTemporary(int(context.Sender().ID))
+		plants, err := useCases.GetGroupPlants(group.ID)
+		if err != nil {
+			return err
+		}
 
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,
-			InlineKeyboard: [][]telebot.InlineButton{
-				{
-					buttons.CreatePlant,
-				},
-				{
-					buttons.Menu,
-				},
-			},
+			InlineKeyboard: [][]telebot.InlineButton{},
 		}
+
+		if len(plants) > 0 {
+			menu.InlineKeyboard = append(
+				menu.InlineKeyboard,
+				[]telebot.InlineButton{
+					buttons.ManageGroupSeePlants,
+				},
+			)
+		}
+
+		menu.InlineKeyboard = append(
+			menu.InlineKeyboard,
+			[]telebot.InlineButton{
+				buttons.ManageGroupChange,
+			},
+			[]telebot.InlineButton{
+				buttons.ManageGroupRemoval,
+			},
+			[]telebot.InlineButton{
+				buttons.BackToManageGroup,
+				buttons.Menu,
+			},
+		)
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromDisk(paths.GroupCreatedImage),
+				File: telebot.FromDisk(paths.ManageGroupActionImage),
 				Caption: fmt.Sprintf(
-					texts.GroupCreated,
+					texts.ManageGroupAction,
 					group.Title,
 					group.Description,
 					group.LastWateringDate.Format(dateFormat),
@@ -256,6 +188,123 @@ func ConfirmAddGroupCallback(
 				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
 
+			return err
+		}
+
+		// TODO при проблемах логики следует сделать в рамках транзакции
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.ManageGroupAction); err != nil {
+			return err
+		}
+
+		return nil
+	}
+}
+
+func ConfirmGroupRemovalCallback(
+	_ *telebot.Bot,
+	useCases interfaces.UseCases,
+	logger logging.Logger,
+) telebot.HandlerFunc {
+	return func(context telebot.Context) error {
+		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
+		if err != nil {
+			return err
+		}
+
+		group, err := temp.GetGroup()
+		if err != nil {
+			logger.Error(
+				"Failed to get Group from Temporary",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
+		}
+
+		if err = useCases.DeleteGroup(group.ID); err != nil {
+			return err
+		}
+
+		err = context.Respond(
+			&telebot.CallbackResponse{
+				CallbackID: context.Callback().ID,
+				Text:       texts.GroupDeleted,
+			},
+		)
+		if err != nil {
+			logger.Error(
+				"Failed to send Response",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
+		}
+
+		// Удаляем после отправки telebot.CallbackResponse:
+		if err = context.Delete(); err != nil {
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
+		}
+
+		user, err := useCases.GetUserByTelegramID(int(context.Sender().ID))
+		if err != nil {
+			return err
+		}
+
+		menu := &telebot.ReplyMarkup{
+			ResizeKeyboard: true,
+			InlineKeyboard: [][]telebot.InlineButton{
+				{
+					buttons.CreateGroup,
+				},
+			},
+		}
+
+		groupsCount, err := useCases.CountUserGroups(user.ID)
+		if err != nil {
+			return err
+		}
+
+		if groupsCount > 0 {
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.CreatePlant})
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManageGroups})
+		}
+
+		plantsCount, err := useCases.CountUserPlants(user.ID)
+		if err != nil {
+			return err
+		}
+
+		if plantsCount > 0 {
+			menu.InlineKeyboard = append(menu.InlineKeyboard, []telebot.InlineButton{buttons.ManagePlants})
+		}
+
+		err = context.Send(
+			&telebot.Photo{
+				File:    telebot.FromDisk(paths.StartImage),
+				Caption: texts.OnStart,
+			},
+			menu,
+		)
+		if err != nil {
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
+		}
+
+		// TODO при проблемах логики следует сделать в рамках транзакции.
+		if err = useCases.ResetTemporary(int(context.Sender().ID)); err != nil {
 			return err
 		}
 

@@ -8,6 +8,7 @@ import (
 	"github.com/DKhorkov/libs/logging"
 
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
+	customerrors "github.com/DKhorkov/plantsCareTelegramBot/internal/errors"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 )
@@ -92,6 +93,19 @@ func (u *temporaryUseCases) AddGroupTitle(telegramID int, title string) (*entiti
 	group := &entities.Group{
 		UserID: temp.UserID,
 		Title:  title,
+	}
+
+	exists, err := u.storage.GroupExists(*group)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to check existence for Group=%+v", group),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+	}
+
+	if exists {
+		return nil, customerrors.ErrGroupAlreadyExists
 	}
 
 	data, err := json.Marshal(group)
@@ -237,8 +251,9 @@ func (u *temporaryUseCases) AddGroupWateringInterval(telegramID, wateringInterva
 
 	nextWateringDate := group.LastWateringDate.AddDate(0, 0, wateringInterval)
 
-	today := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, nextWateringDate.Location())
+	now := time.Now()
 
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, nextWateringDate.Location())
 	if nextWateringDate.Before(today) {
 		nextWateringDate = today
 	}
@@ -401,6 +416,19 @@ func (u *temporaryUseCases) AddPlantGroup(telegramID, groupID int) (*entities.Pl
 
 	plant.GroupID = groupID
 
+	exists, err := u.storage.PlantExists(*plant)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to check existence for Plant=%+v", plant),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+	}
+
+	if exists {
+		return nil, customerrors.ErrPlantAlreadyExists
+	}
+
 	data, err := json.Marshal(plant)
 	if err != nil {
 		u.logger.Error(
@@ -497,8 +525,46 @@ func (u *temporaryUseCases) ManagePlant(telegramID, plantID int) error {
 	}
 
 	temp.Data = data
+
 	temp.Step = steps.ManagePlantAction
-	temp.MessageID = nil // not to delete already deleted message
+
+	if err = u.storage.UpdateTemporary(*temp); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update Temporary with ID=%d", temp.ID),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+
+		return err
+	}
+
+	return nil
+}
+
+func (u *temporaryUseCases) ManageGroup(telegramID, groupID int) error {
+	temp, err := u.GetUserTemporary(telegramID)
+	if err != nil {
+		return err
+	}
+
+	group := &entities.Group{
+		ID: groupID,
+	}
+
+	data, err := json.Marshal(group)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to marshal data for User with ID=%d", temp.UserID),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+
+		return err
+	}
+
+	temp.Data = data
+
+	temp.Step = steps.ManageGroupAction
 
 	if err = u.storage.UpdateTemporary(*temp); err != nil {
 		u.logger.Error(

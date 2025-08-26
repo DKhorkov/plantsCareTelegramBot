@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"bytes"
 	"fmt"
 
 	"github.com/DKhorkov/libs/logging"
@@ -9,11 +8,13 @@ import (
 
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
-func ChangePlantDescription(
+func ChangeGroupDescription(
 	_ *telebot.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
@@ -47,10 +48,10 @@ func ChangePlantDescription(
 			}
 		}
 
-		plant, err := temp.GetPlant()
+		group, err := temp.GetGroup()
 		if err != nil {
 			logger.Error(
-				"Failed to get Plant from Temporary",
+				"Failed to get Group from Temporary",
 				"Error", err,
 				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 			)
@@ -58,12 +59,7 @@ func ChangePlantDescription(
 			return err
 		}
 
-		plant, err = useCases.UpdatePlantDescription(plant.ID, context.Message().Text)
-		if err != nil {
-			return err
-		}
-
-		group, err := useCases.GetGroup(plant.GroupID)
+		group, err = useCases.UpdateGroupDescription(group.ID, context.Message().Text)
 		if err != nil {
 			return err
 		}
@@ -72,19 +68,19 @@ func ChangePlantDescription(
 			ResizeKeyboard: true,
 			InlineKeyboard: [][]telebot.InlineButton{
 				{
-					buttons.ManagePlantChangeTitle,
+					buttons.ManageGroupChangeTitle,
 				},
 				{
-					buttons.ManagePlantChangeDescription,
+					buttons.ManageGroupChangeDescription,
 				},
 				{
-					buttons.ManagePlantChangeGroup,
+					buttons.ManageGroupChangeLastWateringDate,
 				},
 				{
-					buttons.ManagePlantChangePhoto,
+					buttons.ManageGroupChangeWateringInterval,
 				},
 				{
-					buttons.BackToManagePlantAction,
+					buttons.BackToManageGroupAction,
 					buttons.Menu,
 				},
 			},
@@ -92,12 +88,14 @@ func ChangePlantDescription(
 
 		err = context.Send(
 			&telebot.Photo{
-				File: telebot.FromReader(bytes.NewReader(plant.Photo)),
+				File: telebot.FromDisk(paths.ManageGroupChangeImage),
 				Caption: fmt.Sprintf(
-					texts.ManagePlantChange,
-					plant.Title,
-					plant.Description,
+					texts.ManageGroupChange,
 					group.Title,
+					group.Description,
+					group.LastWateringDate.Format(dateFormat),
+					utils.GetWateringInterval(group.WateringInterval),
+					group.NextWateringDate.Format(dateFormat),
 				),
 			},
 			menu,
@@ -113,7 +111,7 @@ func ChangePlantDescription(
 		}
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
-		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.ManagePlantChange); err != nil {
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.ManageGroupChange); err != nil {
 			return err
 		}
 

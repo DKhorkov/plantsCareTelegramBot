@@ -42,4 +42,59 @@ var (
 		Unique: "confirmAddGroupButton",
 		Text:   "Все верно ✅",
 	}
+
+	ManageGroupSeePlants = telebot.InlineButton{
+		Unique: "manageGroupSeePlants",
+		Text:   "Просмотр растений в данном сценарии 👀",
+	}
+
+	ManageGroupChange = telebot.InlineButton{
+		Unique: "manageGroupChange",
+		Text:   "Редактировать сценарий полива 🛠",
+	}
+
+	ManageGroupRemoval = telebot.InlineButton{
+		Unique: "manageGroupRemoval",
+		Text:   "Удалить сценарий полива 🗑",
+	}
+
+	BackToManageGroup = telebot.InlineButton{
+		Unique: "backToManageGroup",
+		Text:   "Назад ↩️",
+	}
+
+	ConfirmGroupRemoval = telebot.InlineButton{
+		Unique: "confirmGroupRemoval",
+		Text:   "Подтвердить удаление ✅",
+	}
+
+	BackToManageGroupAction = telebot.InlineButton{
+		Unique: "backToManageGroupAction",
+		Text:   "Назад ↩️",
+	}
+
+	BackToManageGroupChange = telebot.InlineButton{
+		Unique: "backToManageGroupChange",
+		Text:   "Назад ↩️",
+	}
+
+	ManageGroupChangeTitle = telebot.InlineButton{
+		Unique: "manageGroupChangeTitle",
+		Text:   "Изменить название сценария полива",
+	}
+
+	ManageGroupChangeDescription = telebot.InlineButton{
+		Unique: "manageGroupChangeDescription",
+		Text:   "Изменить описание сценария полива",
+	}
+
+	ManageGroupChangeLastWateringDate = telebot.InlineButton{
+		Unique: "manageGroupChangeLastWateringDate",
+		Text:   "Изменить дату последнего полива сценария",
+	}
+
+	ManageGroupChangeWateringInterval = telebot.InlineButton{
+		Unique: "manageGroupChangeWateringInterval",
+		Text:   "Изменить интервал полива сценария",
+	}
 )

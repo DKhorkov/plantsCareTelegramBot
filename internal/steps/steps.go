@@ -22,4 +22,12 @@ const (
 	ChangePlantDescription
 	ChangePlantGroup
 	ChangePlantPhoto
+	ManageGroup
+	ManageGroupAction
+	ManageGroupRemoval
+	ManageGroupChange
+	ChangeGroupTitle
+	ChangeGroupDescription
+	ChangeGroupLastWateringDate
+	ChangeGroupWateringInterval
 )

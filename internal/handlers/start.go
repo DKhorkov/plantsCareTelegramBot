@@ -20,6 +20,7 @@ import (
 const (
 	groupsPerUserLimit             = 5
 	managePlantsGroupButtonsPerRaw = 1
+	manageGroupButtonsPerRaw       = 1
 )
 
 func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
@@ -336,6 +337,84 @@ func ManagePlantsCallback(bot *telebot.Bot, useCases interfaces.UseCases, logger
 
 		// TODO при проблемах логики следует сделать в рамках транзакции
 		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.ManagePlantsChooseGroup); err != nil {
+			return err
+		}
+
+		return nil
+	}
+}
+
+func ManageGroupsCallback(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+	return func(context telebot.Context) error {
+		if err := context.Delete(); err != nil {
+			logger.Error(
+				"Failed to delete message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
+		}
+
+		user, err := useCases.GetUserByTelegramID(int(context.Sender().ID))
+		if err != nil {
+			return err
+		}
+
+		groups, err := useCases.GetUserGroups(user.ID)
+		if err != nil {
+			return err
+		}
+
+		menu := &telebot.ReplyMarkup{
+			ResizeKeyboard: true,
+			InlineKeyboard: [][]telebot.InlineButton{},
+		}
+
+		var row []telebot.InlineButton
+
+		for _, group := range groups {
+			btn := telebot.InlineButton{
+				Unique: utils.GenUniqueParam("manage_group"),
+				Text:   group.Title,
+				Data:   strconv.Itoa(group.ID),
+			}
+
+			bot.Handle(&btn, ManageGroupCallback(bot, useCases, logger))
+
+			row = append(row, btn)
+			if len(row) == manageGroupButtonsPerRaw {
+				menu.InlineKeyboard = append(menu.InlineKeyboard, row)
+				row = []telebot.InlineButton{}
+			}
+		}
+
+		menu.InlineKeyboard = append(
+			menu.InlineKeyboard,
+			[]telebot.InlineButton{
+				buttons.BackToStart,
+			},
+		)
+
+		err = context.Send(
+			&telebot.Photo{
+				File:    telebot.FromDisk(paths.ManageGroupImage),
+				Caption: texts.ManageGroup,
+			},
+			menu,
+		)
+		if err != nil {
+			logger.Error(
+				"Failed to send message",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
+		}
+
+		// TODO при проблемах логики следует сделать в рамках транзакции
+		if err = useCases.SetTemporaryStep(int(context.Sender().ID), steps.ManageGroup); err != nil {
 			return err
 		}
 

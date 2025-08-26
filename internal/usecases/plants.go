@@ -6,6 +6,7 @@ import (
 	"github.com/DKhorkov/libs/logging"
 
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
+	customerrors "github.com/DKhorkov/plantsCareTelegramBot/internal/errors"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 )
 
@@ -68,19 +69,6 @@ func (u *plantsUseCases) CreatePlant(plant entities.Plant) (*entities.Plant, err
 	return &plant, err
 }
 
-func (u *plantsUseCases) PlantExists(plant entities.Plant) (bool, error) {
-	exists, err := u.storage.PlantExists(plant)
-	if err != nil {
-		u.logger.Error(
-			fmt.Sprintf("Failed to check Plant existence for Group with ID=%d", plant.GroupID),
-			"Error", err,
-			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-		)
-	}
-
-	return exists, err
-}
-
 func (u *plantsUseCases) GetPlant(id int) (*entities.Plant, error) {
 	plant, err := u.storage.GetPlant(id)
 	if err != nil {
@@ -107,15 +95,102 @@ func (u *plantsUseCases) DeletePlant(id int) error {
 	return err
 }
 
-func (u *plantsUseCases) UpdatePlant(plant entities.Plant) error {
-	err := u.storage.UpdatePlant(plant)
+func (u *plantsUseCases) UpdatePlantTitle(id int, title string) (*entities.Plant, error) {
+	plant, err := u.GetPlant(id)
+	if err != nil {
+		return nil, err
+	}
+
+	plant.Title = title
+
+	exists, err := u.storage.PlantExists(*plant)
 	if err != nil {
 		u.logger.Error(
-			fmt.Sprintf("Failed to update Plant for with ID=%d", plant.ID),
+			fmt.Sprintf("Failed to check existence for Plant with ID=%d", plant.ID),
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
 	}
 
-	return err
+	if exists {
+		return nil, customerrors.ErrPlantAlreadyExists
+	}
+
+	if err = u.storage.UpdatePlant(*plant); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update Plant with ID=%d", plant.ID),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+	}
+
+	return plant, err
+}
+
+func (u *plantsUseCases) UpdatePlantDescription(id int, description string) (*entities.Plant, error) {
+	plant, err := u.GetPlant(id)
+	if err != nil {
+		return nil, err
+	}
+
+	plant.Description = description
+	if err = u.storage.UpdatePlant(*plant); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update Plant with ID=%d", plant.ID),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+	}
+
+	return plant, err
+}
+
+func (u *plantsUseCases) UpdatePlantGroup(id, groupID int) (*entities.Plant, error) {
+	plant, err := u.GetPlant(id)
+	if err != nil {
+		return nil, err
+	}
+
+	plant.GroupID = groupID
+
+	exists, err := u.storage.PlantExists(*plant)
+	if err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to check existence for Plant with ID=%d", plant.ID),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+	}
+
+	if exists {
+		return nil, customerrors.ErrPlantAlreadyExists
+	}
+
+	if err = u.storage.UpdatePlant(*plant); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update Plant with ID=%d", plant.ID),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+	}
+
+	return plant, err
+}
+
+func (u *plantsUseCases) UpdatePlantPhoto(id int, photo []byte) (*entities.Plant, error) {
+	plant, err := u.GetPlant(id)
+	if err != nil {
+		return nil, err
+	}
+
+	plant.Photo = photo
+	if err = u.storage.UpdatePlant(*plant); err != nil {
+		u.logger.Error(
+			fmt.Sprintf("Failed to update Plant with ID=%d", plant.ID),
+			"Error", err,
+			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+		)
+	}
+
+	return plant, err
 }

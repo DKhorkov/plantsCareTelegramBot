@@ -122,6 +122,7 @@ linters:
       - path: "internal/handlers/add_plant_group.go"
         linters:
           - gocognit
+          - staticcheck
 
       - path: "internal/handlers/add_plant_description.go"
         linters:
@@ -139,7 +140,15 @@ linters:
         linters:
           - dupl
 
+      - path: "internal/handlers/manage_group_removal.go"
+        linters:
+          - dupl
+
       - path: "internal/handlers/manage_plant_change.go"
+        linters:
+          - dupl
+
+      - path: "internal/handlers/manage_group_change.go"
         linters:
           - dupl
 

@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"strconv"
+	"time"
 
 	"github.com/DKhorkov/libs/logging"
 	"gopkg.in/telebot.v4"
@@ -29,11 +30,11 @@ func GroupWateredCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger l
 			return err
 		}
 
-		group.LastWateringDate = group.NextWateringDate
+		now := time.Now()
+		wateredDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, group.NextWateringDate.Location())
 
-		group.NextWateringDate = group.NextWateringDate.AddDate(0, 0, group.WateringInterval)
-
-		if err = useCases.UpdateGroup(*group); err != nil {
+		_, err = useCases.UpdateGroupLastWateringDate(groupID, wateredDate)
+		if err != nil {
 			return err
 		}
 

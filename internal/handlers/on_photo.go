@@ -20,8 +20,10 @@ func OnPhoto(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logg
 		}
 
 		switch temp.Step {
-		case steps.AddGroupLastWateringDate: // Логика обработки ответа от календаря с сооббщением с картинкой
+		case steps.AddGroupLastWateringDate: // Логика обработки ответа от календаря с сообщением с картинкой
 			return AddGroupLastWateringDate(bot, useCases, logger)(context)
+		case steps.ChangeGroupLastWateringDate: // Логика обработки ответа от календаря с сообщением с картинкой
+			return ChangeGroupLastWateringDate(bot, useCases, logger)(context)
 		case steps.AddPlantPhoto:
 			return AddPlantPhoto(bot, useCases, logger)(context)
 		case steps.ChangePlantPhoto:
