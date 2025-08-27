@@ -44,7 +44,7 @@ var Default = map[any]interfaces.Handler{
 	&buttons.ManagePlantChangePhoto:            ManagePlantChangePhotoCallback,
 	&buttons.BackToManagePlantChange:           ManagePlantChangeCallback,
 	&buttons.BackToManageGroup:                 ManageGroupsCallback,
-	&buttons.ManageGroupSeePlants:              Delete,
+	&buttons.ManageGroupSeePlants:              ManageGroupSeePlantsCallback,
 	&buttons.ManageGroupChange:                 ManageGroupChangeCallback,
 	&buttons.ManageGroupRemoval:                ManageGroupRemovalCallback,
 	&buttons.ConfirmGroupRemoval:               ConfirmGroupRemovalCallback,

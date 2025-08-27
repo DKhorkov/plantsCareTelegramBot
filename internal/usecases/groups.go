@@ -24,6 +24,8 @@ func (u *groupsUseCases) GetUserGroups(userID int) ([]entities.Group, error) {
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return groups, err
@@ -37,6 +39,8 @@ func (u *groupsUseCases) CountUserGroups(userID int) (int, error) {
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return 0, err
 	}
 
 	return count, err
@@ -50,6 +54,8 @@ func (u *groupsUseCases) CreateGroup(group entities.Group) (*entities.Group, err
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	group.ID = groupID
@@ -78,6 +84,8 @@ func (u *groupsUseCases) GetGroup(id int) (*entities.Group, error) {
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return group, err
@@ -91,6 +99,8 @@ func (u *groupsUseCases) GetGroupsForNotify(limit, offset int) ([]entities.Group
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return groups, err
@@ -124,6 +134,8 @@ func (u *groupsUseCases) UpdateGroupTitle(id int, title string) (*entities.Group
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	if exists {
@@ -136,6 +148,8 @@ func (u *groupsUseCases) UpdateGroupTitle(id int, title string) (*entities.Group
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return group, err
@@ -154,6 +168,8 @@ func (u *groupsUseCases) UpdateGroupDescription(id int, description string) (*en
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return group, err
@@ -184,6 +200,8 @@ func (u *groupsUseCases) UpdateGroupLastWateringDate(id int, lastWateringDate ti
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return group, err
@@ -214,6 +232,8 @@ func (u *groupsUseCases) UpdateGroupWateringInterval(id, wateringInterval int) (
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return group, err

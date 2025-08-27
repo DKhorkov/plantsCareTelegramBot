@@ -22,6 +22,8 @@ func (u *notificationsUseCases) SaveNotification(notification entities.Notificat
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	notification.ID = notificationID

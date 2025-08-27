@@ -14,4 +14,5 @@ const (
 	ChangeGroupDescriptionImage      = "./static/images/media_message_picture.png"
 	ChangeGroupLastWateringDateImage = "./static/images/media_message_picture.png"
 	ChangeGroupWateringIntervalImage = "./static/images/media_message_picture.png"
+	ManageGroupSeePlantsImage        = "./static/images/media_message_picture.png"
 )

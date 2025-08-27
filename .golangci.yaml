@@ -102,6 +102,8 @@ linters:
       - path: "internal/utils/texts.go"
         linters:
           - revive
+          - lll
+          - mnd
 
       - path: "internal/config/config.go"
         linters:

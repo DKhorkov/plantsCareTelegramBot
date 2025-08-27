@@ -23,6 +23,8 @@ func (u *plantsUseCases) CountUserPlants(userID int) (int, error) {
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return 0, err
 	}
 
 	return count, err
@@ -36,6 +38,8 @@ func (u *plantsUseCases) GetGroupPlants(groupID int) ([]entities.Plant, error) {
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return plants, err
@@ -49,6 +53,8 @@ func (u *plantsUseCases) CountGroupPlants(groupID int) (int, error) {
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return 0, err
 	}
 
 	return count, err
@@ -62,6 +68,8 @@ func (u *plantsUseCases) CreatePlant(plant entities.Plant) (*entities.Plant, err
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	plant.ID = plantID
@@ -77,6 +85,8 @@ func (u *plantsUseCases) GetPlant(id int) (*entities.Plant, error) {
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return plant, err
@@ -110,6 +120,8 @@ func (u *plantsUseCases) UpdatePlantTitle(id int, title string) (*entities.Plant
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	if exists {
@@ -122,6 +134,8 @@ func (u *plantsUseCases) UpdatePlantTitle(id int, title string) (*entities.Plant
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return plant, err
@@ -140,6 +154,8 @@ func (u *plantsUseCases) UpdatePlantDescription(id int, description string) (*en
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return plant, err
@@ -160,6 +176,8 @@ func (u *plantsUseCases) UpdatePlantGroup(id, groupID int) (*entities.Plant, err
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	if exists {
@@ -172,6 +190,8 @@ func (u *plantsUseCases) UpdatePlantGroup(id, groupID int) (*entities.Plant, err
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return plant, err
@@ -190,6 +210,8 @@ func (u *plantsUseCases) UpdatePlantPhoto(id int, photo []byte) (*entities.Plant
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	return plant, err

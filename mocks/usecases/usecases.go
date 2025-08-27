@@ -11,6 +11,7 @@ package mockusecases
 
 import (
 	reflect "reflect"
+	time "time"
 
 	entities "github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
 	gomock "go.uber.org/mock/gomock"
@@ -55,6 +56,21 @@ func (mr *MockUseCasesMockRecorder) AddGroupDescription(telegramID, description 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddGroupDescription", reflect.TypeOf((*MockUseCases)(nil).AddGroupDescription), telegramID, description)
 }
 
+// AddGroupLastWateringDate mocks base method.
+func (m *MockUseCases) AddGroupLastWateringDate(telegramID int, lastWateringDate time.Time) (*entities.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddGroupLastWateringDate", telegramID, lastWateringDate)
+	ret0, _ := ret[0].(*entities.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddGroupLastWateringDate indicates an expected call of AddGroupLastWateringDate.
+func (mr *MockUseCasesMockRecorder) AddGroupLastWateringDate(telegramID, lastWateringDate any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddGroupLastWateringDate", reflect.TypeOf((*MockUseCases)(nil).AddGroupLastWateringDate), telegramID, lastWateringDate)
+}
+
 // AddGroupTitle mocks base method.
 func (m *MockUseCases) AddGroupTitle(telegramID int, title string) (*entities.Group, error) {
 	m.ctrl.T.Helper()
@@ -68,6 +84,96 @@ func (m *MockUseCases) AddGroupTitle(telegramID int, title string) (*entities.Gr
 func (mr *MockUseCasesMockRecorder) AddGroupTitle(telegramID, title any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddGroupTitle", reflect.TypeOf((*MockUseCases)(nil).AddGroupTitle), telegramID, title)
+}
+
+// AddGroupWateringInterval mocks base method.
+func (m *MockUseCases) AddGroupWateringInterval(telegramID, wateringInterval int) (*entities.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddGroupWateringInterval", telegramID, wateringInterval)
+	ret0, _ := ret[0].(*entities.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddGroupWateringInterval indicates an expected call of AddGroupWateringInterval.
+func (mr *MockUseCasesMockRecorder) AddGroupWateringInterval(telegramID, wateringInterval any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddGroupWateringInterval", reflect.TypeOf((*MockUseCases)(nil).AddGroupWateringInterval), telegramID, wateringInterval)
+}
+
+// AddPlantDescription mocks base method.
+func (m *MockUseCases) AddPlantDescription(telegramID int, description string) (*entities.Plant, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddPlantDescription", telegramID, description)
+	ret0, _ := ret[0].(*entities.Plant)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddPlantDescription indicates an expected call of AddPlantDescription.
+func (mr *MockUseCasesMockRecorder) AddPlantDescription(telegramID, description any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPlantDescription", reflect.TypeOf((*MockUseCases)(nil).AddPlantDescription), telegramID, description)
+}
+
+// AddPlantGroup mocks base method.
+func (m *MockUseCases) AddPlantGroup(telegramID, groupID int) (*entities.Plant, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddPlantGroup", telegramID, groupID)
+	ret0, _ := ret[0].(*entities.Plant)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddPlantGroup indicates an expected call of AddPlantGroup.
+func (mr *MockUseCasesMockRecorder) AddPlantGroup(telegramID, groupID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPlantGroup", reflect.TypeOf((*MockUseCases)(nil).AddPlantGroup), telegramID, groupID)
+}
+
+// AddPlantPhoto mocks base method.
+func (m *MockUseCases) AddPlantPhoto(telegramID int, photo []byte) (*entities.Plant, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddPlantPhoto", telegramID, photo)
+	ret0, _ := ret[0].(*entities.Plant)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddPlantPhoto indicates an expected call of AddPlantPhoto.
+func (mr *MockUseCasesMockRecorder) AddPlantPhoto(telegramID, photo any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPlantPhoto", reflect.TypeOf((*MockUseCases)(nil).AddPlantPhoto), telegramID, photo)
+}
+
+// AddPlantTitle mocks base method.
+func (m *MockUseCases) AddPlantTitle(telegramID int, title string) (*entities.Plant, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddPlantTitle", telegramID, title)
+	ret0, _ := ret[0].(*entities.Plant)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddPlantTitle indicates an expected call of AddPlantTitle.
+func (mr *MockUseCasesMockRecorder) AddPlantTitle(telegramID, title any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPlantTitle", reflect.TypeOf((*MockUseCases)(nil).AddPlantTitle), telegramID, title)
+}
+
+// CountGroupPlants mocks base method.
+func (m *MockUseCases) CountGroupPlants(groupID int) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountGroupPlants", groupID)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CountGroupPlants indicates an expected call of CountGroupPlants.
+func (mr *MockUseCasesMockRecorder) CountGroupPlants(groupID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountGroupPlants", reflect.TypeOf((*MockUseCases)(nil).CountGroupPlants), groupID)
 }
 
 // CountUserGroups mocks base method.
@@ -100,6 +206,139 @@ func (mr *MockUseCasesMockRecorder) CountUserPlants(userID any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountUserPlants", reflect.TypeOf((*MockUseCases)(nil).CountUserPlants), userID)
 }
 
+// CreateGroup mocks base method.
+func (m *MockUseCases) CreateGroup(group entities.Group) (*entities.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateGroup", group)
+	ret0, _ := ret[0].(*entities.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateGroup indicates an expected call of CreateGroup.
+func (mr *MockUseCasesMockRecorder) CreateGroup(group any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGroup", reflect.TypeOf((*MockUseCases)(nil).CreateGroup), group)
+}
+
+// CreatePlant mocks base method.
+func (m *MockUseCases) CreatePlant(plant entities.Plant) (*entities.Plant, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreatePlant", plant)
+	ret0, _ := ret[0].(*entities.Plant)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreatePlant indicates an expected call of CreatePlant.
+func (mr *MockUseCasesMockRecorder) CreatePlant(plant any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePlant", reflect.TypeOf((*MockUseCases)(nil).CreatePlant), plant)
+}
+
+// DeleteGroup mocks base method.
+func (m *MockUseCases) DeleteGroup(id int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteGroup", id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteGroup indicates an expected call of DeleteGroup.
+func (mr *MockUseCasesMockRecorder) DeleteGroup(id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGroup", reflect.TypeOf((*MockUseCases)(nil).DeleteGroup), id)
+}
+
+// DeletePlant mocks base method.
+func (m *MockUseCases) DeletePlant(id int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeletePlant", id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeletePlant indicates an expected call of DeletePlant.
+func (mr *MockUseCasesMockRecorder) DeletePlant(id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePlant", reflect.TypeOf((*MockUseCases)(nil).DeletePlant), id)
+}
+
+// GetGroup mocks base method.
+func (m *MockUseCases) GetGroup(id int) (*entities.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroup", id)
+	ret0, _ := ret[0].(*entities.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroup indicates an expected call of GetGroup.
+func (mr *MockUseCasesMockRecorder) GetGroup(id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroup", reflect.TypeOf((*MockUseCases)(nil).GetGroup), id)
+}
+
+// GetGroupPlants mocks base method.
+func (m *MockUseCases) GetGroupPlants(groupID int) ([]entities.Plant, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupPlants", groupID)
+	ret0, _ := ret[0].([]entities.Plant)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupPlants indicates an expected call of GetGroupPlants.
+func (mr *MockUseCasesMockRecorder) GetGroupPlants(groupID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupPlants", reflect.TypeOf((*MockUseCases)(nil).GetGroupPlants), groupID)
+}
+
+// GetGroupsForNotify mocks base method.
+func (m *MockUseCases) GetGroupsForNotify(limit, offset int) ([]entities.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupsForNotify", limit, offset)
+	ret0, _ := ret[0].([]entities.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGroupsForNotify indicates an expected call of GetGroupsForNotify.
+func (mr *MockUseCasesMockRecorder) GetGroupsForNotify(limit, offset any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupsForNotify", reflect.TypeOf((*MockUseCases)(nil).GetGroupsForNotify), limit, offset)
+}
+
+// GetPlant mocks base method.
+func (m *MockUseCases) GetPlant(id int) (*entities.Plant, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPlant", id)
+	ret0, _ := ret[0].(*entities.Plant)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPlant indicates an expected call of GetPlant.
+func (mr *MockUseCasesMockRecorder) GetPlant(id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPlant", reflect.TypeOf((*MockUseCases)(nil).GetPlant), id)
+}
+
+// GetUserByID mocks base method.
+func (m *MockUseCases) GetUserByID(id int) (*entities.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByID", id)
+	ret0, _ := ret[0].(*entities.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByID indicates an expected call of GetUserByID.
+func (mr *MockUseCasesMockRecorder) GetUserByID(id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByID", reflect.TypeOf((*MockUseCases)(nil).GetUserByID), id)
+}
+
 // GetUserByTelegramID mocks base method.
 func (m *MockUseCases) GetUserByTelegramID(telegramID int) (*entities.User, error) {
 	m.ctrl.T.Helper()
@@ -130,21 +369,6 @@ func (mr *MockUseCasesMockRecorder) GetUserGroups(userID any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserGroups", reflect.TypeOf((*MockUseCases)(nil).GetUserGroups), userID)
 }
 
-// GetUserPlants mocks base method.
-func (m *MockUseCases) GetUserPlants(userID int) ([]entities.Plant, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserPlants", userID)
-	ret0, _ := ret[0].([]entities.Plant)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetUserPlants indicates an expected call of GetUserPlants.
-func (mr *MockUseCasesMockRecorder) GetUserPlants(userID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserPlants", reflect.TypeOf((*MockUseCases)(nil).GetUserPlants), userID)
-}
-
 // GetUserTemporary mocks base method.
 func (m *MockUseCases) GetUserTemporary(telegramID int) (*entities.Temporary, error) {
 	m.ctrl.T.Helper()
@@ -158,6 +382,63 @@ func (m *MockUseCases) GetUserTemporary(telegramID int) (*entities.Temporary, er
 func (mr *MockUseCasesMockRecorder) GetUserTemporary(telegramID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserTemporary", reflect.TypeOf((*MockUseCases)(nil).GetUserTemporary), telegramID)
+}
+
+// ManageGroup mocks base method.
+func (m *MockUseCases) ManageGroup(telegramID, groupID int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ManageGroup", telegramID, groupID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ManageGroup indicates an expected call of ManageGroup.
+func (mr *MockUseCasesMockRecorder) ManageGroup(telegramID, groupID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ManageGroup", reflect.TypeOf((*MockUseCases)(nil).ManageGroup), telegramID, groupID)
+}
+
+// ManagePlant mocks base method.
+func (m *MockUseCases) ManagePlant(telegramID, plantID int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ManagePlant", telegramID, plantID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ManagePlant indicates an expected call of ManagePlant.
+func (mr *MockUseCasesMockRecorder) ManagePlant(telegramID, plantID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ManagePlant", reflect.TypeOf((*MockUseCases)(nil).ManagePlant), telegramID, plantID)
+}
+
+// ResetTemporary mocks base method.
+func (m *MockUseCases) ResetTemporary(telegramID int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ResetTemporary", telegramID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ResetTemporary indicates an expected call of ResetTemporary.
+func (mr *MockUseCasesMockRecorder) ResetTemporary(telegramID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResetTemporary", reflect.TypeOf((*MockUseCases)(nil).ResetTemporary), telegramID)
+}
+
+// SaveNotification mocks base method.
+func (m *MockUseCases) SaveNotification(notification entities.Notification) (*entities.Notification, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SaveNotification", notification)
+	ret0, _ := ret[0].(*entities.Notification)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SaveNotification indicates an expected call of SaveNotification.
+func (mr *MockUseCasesMockRecorder) SaveNotification(notification any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveNotification", reflect.TypeOf((*MockUseCases)(nil).SaveNotification), notification)
 }
 
 // SaveUser mocks base method.
@@ -176,7 +457,7 @@ func (mr *MockUseCasesMockRecorder) SaveUser(user any) *gomock.Call {
 }
 
 // SetTemporaryMessage mocks base method.
-func (m *MockUseCases) SetTemporaryMessage(telegramID, messageID int) error {
+func (m *MockUseCases) SetTemporaryMessage(telegramID int, messageID *int) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SetTemporaryMessage", telegramID, messageID)
 	ret0, _ := ret[0].(error)
@@ -201,4 +482,124 @@ func (m *MockUseCases) SetTemporaryStep(telegramID, step int) error {
 func (mr *MockUseCasesMockRecorder) SetTemporaryStep(telegramID, step any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetTemporaryStep", reflect.TypeOf((*MockUseCases)(nil).SetTemporaryStep), telegramID, step)
+}
+
+// UpdateGroupDescription mocks base method.
+func (m *MockUseCases) UpdateGroupDescription(id int, description string) (*entities.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateGroupDescription", id, description)
+	ret0, _ := ret[0].(*entities.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateGroupDescription indicates an expected call of UpdateGroupDescription.
+func (mr *MockUseCasesMockRecorder) UpdateGroupDescription(id, description any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateGroupDescription", reflect.TypeOf((*MockUseCases)(nil).UpdateGroupDescription), id, description)
+}
+
+// UpdateGroupLastWateringDate mocks base method.
+func (m *MockUseCases) UpdateGroupLastWateringDate(id int, lastWateringDate time.Time) (*entities.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateGroupLastWateringDate", id, lastWateringDate)
+	ret0, _ := ret[0].(*entities.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateGroupLastWateringDate indicates an expected call of UpdateGroupLastWateringDate.
+func (mr *MockUseCasesMockRecorder) UpdateGroupLastWateringDate(id, lastWateringDate any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateGroupLastWateringDate", reflect.TypeOf((*MockUseCases)(nil).UpdateGroupLastWateringDate), id, lastWateringDate)
+}
+
+// UpdateGroupTitle mocks base method.
+func (m *MockUseCases) UpdateGroupTitle(id int, title string) (*entities.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateGroupTitle", id, title)
+	ret0, _ := ret[0].(*entities.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateGroupTitle indicates an expected call of UpdateGroupTitle.
+func (mr *MockUseCasesMockRecorder) UpdateGroupTitle(id, title any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateGroupTitle", reflect.TypeOf((*MockUseCases)(nil).UpdateGroupTitle), id, title)
+}
+
+// UpdateGroupWateringInterval mocks base method.
+func (m *MockUseCases) UpdateGroupWateringInterval(id, wateringInterval int) (*entities.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateGroupWateringInterval", id, wateringInterval)
+	ret0, _ := ret[0].(*entities.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateGroupWateringInterval indicates an expected call of UpdateGroupWateringInterval.
+func (mr *MockUseCasesMockRecorder) UpdateGroupWateringInterval(id, wateringInterval any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateGroupWateringInterval", reflect.TypeOf((*MockUseCases)(nil).UpdateGroupWateringInterval), id, wateringInterval)
+}
+
+// UpdatePlantDescription mocks base method.
+func (m *MockUseCases) UpdatePlantDescription(id int, description string) (*entities.Plant, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePlantDescription", id, description)
+	ret0, _ := ret[0].(*entities.Plant)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdatePlantDescription indicates an expected call of UpdatePlantDescription.
+func (mr *MockUseCasesMockRecorder) UpdatePlantDescription(id, description any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePlantDescription", reflect.TypeOf((*MockUseCases)(nil).UpdatePlantDescription), id, description)
+}
+
+// UpdatePlantGroup mocks base method.
+func (m *MockUseCases) UpdatePlantGroup(id, groupID int) (*entities.Plant, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePlantGroup", id, groupID)
+	ret0, _ := ret[0].(*entities.Plant)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdatePlantGroup indicates an expected call of UpdatePlantGroup.
+func (mr *MockUseCasesMockRecorder) UpdatePlantGroup(id, groupID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePlantGroup", reflect.TypeOf((*MockUseCases)(nil).UpdatePlantGroup), id, groupID)
+}
+
+// UpdatePlantPhoto mocks base method.
+func (m *MockUseCases) UpdatePlantPhoto(id int, photo []byte) (*entities.Plant, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePlantPhoto", id, photo)
+	ret0, _ := ret[0].(*entities.Plant)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdatePlantPhoto indicates an expected call of UpdatePlantPhoto.
+func (mr *MockUseCasesMockRecorder) UpdatePlantPhoto(id, photo any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePlantPhoto", reflect.TypeOf((*MockUseCases)(nil).UpdatePlantPhoto), id, photo)
+}
+
+// UpdatePlantTitle mocks base method.
+func (m *MockUseCases) UpdatePlantTitle(id int, title string) (*entities.Plant, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePlantTitle", id, title)
+	ret0, _ := ret[0].(*entities.Plant)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdatePlantTitle indicates an expected call of UpdatePlantTitle.
+func (mr *MockUseCasesMockRecorder) UpdatePlantTitle(id, title any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePlantTitle", reflect.TypeOf((*MockUseCases)(nil).UpdatePlantTitle), id, title)
 }

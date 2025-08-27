@@ -23,14 +23,13 @@ const (
 	loggingTraceSkipLevel = 1
 )
 
-var notifiedGroups = new(sync.Map)
-
 type NotificationsPreparer struct {
-	bot      *telebot.Bot
-	useCases interfaces.UseCases
-	logger   logging.Logger
-	limit    int
-	offset   int
+	bot            *telebot.Bot
+	useCases       interfaces.UseCases
+	logger         logging.Logger
+	limit          int
+	offset         int
+	notifiedGroups *sync.Map
 }
 
 func NewNotificationsPreparer(
@@ -41,11 +40,12 @@ func NewNotificationsPreparer(
 	offset int,
 ) *NotificationsPreparer {
 	return &NotificationsPreparer{
-		bot:      bot,
-		useCases: useCases,
-		logger:   logger,
-		limit:    limit,
-		offset:   offset,
+		bot:            bot,
+		useCases:       useCases,
+		logger:         logger,
+		limit:          limit,
+		offset:         offset,
+		notifiedGroups: new(sync.Map),
 	}
 }
 
@@ -83,7 +83,7 @@ func (p *NotificationsPreparer) canNotifyByTime() bool {
 }
 
 func (p *NotificationsPreparer) alreadyNotified(group entities.Group) bool {
-	value, exists := notifiedGroups.Load(group.ID)
+	value, exists := p.notifiedGroups.Load(group.ID)
 	if !exists {
 		return false
 	}
@@ -170,7 +170,7 @@ func (p *NotificationsPreparer) notify(group entities.Group) error {
 	}
 
 	// Сохраняем информаци об отправке уведомления пользователю по сценарию:
-	notifiedGroups.Store(group.ID, time.Now())
+	p.notifiedGroups.Store(group.ID, time.Now())
 
 	notification := &entities.Notification{
 		GroupID:   group.ID,

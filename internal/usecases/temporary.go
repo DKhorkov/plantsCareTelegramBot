@@ -102,6 +102,8 @@ func (u *temporaryUseCases) AddGroupTitle(telegramID int, title string) (*entiti
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	if exists {
@@ -423,6 +425,8 @@ func (u *temporaryUseCases) AddPlantGroup(telegramID, groupID int) (*entities.Pl
 			"Error", err,
 			"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
 		)
+
+		return nil, err
 	}
 
 	if exists {
