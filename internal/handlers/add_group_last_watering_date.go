@@ -25,7 +25,7 @@ const (
 var wateringIntervals = []int{1, 2, 3, 4, 5, 6, 7, 10, 14, 18, 21, 30}
 
 func AddGroupLastWateringDate(
-	bot *telebot.Bot,
+	_ *telebot.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -83,12 +83,10 @@ func AddGroupLastWateringDate(
 
 		for _, value := range wateringIntervals {
 			btn := telebot.InlineButton{
-				Unique: utils.GenUniqueParam("watering_interval"),
+				Unique: buttons.AddGroupWateringInterval.Unique,
 				Text:   utils.GetWateringInterval(value),
 				Data:   strconv.Itoa(value),
 			}
-
-			bot.Handle(&btn, AddGroupWateringIntervalCallback(bot, useCases, logger))
 
 			row = append(row, btn)
 			if len(row) == groupWateringIntervalButtonsPerRaw {
@@ -165,7 +163,16 @@ func BackToAddGroupLastWateringDateCallback(
 			return err
 		}
 
-		c := calendar.NewCalendar(bot, logger, calendar.Options{Language: "ru"})
+		now := time.Now()
+		c := calendar.NewCalendar(
+			bot,
+			logger,
+			calendar.Options{
+				Language:  "ru",
+				YearRange: [2]int{now.Year(), now.Year()},
+			},
+		)
+
 		c.SetBackButton(buttons.BackToAddGroupDescription)
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,

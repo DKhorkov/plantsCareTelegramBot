@@ -20,7 +20,7 @@ const (
 )
 
 func ManageGroupSeePlantsCallback(
-	bot *telebot.Bot,
+	_ *telebot.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -70,12 +70,10 @@ func ManageGroupSeePlantsCallback(
 
 		for _, plant := range plants {
 			btn := telebot.InlineButton{
-				Unique: utils.GenUniqueParam("manage_plant"),
+				Unique: buttons.ManagePlant.Unique,
 				Text:   plant.Title,
 				Data:   strconv.Itoa(plant.ID),
 			}
-
-			bot.Handle(&btn, ManagePlantCallback(bot, useCases, logger))
 
 			row = append(row, btn)
 			if len(row) == manageGroupSeePlantsButtonsPerRow {

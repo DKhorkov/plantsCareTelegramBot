@@ -14,7 +14,6 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
 const (
@@ -252,7 +251,7 @@ func AddPlantCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 	}
 }
 
-func ManagePlantsCallback(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func ManagePlantsCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(
@@ -297,12 +296,10 @@ func ManagePlantsCallback(bot *telebot.Bot, useCases interfaces.UseCases, logger
 
 		for _, group := range groupsWithPlants {
 			btn := telebot.InlineButton{
-				Unique: utils.GenUniqueParam("manage_plants_group"),
+				Unique: buttons.ManagePlantsGroup.Unique,
 				Text:   group.Title,
 				Data:   strconv.Itoa(group.ID),
 			}
-
-			bot.Handle(&btn, ManagePlantsGroupCallback(bot, useCases, logger))
 
 			row = append(row, btn)
 			if len(row) == managePlantsGroupButtonsPerRaw {
@@ -344,7 +341,7 @@ func ManagePlantsCallback(bot *telebot.Bot, useCases interfaces.UseCases, logger
 	}
 }
 
-func ManageGroupsCallback(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func ManageGroupsCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(
@@ -375,12 +372,10 @@ func ManageGroupsCallback(bot *telebot.Bot, useCases interfaces.UseCases, logger
 
 		for _, group := range groups {
 			btn := telebot.InlineButton{
-				Unique: utils.GenUniqueParam("manage_group"),
+				Unique: buttons.ManageGroup.Unique,
 				Text:   group.Title,
 				Data:   strconv.Itoa(group.ID),
 			}
-
-			bot.Handle(&btn, ManageGroupCallback(bot, useCases, logger))
 
 			row = append(row, btn)
 			if len(row) == manageGroupButtonsPerRaw {

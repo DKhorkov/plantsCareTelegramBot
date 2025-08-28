@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/DKhorkov/libs/logging"
 	"gopkg.in/telebot.v4"
@@ -317,7 +318,16 @@ func ManageGroupChangeLastWateringDateCallback(
 			return err
 		}
 
-		c := calendar.NewCalendar(bot, logger, calendar.Options{Language: "ru"})
+		now := time.Now()
+		c := calendar.NewCalendar(
+			bot,
+			logger,
+			calendar.Options{
+				Language:  "ru",
+				YearRange: [2]int{now.Year(), now.Year()},
+			},
+		)
+
 		c.SetBackButton(buttons.BackToManageGroupChange)
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,
@@ -358,7 +368,7 @@ func ManageGroupChangeLastWateringDateCallback(
 }
 
 func ManageGroupChangeWateringIntervalCallback(
-	bot *telebot.Bot,
+	_ *telebot.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -403,12 +413,10 @@ func ManageGroupChangeWateringIntervalCallback(
 
 		for _, value := range wateringIntervals {
 			btn := telebot.InlineButton{
-				Unique: utils.GenUniqueParam("watering_interval"),
+				Unique: buttons.ChangeGroupWateringInterval.Unique,
 				Text:   utils.GetWateringInterval(value),
 				Data:   strconv.Itoa(value),
 			}
-
-			bot.Handle(&btn, ChangeGroupWateringIntervalCallback(bot, useCases, logger))
 
 			row = append(row, btn)
 			if len(row) == groupWateringIntervalButtonsPerRaw {

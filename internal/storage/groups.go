@@ -190,6 +190,14 @@ func (s *groupsStorage) GetUserGroups(userID int) ([]entities.Group, error) {
 		Select(selectAllColumns).
 		From(groupsTableName).
 		Where(sq.Eq{userIDColumnName: userID}).
+		OrderBy( // В порядке добавления сценариев
+			fmt.Sprintf(
+				"%s.%s %s",
+				groupsTableName,
+				idColumnName,
+				asc,
+			),
+		).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
@@ -314,7 +322,7 @@ func (s *groupsStorage) GetGroupsForNotify(limit, offset int) ([]entities.Group,
 		).
 		Limit(uint64(limit)).
 		Offset(uint64(offset)).
-		OrderBy( // В порядке формирования сценариев
+		OrderBy( // В порядке добавления сценариев
 			fmt.Sprintf(
 				"%s.%s %s",
 				groupsTableName,

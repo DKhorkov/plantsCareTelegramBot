@@ -1,6 +1,8 @@
 package buttons
 
-import "gopkg.in/telebot.v4"
+import (
+	"gopkg.in/telebot.v4"
+)
 
 var (
 	CreateGroup = telebot.InlineButton{
@@ -96,5 +98,22 @@ var (
 	ManageGroupChangeWateringInterval = telebot.InlineButton{
 		Unique: "manageGroupChangeWateringInterval",
 		Text:   "Изменить интервал полива сценария",
+	}
+
+	GroupWatered = telebot.InlineButton{
+		Unique: "groupWatered",
+		Text:   "Растения в данном сценарии политы ✅",
+	}
+
+	ManageGroup = telebot.InlineButton{
+		Unique: "manageGroup",
+	}
+
+	AddGroupWateringInterval = telebot.InlineButton{
+		Unique: "addGroupWateringInterval",
+	}
+
+	ChangeGroupWateringInterval = telebot.InlineButton{
+		Unique: "changeGroupWateringInterval",
 	}
 )

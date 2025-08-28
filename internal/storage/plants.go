@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/DKhorkov/libs/db"
@@ -203,6 +204,14 @@ func (s *plantsStorage) GetGroupPlants(groupID int) ([]entities.Plant, error) {
 		Select(selectAllColumns).
 		From(plantsTableName).
 		Where(sq.Eq{groupIDColumnName: groupID}).
+		OrderBy( // В порядке добавления растений
+			fmt.Sprintf(
+				"%s.%s %s",
+				plantsTableName,
+				idColumnName,
+				asc,
+			),
+		).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {

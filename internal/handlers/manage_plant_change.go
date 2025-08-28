@@ -12,7 +12,6 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
 func ManagePlantChangeCallback(
@@ -289,7 +288,7 @@ func ManagePlantChangeDescriptionCallback(
 }
 
 func ManagePlantChangeGroupCallback(
-	bot *telebot.Bot,
+	_ *telebot.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -349,12 +348,10 @@ func ManagePlantChangeGroupCallback(
 			}
 
 			btn := telebot.InlineButton{
-				Unique: utils.GenUniqueParam("plant_group"),
+				Unique: buttons.ChangePlantGroup.Unique,
 				Text:   group.Title,
 				Data:   strconv.Itoa(group.ID),
 			}
-
-			bot.Handle(&btn, ChangePlantGroupCallback(bot, useCases, logger))
 
 			row = append(row, btn)
 			if len(row) == plantGroupButtonsPerRaw {

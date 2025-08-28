@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/DKhorkov/libs/logging"
 	"gopkg.in/telebot.v4"
@@ -145,7 +146,16 @@ func SkipGroupDescriptionCallback(
 			return err
 		}
 
-		c := calendar.NewCalendar(bot, logger, calendar.Options{Language: "ru"})
+		now := time.Now()
+		c := calendar.NewCalendar(
+			bot,
+			logger,
+			calendar.Options{
+				Language:  "ru",
+				YearRange: [2]int{now.Year(), now.Year()},
+			},
+		)
+
 		c.SetBackButton(buttons.BackToAddGroupDescription)
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,

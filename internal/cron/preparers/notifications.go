@@ -10,8 +10,8 @@ import (
 	"github.com/DKhorkov/libs/logging"
 	"gopkg.in/telebot.v4"
 
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/entities"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/handlers"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
@@ -135,12 +135,10 @@ func (p *NotificationsPreparer) notify(group entities.Group) error {
 	}
 
 	btn := telebot.InlineButton{
-		Unique: "groupWatered",
-		Text:   "Растения в данном сценарии политы ✅",
+		Unique: buttons.GroupWatered.Unique,
+		Text:   buttons.GroupWatered.Text,
 		Data:   strconv.Itoa(group.ID),
 	}
-
-	p.bot.Handle(&btn, handlers.GroupWateredCallback(p.bot, p.useCases, p.logger))
 
 	menu := &telebot.ReplyMarkup{
 		ResizeKeyboard: true,

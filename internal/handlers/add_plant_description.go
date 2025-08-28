@@ -12,14 +12,13 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
 const (
 	plantGroupButtonsPerRaw = 1
 )
 
-func AddPlantDescription(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func AddPlantDescription(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(
@@ -73,12 +72,10 @@ func AddPlantDescription(bot *telebot.Bot, useCases interfaces.UseCases, logger 
 
 		for _, group := range groups {
 			btn := telebot.InlineButton{
-				Unique: utils.GenUniqueParam("plant_group"),
+				Unique: buttons.AddPlantGroup.Unique,
 				Text:   group.Title,
 				Data:   strconv.Itoa(group.ID),
 			}
-
-			bot.Handle(&btn, AddPlantGroupCallback(bot, useCases, logger))
 
 			row = append(row, btn)
 			if len(row) == plantGroupButtonsPerRaw {

@@ -11,7 +11,6 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/paths"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
-	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
 const (
@@ -108,7 +107,7 @@ func AddPlantTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 }
 
 func SkipPlantDescriptionCallback(
-	bot *telebot.Bot,
+	_ *telebot.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -147,12 +146,10 @@ func SkipPlantDescriptionCallback(
 
 		for _, group := range groups {
 			btn := telebot.InlineButton{
-				Unique: utils.GenUniqueParam("plant_group"),
+				Unique: buttons.AddPlantGroup.Unique,
 				Text:   group.Title,
 				Data:   strconv.Itoa(group.ID),
 			}
-
-			bot.Handle(&btn, AddPlantGroupCallback(bot, useCases, logger))
 
 			row = append(row, btn)
 			if len(row) == plantGroupButtonsPerRaw {

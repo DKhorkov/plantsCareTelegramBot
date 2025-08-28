@@ -1,6 +1,8 @@
 package buttons
 
-import "gopkg.in/telebot.v4"
+import (
+	"gopkg.in/telebot.v4"
+)
 
 var (
 	CreatePlant = telebot.InlineButton{
@@ -116,5 +118,21 @@ var (
 	BackToManagePlantChange = telebot.InlineButton{
 		Unique: "backToManagePlantChange",
 		Text:   "Назад ↩️",
+	}
+
+	ManagePlantsGroup = telebot.InlineButton{
+		Unique: "managePlantsGroup",
+	}
+
+	AddPlantGroup = telebot.InlineButton{
+		Unique: "addPlantGroup",
+	}
+
+	ChangePlantGroup = telebot.InlineButton{
+		Unique: "changePlantGroup",
+	}
+
+	ManagePlant = telebot.InlineButton{
+		Unique: "managePlant",
 	}
 )
