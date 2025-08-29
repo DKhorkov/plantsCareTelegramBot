@@ -2,7 +2,6 @@ package calendar
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 
@@ -13,70 +12,71 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
-const (
-	monthsPerYear         = 12
-	loggingTraceSkipLevel = 1
-)
-
 // Calendar represents the main object.
 type Calendar struct {
 	bot        *telebot.Bot
 	logger     logging.Logger
-	opt        *Options
 	kb         [][]telebot.InlineButton
 	currYear   int
 	currMonth  time.Month
-	backButton telebot.InlineButton
+	yearsRange [2]int
+	language   string
+	buttons    map[string]*telebot.InlineButton
 }
 
 // NewCalendar builds and returns a Calendar.
-func NewCalendar(bot *telebot.Bot, logger logging.Logger, opt Options) *Calendar {
-	if opt.YearRange == [2]int{0, 0} {
-		opt.YearRange = [2]int{MinYearLimit, MaxYearLimit}
+func NewCalendar(bot *telebot.Bot, logger logging.Logger, opts ...Option) (*Calendar, error) {
+	now := time.Now()
+	calendarOptions := options{
+		initialYear:  now.Year(),
+		initialMonth: now.Month(),
+		yearsRange:   [2]int{now.Year(), now.Year()},
+		language:     RussianLangAbbr,
 	}
 
-	if opt.InitialYear == 0 {
-		opt.InitialYear = time.Now().Year()
+	for _, opt := range opts {
+		err := opt(&calendarOptions)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	if opt.InitialMonth == 0 {
-		opt.InitialMonth = time.Now().Month()
-	}
-
-	err := opt.validate()
+	err := calendarOptions.validate()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return &Calendar{
-		bot:       bot,
-		logger:    logger,
-		kb:        make([][]telebot.InlineButton, 0),
-		opt:       &opt,
-		currYear:  opt.InitialYear,
-		currMonth: opt.InitialMonth,
+	unique := utils.GenUniqueParam("") // Уникальное значение для кнопок экземпляра каждого календаря
+	btns := map[string]*telebot.InlineButton{
+		monthsPerYearButton: {Unique: buttonsPrefix + unique},
+		pickedMonthButton:   {Unique: pickedMonthButton + unique},
+		ignoreQueryButton:   {Unique: ignoreQueryButton + unique},
+		selectedDayButton:   {Unique: selectedDayButton + unique},
+		previousMonthButton: {Unique: previousMonthButton + unique},
+		nextMonthButton:     {Unique: nextMonthButton + unique},
 	}
-}
 
-// Options represents a struct for passing optional
-// properties for customizing a calendar keyboard.
-type Options struct {
-	// The year that will be initially active in the calendar.
-	// Default value - today's year
-	InitialYear int
+	if calendarOptions.backButton != nil {
+		btns[backButton] = calendarOptions.backButton
+	}
 
-	// The month that will be initially active in the calendar
-	// Default value - today's month
-	InitialMonth time.Month
+	cal := &Calendar{
+		bot:        bot,
+		logger:     logger,
+		kb:         make([][]telebot.InlineButton, 0),
+		currYear:   calendarOptions.initialYear,
+		currMonth:  calendarOptions.initialMonth,
+		yearsRange: calendarOptions.yearsRange,
+		language:   calendarOptions.language,
+		buttons:    btns,
+	}
 
-	// The range of displayed years
-	// Default value - {1970, 292277026596} (time.Unix years range)
-	YearRange [2]int
+	// Регистрируем кнопки единожды для календаря:
+	for buttonName, handler := range handlers {
+		bot.Handle(btns[buttonName], handler(cal))
+	}
 
-	// The language of all designations.
-	// If equals "ru" the designations would be Russian,
-	// otherwise - English
-	Language string
+	return cal, nil
 }
 
 // GetKeyboard builds the calendar inline-keyboard.
@@ -92,11 +92,6 @@ func (cal *Calendar) GetKeyboard() [][]telebot.InlineButton {
 	return cal.kb
 }
 
-// SetBackButton sets back button for the calendar inline-keyboard logic.
-func (cal *Calendar) SetBackButton(button telebot.InlineButton) {
-	cal.backButton = button
-}
-
 // Clears the calendar's keyboard.
 func (cal *Calendar) clearKeyboard() {
 	cal.kb = make([][]telebot.InlineButton, 0)
@@ -108,35 +103,9 @@ func (cal *Calendar) addMonthYearRow() {
 	var row []telebot.InlineButton
 
 	btn := telebot.InlineButton{
-		Unique: utils.GenUniqueParam("month_year_btn"),
+		Unique: cal.buttons[monthsPerYearButton].Unique,
 		Text:   fmt.Sprintf("%s %v", cal.getMonthDisplayName(cal.currMonth), cal.currYear),
 	}
-
-	cal.bot.Handle(&btn, func(ctx telebot.Context) error {
-		_, err := cal.bot.EditReplyMarkup(
-			ctx.Message(),
-			&telebot.ReplyMarkup{
-				InlineKeyboard: cal.getMonthPickKeyboard(),
-			},
-		)
-		if err != nil {
-			cal.logger.Error(
-				"Failed to edit reply markup",
-				"Error", err,
-				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-			)
-		}
-
-		if err = ctx.Respond(); err != nil {
-			cal.logger.Error(
-				"Failed to reply to message",
-				"Error", err,
-				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-			)
-		}
-
-		return nil
-	})
 
 	row = append(row, btn)
 	cal.addRowToKeyboard(&row)
@@ -152,48 +121,15 @@ func (cal *Calendar) getMonthPickKeyboard() [][]telebot.InlineButton {
 	for i := 1; i <= monthsPerYear; i++ {
 		monthName := cal.getMonthDisplayName(time.Month(i))
 		monthBtn := telebot.InlineButton{
-			Unique: utils.GenUniqueParam("month_pick_" + strconv.Itoa(i)),
-			Text:   monthName, Data: strconv.Itoa(i),
+			Unique: cal.buttons[pickedMonthButton].Unique,
+			Text:   monthName,
+			Data:   strconv.Itoa(i),
 		}
-
-		cal.bot.Handle(&monthBtn, func(ctx telebot.Context) error {
-			monthNum, err := strconv.Atoi(ctx.Data())
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			cal.currMonth = time.Month(monthNum)
-
-			// Show the calendar keyboard with the active selected month back
-			_, err = cal.bot.EditReplyMarkup(
-				ctx.Message(),
-				&telebot.ReplyMarkup{
-					InlineKeyboard: cal.GetKeyboard(),
-				},
-			)
-			if err != nil {
-				cal.logger.Error(
-					"Failed to edit reply markup",
-					"Error", err,
-					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-				)
-			}
-
-			if err = ctx.Respond(); err != nil {
-				cal.logger.Error(
-					"Failed to reply to message",
-					"Error", err,
-					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-				)
-			}
-
-			return nil
-		})
 
 		row = append(row, monthBtn)
 
 		// Arranging the months in 2 columns
-		if i%2 == 0 {
+		if i%monthsPerRowButtonsCount == 0 {
 			cal.addRowToKeyboard(&row)
 			row = []telebot.InlineButton{} // empty row
 		}
@@ -210,8 +146,11 @@ func (cal *Calendar) addWeekdaysRow() {
 	var row []telebot.InlineButton
 
 	for i, wd := range cal.getWeekdaysDisplayArray() {
-		btn := telebot.InlineButton{Unique: utils.GenUniqueParam("weekday_" + strconv.Itoa(i)), Text: wd}
-		cal.bot.Handle(&btn, cal.ignoreQuery())
+		btn := telebot.InlineButton{
+			Unique: utils.GenUniqueParam("weekday_" + strconv.Itoa(i)),
+			Text:   wd,
+		}
+
 		row = append(row, btn)
 	}
 
@@ -227,14 +166,14 @@ func (cal *Calendar) addDaysRows() {
 
 	// Calculating the number of empty buttons that need to be inserted forward
 	weekdayNumber := int(beginningOfMonth.Weekday())
-	if weekdayNumber == 0 && cal.opt.Language == RussianLangAbbr { // russian Sunday exception
+	if weekdayNumber == 0 && cal.language == RussianLangAbbr { // russian Sunday exception
 		weekdayNumber = 7
 	}
 
 	// The difference between English and Russian weekdays order
 	// en: Sunday (0), Monday (1), Tuesday (3), ...
 	// ru: Monday (1), Tuesday (2), ..., Sunday (7)
-	if cal.opt.Language != RussianLangAbbr {
+	if cal.language != RussianLangAbbr {
 		weekdayNumber++
 	}
 
@@ -247,32 +186,10 @@ func (cal *Calendar) addDaysRows() {
 	for i := 1; i <= amountOfDaysInMonth; i++ {
 		dayText := strconv.Itoa(i)
 		cell := telebot.InlineButton{
-			Unique: utils.GenUniqueParam("day_" + strconv.Itoa(i)),
+			Unique: cal.buttons[selectedDayButton].Unique,
 			Text:   dayText,
 			Data:   dayText,
 		}
-
-		cal.bot.Handle(&cell, func(ctx telebot.Context) error {
-			dayInt, err := strconv.Atoi(ctx.Data())
-			if err != nil {
-				return err
-			}
-
-			ctx.Message().Payload = cal.genDateStrFromDay(dayInt)
-
-			upd := telebot.Update{Message: ctx.Message()}
-			cal.bot.ProcessUpdate(upd)
-
-			if err = ctx.Respond(); err != nil {
-				cal.logger.Error(
-					"Failed to reply to message",
-					"Error", err,
-					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-				)
-			}
-
-			return nil
-		})
 
 		row = append(row, cell)
 
@@ -296,91 +213,26 @@ func (cal *Calendar) addDaysRows() {
 func (cal *Calendar) addControlButtonsRow() {
 	var row []telebot.InlineButton
 
-	prev := telebot.InlineButton{Unique: utils.GenUniqueParam("prev_month"), Text: "＜"}
-
-	// Hide "prev" button if it rests on the range
-	if cal.currYear <= cal.opt.YearRange[0] && cal.currMonth == 1 {
-		prev.Text = ""
-	} else {
-		cal.bot.Handle(&prev, func(ctx telebot.Context) error {
-			// Additional protection against entering the years ranges
-			if cal.currMonth > 1 {
-				cal.currMonth--
-			} else {
-				cal.currMonth = monthsPerYear
-				if cal.currYear > cal.opt.YearRange[0] {
-					cal.currYear--
-				}
-			}
-
-			_, err := cal.bot.EditReplyMarkup(
-				ctx.Message(),
-				&telebot.ReplyMarkup{
-					InlineKeyboard: cal.GetKeyboard(),
-				},
-			)
-			if err != nil {
-				cal.logger.Error(
-					"Failed to edit reply markup",
-					"Error", err,
-					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-				)
-			}
-
-			if err = ctx.Respond(); err != nil {
-				cal.logger.Error(
-					"Failed to reply to message",
-					"Error", err,
-					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-				)
-			}
-
-			return nil
-		})
+	prev := telebot.InlineButton{
+		Unique: cal.buttons[previousMonthButton].Unique,
+		Text:   "＜",
 	}
 
-	next := telebot.InlineButton{Unique: utils.GenUniqueParam("next_month"), Text: "＞"}
+	// Hide "prev" button if it rests on the range
+	if cal.currYear <= cal.yearsRange[0] && cal.currMonth == 1 {
+		prev.Unique = cal.buttons[ignoreQueryButton].Unique
+		prev.Text = ""
+	}
+
+	next := telebot.InlineButton{
+		Unique: cal.buttons[nextMonthButton].Unique,
+		Text:   "＞",
+	}
 
 	// Hide "next" button if it rests on the range
-	if cal.currYear >= cal.opt.YearRange[1] && cal.currMonth == monthsPerYear {
+	if cal.currYear >= cal.yearsRange[1] && cal.currMonth == monthsPerYear {
+		next.Unique = cal.buttons[ignoreQueryButton].Unique
 		next.Text = ""
-	} else {
-		cal.bot.Handle(&next, func(ctx telebot.Context) error {
-			// Additional protection against entering the years ranges
-			if cal.currMonth < monthsPerYear {
-				cal.currMonth++
-			} else {
-				if cal.currYear < cal.opt.YearRange[1] {
-					cal.currYear++
-				}
-
-				cal.currMonth = 1
-			}
-
-			_, err := cal.bot.EditReplyMarkup(
-				ctx.Message(),
-				&telebot.ReplyMarkup{
-					InlineKeyboard: cal.GetKeyboard(),
-				},
-			)
-			if err != nil {
-				cal.logger.Error(
-					"Failed to edit reply markup",
-					"Error", err,
-					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-				)
-			}
-
-			if err = ctx.Respond(); err != nil {
-				cal.logger.Error(
-					"Failed to reply to message",
-					"Error", err,
-					"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-				)
-			}
-
-			return nil
-		})
 	}
 
 	row = append(row, prev, next)
@@ -391,14 +243,18 @@ func (cal *Calendar) addControlButtonsRow() {
 func (cal *Calendar) addBackAndMenuButtonsRow() {
 	var row []telebot.InlineButton
 
-	row = append(row, cal.backButton, buttons.Menu)
+	if b, exists := cal.buttons[backButton]; exists {
+		row = append(row, *b)
+	}
+
+	row = append(row, buttons.Menu)
 	cal.addRowToKeyboard(&row)
 }
 
 // Returns a formatted date string from the selected date.
 func (cal *Calendar) genDateStrFromDay(day int) string {
 	return time.Date(cal.currYear, cal.currMonth, day,
-		0, 0, 0, 0, time.UTC).Format("02.01.2006")
+		0, 0, 0, 0, time.UTC).Format(dateFormat)
 }
 
 // Utility function for passing a row to the calendar's keyboard.
@@ -409,23 +265,28 @@ func (cal *Calendar) addRowToKeyboard(row *[]telebot.InlineButton) {
 // Inserts an empty button that doesn't process queries
 // into the keyboard row.
 func (cal *Calendar) addEmptyCell(row *[]telebot.InlineButton) {
-	cell := telebot.InlineButton{Unique: utils.GenUniqueParam("empty_cell"), Text: " "}
-	cal.bot.Handle(&cell, cal.ignoreQuery())
+	cell := telebot.InlineButton{
+		Unique: cal.buttons[ignoreQueryButton].Unique,
+		Text:   " ",
+	}
+
 	*row = append(*row, cell)
 }
 
-// Query stub.
-func (cal *Calendar) ignoreQuery() func(ctx telebot.Context) error {
-	return func(ctx telebot.Context) error {
-		err := ctx.Respond()
-		if err != nil {
-			cal.logger.Error(
-				"Failed to reply to message",
-				"Error", err,
-				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
-			)
-		}
-
-		return nil
+// Returns the name of the month in the selected language.
+func (cal *Calendar) getMonthDisplayName(month time.Month) string {
+	if cal.language == RussianLangAbbr {
+		return RussianMonths[month]
 	}
+
+	return month.String()
+}
+
+// Returns the array of the weekdays names in the selected language.
+func (cal *Calendar) getWeekdaysDisplayArray() [AmountOfDaysInWeek]string {
+	if cal.language == RussianLangAbbr {
+		return RussianWeekdaysAbbrs
+	}
+
+	return EnglishWeekdaysAbbrs
 }

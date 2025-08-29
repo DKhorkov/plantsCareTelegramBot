@@ -3,7 +3,6 @@ package handlers
 import (
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/DKhorkov/libs/logging"
 	"gopkg.in/telebot.v4"
@@ -318,20 +317,24 @@ func ManageGroupChangeLastWateringDateCallback(
 			return err
 		}
 
-		now := time.Now()
-		c := calendar.NewCalendar(
+		cal, err := calendar.NewCalendar(
 			bot,
 			logger,
-			calendar.Options{
-				Language:  "ru",
-				YearRange: [2]int{now.Year(), now.Year()},
-			},
+			calendar.WithBackButton(buttons.BackToManageGroupChange),
 		)
+		if err != nil {
+			logger.Error(
+				"Failed to create calendar",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
-		c.SetBackButton(buttons.BackToManageGroupChange)
+			return err
+		}
+
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,
-			InlineKeyboard: c.GetKeyboard(),
+			InlineKeyboard: cal.GetKeyboard(),
 		}
 
 		err = context.Send(

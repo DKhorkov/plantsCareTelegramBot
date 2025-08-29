@@ -38,3 +38,28 @@ const AmountOfDaysInWeek = 7
 // RussianLangAbbr is a constant that represents the Russian language abbreviation
 // that could be passed in Options.Language.
 const RussianLangAbbr = "ru"
+
+const (
+	monthsPerYear            = 12
+	monthsPerRowButtonsCount = 2
+	loggingTraceSkipLevel    = 1
+	dateFormat               = "02.01.2006"
+
+	buttonsPrefix       = "calendar"
+	backButton          = "back"
+	monthsPerYearButton = "months"
+	pickedMonthButton   = "pickedMonth"
+	ignoreQueryButton   = "ignore"
+	selectedDayButton   = "selectedDay"
+	previousMonthButton = "previousMonth"
+	nextMonthButton     = "nextMonth"
+)
+
+var handlers = map[string]Handler{
+	monthsPerYearButton: MonthsPerYearCallback,
+	pickedMonthButton:   PickedMonthCallback,
+	ignoreQueryButton:   IgnoreQueryCallback,
+	selectedDayButton:   SelectedDayCallback,
+	previousMonthButton: PreviousMonthCallback,
+	nextMonthButton:     NextMonthCallback,
+}

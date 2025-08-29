@@ -163,20 +163,24 @@ func BackToAddGroupLastWateringDateCallback(
 			return err
 		}
 
-		now := time.Now()
-		c := calendar.NewCalendar(
+		cal, err := calendar.NewCalendar(
 			bot,
 			logger,
-			calendar.Options{
-				Language:  "ru",
-				YearRange: [2]int{now.Year(), now.Year()},
-			},
+			calendar.WithBackButton(buttons.BackToAddGroupDescription),
 		)
+		if err != nil {
+			logger.Error(
+				"Failed to create calendar",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
 
-		c.SetBackButton(buttons.BackToAddGroupDescription)
+			return err
+		}
+
 		menu := &telebot.ReplyMarkup{
 			ResizeKeyboard: true,
-			InlineKeyboard: c.GetKeyboard(),
+			InlineKeyboard: cal.GetKeyboard(),
 		}
 
 		err = context.Send(

@@ -5,4 +5,4 @@ import (
 	"gopkg.in/telebot.v4"
 )
 
-type Handler = func(bot *telebot.Bot, useCases UseCases, logger logging.Logger) telebot.HandlerFunc
+type Handler func(bot Bot, useCases UseCases, logger logging.Logger) telebot.HandlerFunc
