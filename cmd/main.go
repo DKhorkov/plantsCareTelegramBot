@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/DKhorkov/libs/db"
+	"github.com/DKhorkov/libs/loadenv"
 	"github.com/DKhorkov/libs/logging"
 
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/app"
@@ -21,6 +22,9 @@ const (
 )
 
 func main() {
+	// Инициализируем переменные окружения для дальнейшего считывания в конфиге:
+	loadenv.Init()
+
 	cfg := config.New()
 	logger := logging.New(
 		cfg.Logging.Level,

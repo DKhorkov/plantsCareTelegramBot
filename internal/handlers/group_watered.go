@@ -12,7 +12,7 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
 )
 
-func GroupWateredCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func GroupWateredCallback(_ interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		groupID, err := strconv.Atoi(context.Data())
 		if err != nil {

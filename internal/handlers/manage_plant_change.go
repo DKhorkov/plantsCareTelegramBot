@@ -15,7 +15,7 @@ import (
 )
 
 func ManagePlantChangeCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -110,7 +110,7 @@ func ManagePlantChangeCallback(
 }
 
 func ManagePlantChangeTitleCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -199,7 +199,7 @@ func ManagePlantChangeTitleCallback(
 }
 
 func ManagePlantChangeDescriptionCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -288,7 +288,7 @@ func ManagePlantChangeDescriptionCallback(
 }
 
 func ManagePlantChangeGroupCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -400,7 +400,7 @@ func ManagePlantChangeGroupCallback(
 }
 
 func ManagePlantChangePhotoCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

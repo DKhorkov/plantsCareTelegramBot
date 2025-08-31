@@ -12,7 +12,9 @@ import (
 )
 
 func TestNew_TableDriven_Simple(t *testing.T) {
-	// Запускать в корневой дирекетории проекта:
+	// Инициализируем переменные окружения для дальнейшего считывания:
+	loadenv.Init("../../.env")
+
 	token := loadenv.GetEnv("BOT_TOKEN", "")
 
 	tests := []struct {

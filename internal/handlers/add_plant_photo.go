@@ -14,7 +14,7 @@ import (
 )
 
 func AddPlantPhoto(
-	bot *telebot.Bot,
+	bot interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -118,7 +118,7 @@ func AddPlantPhoto(
 }
 
 func ConfirmAddPlantCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

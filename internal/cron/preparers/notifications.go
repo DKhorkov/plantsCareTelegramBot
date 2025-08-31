@@ -24,7 +24,7 @@ const (
 )
 
 type NotificationsPreparer struct {
-	bot            *telebot.Bot
+	bot            interfaces.Bot
 	useCases       interfaces.UseCases
 	logger         logging.Logger
 	limit          int
@@ -33,7 +33,7 @@ type NotificationsPreparer struct {
 }
 
 func NewNotificationsPreparer(
-	bot *telebot.Bot,
+	bot interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 	limit int,
@@ -168,13 +168,14 @@ func (p *NotificationsPreparer) notify(group entities.Group) error {
 	}
 
 	// Сохраняем информаци об отправке уведомления пользователю по сценарию:
-	p.notifiedGroups.Store(group.ID, time.Now())
+	now := time.Now()
+	p.notifiedGroups.Store(group.ID, now)
 
 	notification := &entities.Notification{
 		GroupID:   group.ID,
 		MessageID: msg.ID,
 		Text:      msg.Text,
-		SentAt:    msg.Time(),
+		SentAt:    now,
 	}
 
 	if _, err = p.useCases.SaveNotification(*notification); err != nil {

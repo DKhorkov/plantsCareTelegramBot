@@ -8,7 +8,7 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
 )
 
-func Help(_ *telebot.Bot, _ interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func Help(_ interfaces.Bot, _ interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(

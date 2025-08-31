@@ -22,7 +22,7 @@ const (
 	manageGroupButtonsPerRaw       = 1
 )
 
-func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func Start(_ interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(
@@ -102,7 +102,7 @@ func Start(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) 
 	}
 }
 
-func AddGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func AddGroupCallback(_ interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		user, err := useCases.GetUserByTelegramID(int(context.Sender().ID))
 		if err != nil {
@@ -198,7 +198,7 @@ func AddGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 	}
 }
 
-func AddPlantCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func AddPlantCallback(_ interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(
@@ -251,7 +251,7 @@ func AddPlantCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger loggi
 	}
 }
 
-func ManagePlantsCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func ManagePlantsCallback(_ interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(
@@ -341,7 +341,7 @@ func ManagePlantsCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger l
 	}
 }
 
-func ManageGroupsCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func ManageGroupsCallback(_ interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(

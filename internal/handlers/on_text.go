@@ -8,7 +8,7 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 )
 
-func OnText(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func OnText(bot interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		temp, err := useCases.GetUserTemporary(int(context.Sender().ID))
 		if err != nil {

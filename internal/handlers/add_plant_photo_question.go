@@ -16,7 +16,7 @@ import (
 )
 
 func AcceptAddPlantPhotoCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -102,7 +102,7 @@ func AcceptAddPlantPhotoCallback(
 }
 
 func BackToAddPlantPhotoQuestionCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -194,7 +194,7 @@ func BackToAddPlantPhotoQuestionCallback(
 }
 
 func RejectAddPlantPhotoCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

@@ -9,12 +9,13 @@ import (
 	"gopkg.in/telebot.v4"
 
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/buttons"
+	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/utils"
 )
 
 // Calendar represents the main object.
 type Calendar struct {
-	bot        *telebot.Bot
+	bot        interfaces.Bot
 	logger     logging.Logger
 	kb         [][]telebot.InlineButton
 	currYear   int
@@ -25,7 +26,7 @@ type Calendar struct {
 }
 
 // NewCalendar builds and returns a Calendar.
-func NewCalendar(bot *telebot.Bot, logger logging.Logger, opts ...Option) (*Calendar, error) {
+func NewCalendar(bot interfaces.Bot, logger logging.Logger, opts ...Option) (*Calendar, error) {
 	now := time.Now()
 	calendarOptions := options{
 		initialYear:  now.Year(),

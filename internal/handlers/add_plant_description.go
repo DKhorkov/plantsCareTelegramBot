@@ -18,7 +18,7 @@ const (
 	plantGroupButtonsPerRaw = 1
 )
 
-func AddPlantDescription(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func AddPlantDescription(_ interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(
@@ -114,7 +114,7 @@ func AddPlantDescription(_ *telebot.Bot, useCases interfaces.UseCases, logger lo
 }
 
 func BackToAddPlantDescriptionCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

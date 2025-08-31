@@ -2,13 +2,12 @@ package handlers
 
 import (
 	"github.com/DKhorkov/libs/logging"
-	"gopkg.in/telebot.v4"
 
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 )
 
 func Prepare(
-	bot *telebot.Bot,
+	bot interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 	handlers map[any]interfaces.Handler,

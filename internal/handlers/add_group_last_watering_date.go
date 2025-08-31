@@ -25,7 +25,7 @@ const (
 var wateringIntervals = []int{1, 2, 3, 4, 5, 6, 7, 10, 14, 18, 21, 30}
 
 func AddGroupLastWateringDate(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -131,7 +131,7 @@ func AddGroupLastWateringDate(
 }
 
 func BackToAddGroupLastWateringDateCallback(
-	bot *telebot.Bot,
+	bot interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

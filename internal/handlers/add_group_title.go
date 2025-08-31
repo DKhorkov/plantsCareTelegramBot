@@ -19,7 +19,7 @@ const (
 	groupTitleMaxLength = 50
 )
 
-func AddGroupTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func AddGroupTitle(_ interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(
@@ -125,7 +125,7 @@ func AddGroupTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 }
 
 func SkipGroupDescriptionCallback(
-	bot *telebot.Bot,
+	bot interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

@@ -14,7 +14,7 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
 )
 
-func AddGroupDescription(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func AddGroupDescription(bot interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(
@@ -91,7 +91,7 @@ func AddGroupDescription(bot *telebot.Bot, useCases interfaces.UseCases, logger 
 }
 
 func BackToAddGroupDescriptionCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

@@ -16,7 +16,7 @@ import (
 )
 
 func AddGroupWateringIntervalCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -89,7 +89,7 @@ func AddGroupWateringIntervalCallback(
 }
 
 func BackToAddGroupWateringIntervalCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -183,7 +183,7 @@ func BackToAddGroupWateringIntervalCallback(
 }
 
 func ConfirmAddGroupCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

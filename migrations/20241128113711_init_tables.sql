@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS notifications
 CREATE TABLE IF NOT EXISTS temporary
 (
     id         SERIAL PRIMARY KEY,
-    user_id    INTEGER NOT NULL,
+    user_id    INTEGER NOT NULL UNIQUE,
     step       INTEGER NOT NULL,
     message_id BIGINT,
     data       bytea,

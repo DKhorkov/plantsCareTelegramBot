@@ -15,7 +15,7 @@ import (
 )
 
 func ChangePlantPhoto(
-	bot *telebot.Bot,
+	bot interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

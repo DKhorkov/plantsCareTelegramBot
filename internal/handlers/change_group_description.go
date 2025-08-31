@@ -15,7 +15,7 @@ import (
 )
 
 func ChangeGroupDescription(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

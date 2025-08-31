@@ -17,7 +17,7 @@ import (
 )
 
 func ManageGroupChangeCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -109,7 +109,7 @@ func ManageGroupChangeCallback(
 }
 
 func ManageGroupChangeTitleCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -195,7 +195,7 @@ func ManageGroupChangeTitleCallback(
 }
 
 func ManageGroupChangeDescriptionCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -281,7 +281,7 @@ func ManageGroupChangeDescriptionCallback(
 }
 
 func ManageGroupChangeLastWateringDateCallback(
-	bot *telebot.Bot,
+	bot interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -371,7 +371,7 @@ func ManageGroupChangeLastWateringDateCallback(
 }
 
 func ManageGroupChangeWateringIntervalCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

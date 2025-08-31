@@ -15,7 +15,7 @@ import (
 )
 
 func ManageGroupCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

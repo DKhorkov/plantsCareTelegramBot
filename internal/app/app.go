@@ -7,7 +7,6 @@ import (
 	"syscall"
 
 	"github.com/DKhorkov/libs/logging"
-	"gopkg.in/telebot.v4"
 
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/interfaces"
 )
@@ -17,13 +16,13 @@ const (
 )
 
 type App struct {
-	bot    *telebot.Bot
+	bot    interfaces.Bot
 	logger logging.Logger
 	crons  []interfaces.Cron
 }
 
 func New(
-	bot *telebot.Bot,
+	bot interfaces.Bot,
 	logger logging.Logger,
 	crons []interfaces.Cron,
 ) *App {

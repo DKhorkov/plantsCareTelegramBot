@@ -17,7 +17,7 @@ const (
 	plantTitleMaxLength = 50
 )
 
-func AddPlantTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func AddPlantTitle(_ interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(
@@ -107,7 +107,7 @@ func AddPlantTitle(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.
 }
 
 func SkipPlantDescriptionCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

@@ -8,7 +8,7 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/steps"
 )
 
-func OnMedia(bot *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func OnMedia(bot interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		// Для календаря используем context.Chat().ID:
 		temp, err := useCases.GetUserTemporary(int(context.Chat().ID))

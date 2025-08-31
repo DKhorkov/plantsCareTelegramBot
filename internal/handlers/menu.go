@@ -10,7 +10,7 @@ import (
 	"github.com/DKhorkov/plantsCareTelegramBot/internal/texts"
 )
 
-func BackToMenu(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func BackToMenu(_ interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		if err := context.Delete(); err != nil {
 			logger.Error(

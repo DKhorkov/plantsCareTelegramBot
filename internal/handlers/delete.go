@@ -11,7 +11,7 @@ const (
 	loggingTraceSkipLevel = 1
 )
 
-func Delete(_ *telebot.Bot, _ interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func Delete(_ interfaces.Bot, _ interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		err := context.Delete()
 		if err != nil {

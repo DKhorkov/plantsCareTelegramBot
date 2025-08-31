@@ -15,7 +15,7 @@ import (
 )
 
 func ManageGroupRemovalCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -98,7 +98,7 @@ func ManageGroupRemovalCallback(
 }
 
 func BackToManageGroupActionCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
@@ -201,7 +201,7 @@ func BackToManageGroupActionCallback(
 }
 
 func ConfirmGroupRemovalCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {

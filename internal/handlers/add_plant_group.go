@@ -20,7 +20,7 @@ const (
 	plantsPerGroupLimit = 50
 )
 
-func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
+func AddPlantGroupCallback(_ interfaces.Bot, useCases interfaces.UseCases, logger logging.Logger) telebot.HandlerFunc {
 	return func(context telebot.Context) error {
 		groupID, err := strconv.Atoi(context.Data())
 		if err != nil {
@@ -171,7 +171,7 @@ func AddPlantGroupCallback(_ *telebot.Bot, useCases interfaces.UseCases, logger 
 }
 
 func BackToAddPlantGroupCallback(
-	_ *telebot.Bot,
+	_ interfaces.Bot,
 	useCases interfaces.UseCases,
 	logger logging.Logger,
 ) telebot.HandlerFunc {
