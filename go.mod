@@ -6,7 +6,6 @@ require (
 	github.com/DKhorkov/libs v1.12.0
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
-	github.com/joho/godotenv v1.5.1
 	github.com/pressly/goose/v3 v3.25.0
 	github.com/stretchr/testify v1.11.1
 	go.uber.org/mock v0.6.0
@@ -17,6 +16,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect

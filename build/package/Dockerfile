@@ -12,6 +12,9 @@ FROM alpine AS runner
 
 WORKDIR /app
 
+# Установка необходимых утилит: gzip для сжатия бэкапов
+RUN apk add --no-cache gzip
+
 COPY .env .
 COPY --from=builder /build/migrations/ /app/migrations/
 COPY --from=builder /build/static/ /app/static/

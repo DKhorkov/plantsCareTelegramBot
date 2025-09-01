@@ -112,3 +112,35 @@ To print status of all migrations, use next command:
 ```shell
 task -d scripts migrations_status
 ```
+
+## Database
+
+To connect to database container, use next command:
+
+```shell
+sudo docker exec -it database sh
+```
+
+To connect to DB, use next command:
+
+```shell
+psql -U $POSTGRES_USER
+```
+
+To create backup of database, use next command:
+
+```shell
+sudo docker exec database /scripts/backup.sh
+```
+
+To restore database from latest backup, use next command:
+
+```shell
+sudo docker exec database /scripts/restore.sh
+```
+
+To restore database from specific backup, use next command:
+
+```shell
+sudo docker exec database /scripts/restore.sh /backups/{{backup_filename}}
+```
