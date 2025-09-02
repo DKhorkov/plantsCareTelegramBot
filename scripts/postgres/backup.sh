@@ -7,8 +7,8 @@ MIN_FREE_SPACE_MB=500  # Минимум 500 МБ свободно
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 
 # === Проверка переменных ===
-if [ -z "$POSTGRES_USER" ] || [ -z "$POSTGRES_DB" ] || [ -z "$POSTGRES_PORT" ] || [ -z "$POSTGRES_PASSWORD" ]; then
-    echo "❌ Не все переменные окружения заданы: POSTGRES_USER, POSTGRES_DB, POSTGRES_PORT, POSTGRES_PASSWORD" | tee -a "$LOG_FILE"
+if [ -z "$POSTGRES_USER" ] || [ -z "$POSTGRES_DB" ] || [ -z "$POSTGRES_PORT" ] || [ -z "$POSTGRES_PASSWORD" ] || [ -z "$POSTGRES_HOST" ]; then
+    echo "❌ Не все переменные окружения заданы: POSTGRES_USER, POSTGRES_DB, POSTGRES_PORT, POSTGRES_PASSWORD, POSTGRES_HOST" | tee -a "$LOG_FILE"
     exit 1
 fi
 
@@ -31,13 +31,13 @@ mkdir -p "$BACKUP_DIR"
 export PGPASSWORD="$POSTGRES_PASSWORD"
 BACKUP_FILE="$BACKUP_DIR/${POSTGRES_DB}_$TIMESTAMP.sql.gz"
 
-echo "$(date): Начинаем резервное копирование базы '$POSTGRES_DB'..." >> "$LOG_FILE"
+echo "$(date): Начинаем резервное копирование базы '$POSTGRES_DB'..." | tee -a "$LOG_FILE"
 
 # === Создание сжатого бэкапа ===
 echo "📦 Создаём и сжимаем дамп базы: $POSTGRES_DB"
 pg_dump \
     --username="$POSTGRES_USER" \
-    --host=localhost \
+    --host="$POSTGRES_HOST" \
     --port="$POSTGRES_PORT" \
     --no-password \
     --verbose \
@@ -45,14 +45,13 @@ pg_dump \
 
 if [ $? -eq 0 ]; then
     echo "✅ Бэкап успешно создан: $BACKUP_FILE"
-    echo "$(date): Успешно создан бэкап: $BACKUP_FILE" >> "$LOG_FILE"
+    echo "$(date): Успешно создан бэкап: $BACKUP_FILE" | tee -a "$LOG_FILE"
 
     # Симлинк на последний бэкап
     ln -sf "$(basename "$BACKUP_FILE")" "$BACKUP_DIR/latest.sql.gz"
-    echo "🔗 Актуальный бэкап: $BACKUP_DIR/latest.sql.gz"
+    echo "🔗 Актуальный бэкап: $BACKUP_DIR/latest.sql.gz" | tee -a "$LOG_FILE"
 else
     echo "❌ Ошибка при создании бэкапа!"
-    echo "$(date): ОШИБКА при создании бэкапа" >> "$LOG_FILE"
+    echo "$(date): ОШИБКА при создании бэкапа" | tee -a "$LOG_FILE"
     exit 1
 fi
-

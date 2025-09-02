@@ -118,10 +118,10 @@ task -d scripts migrations_status
 To connect to database container, use next command:
 
 ```shell
-sudo docker exec -it database sh
+task -d scripts connect_to_database
 ```
 
-To connect to DB, use next command:
+To connect to DB inside database container, use next command:
 
 ```shell
 psql -U $POSTGRES_USER
@@ -130,17 +130,17 @@ psql -U $POSTGRES_USER
 To create backup of database, use next command:
 
 ```shell
-sudo docker exec database /scripts/backup.sh
+task -d scripts backup
 ```
 
 To restore database from latest backup, use next command:
 
 ```shell
-sudo docker exec database /scripts/restore.sh
+task -d scripts restore
 ```
 
 To restore database from specific backup, use next command:
 
 ```shell
-sudo docker exec database /scripts/restore.sh /backups/{{backup_filename}}
+task -d scripts restore BACKUP_FILENAME={{backup_filename}}
 ```

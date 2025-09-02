@@ -242,3 +242,34 @@ tasks:
       - task: docker_build_prod
       - sudo docker tag plants_care_bot d3m0s/plants_care_bot
       - sudo docker push d3m0s/plants_care_bot
+
+  connect_to_database_container:
+    desc: "Connects to database container."
+    aliases:
+      - connect_to_database
+    dir: ../
+    cmds:
+      - sudo docker exec -it database sh
+
+  create_database_backup:
+    desc: "Creates database backup."
+    aliases:
+      - backup
+    dir: ../
+    cmds:
+      - sudo docker exec database /scripts/backup.sh
+
+  restore_database_from_backup:
+    desc: "Restores database from backup."
+    aliases:
+      - restore
+    dir: ../
+    cmds:
+      - |
+        if [ -z "{{.BACKUP_FILENAME}}" ]; then
+          echo "Восстановление из последней резервной копии..."
+          sudo docker exec database /scripts/restore.sh
+        else
+          echo "Восстановление из резервной копии: {{.BACKUP_FILENAME}}"
+          sudo docker exec database /scripts/restore.sh {{.BACKUP_FILENAME}}
+        fi
