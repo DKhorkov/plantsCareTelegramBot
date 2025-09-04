@@ -49,7 +49,7 @@ func NewCalendar(bot interfaces.Bot, logger logging.Logger, opts ...Option) (*Ca
 
 	unique := utils.GenUniqueParam("") // Уникальное значение для кнопок экземпляра каждого календаря
 	btns := map[string]*telebot.InlineButton{
-		monthsPerYearButton: {Unique: buttonsPrefix + unique},
+		monthsPerYearButton: {Unique: monthsPerYearButton + unique},
 		pickedMonthButton:   {Unique: pickedMonthButton + unique},
 		ignoreQueryButton:   {Unique: ignoreQueryButton + unique},
 		selectedDayButton:   {Unique: selectedDayButton + unique},

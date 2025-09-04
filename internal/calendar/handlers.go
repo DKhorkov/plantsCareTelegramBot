@@ -1,7 +1,6 @@
 package calendar
 
 import (
-	"log"
 	"strconv"
 	"time"
 
@@ -45,7 +44,13 @@ func PickedMonthCallback(cal *Calendar) telebot.HandlerFunc {
 	return func(ctx telebot.Context) error {
 		monthNum, err := strconv.Atoi(ctx.Data())
 		if err != nil {
-			log.Fatal(err)
+			cal.logger.Error(
+				"Failed to get month number",
+				"Error", err,
+				"Tracing", logging.GetLogTraceback(loggingTraceSkipLevel),
+			)
+
+			return err
 		}
 
 		cal.currMonth = time.Month(monthNum)

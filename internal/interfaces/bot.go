@@ -16,3 +16,7 @@ type Bot interface {
 	ProcessUpdate(u telebot.Update)
 	File(file *telebot.File) (io.ReadCloser, error)
 }
+
+type Context interface {
+	telebot.Context
+}

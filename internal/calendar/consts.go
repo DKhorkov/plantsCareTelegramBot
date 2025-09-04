@@ -35,9 +35,11 @@ var (
 // AmountOfDaysInWeek is a constant that represents an amount of days in week.
 const AmountOfDaysInWeek = 7
 
-// RussianLangAbbr is a constant that represents the Russian language abbreviation
-// that could be passed in Options.Language.
-const RussianLangAbbr = "ru"
+// Language abbreviations:
+const (
+	RussianLangAbbr = "ru"
+	EnglishLangAbbr = "en"
+)
 
 const (
 	monthsPerYear            = 12
@@ -45,7 +47,6 @@ const (
 	loggingTraceSkipLevel    = 1
 	dateFormat               = "02.01.2006"
 
-	buttonsPrefix       = "calendar"
 	backButton          = "back"
 	monthsPerYearButton = "months"
 	pickedMonthButton   = "pickedMonth"
