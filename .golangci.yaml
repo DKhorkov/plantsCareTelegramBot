@@ -80,6 +80,10 @@ linters:
         linters:
           - revive
 
+      - path: "internal/interfaces/bot.go"
+        linters:
+          - revive
+
       - path: "internal/calendar/calendar.go"
         linters:
           - nestif

@@ -35,7 +35,7 @@ var (
 // AmountOfDaysInWeek is a constant that represents an amount of days in week.
 const AmountOfDaysInWeek = 7
 
-// Language abbreviations:
+// Language abbreviations.
 const (
 	RussianLangAbbr = "ru"
 	EnglishLangAbbr = "en"
